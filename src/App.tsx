@@ -1,17 +1,7 @@
-import {
-  Refine,
-  GitHubBanner,
-  WelcomePage,
-  Authenticated,
-  AuthProvider,
-} from "@refinedev/core";
-import { DevtoolsPanel, DevtoolsProvider } from "@refinedev/devtools";
-import { RefineKbar, RefineKbarProvider } from "@refinedev/kbar";
+import { Refine, AuthProvider } from "@refinedev/core";
 
-import { BrowserRouter, Route, Routes, Outlet } from "react-router";
+import { BrowserRouter, Route, Routes } from "react-router";
 import routerProvider, {
-  NavigateToResource,
-  CatchAllNavigate,
   UnsavedChangesNotifier,
   DocumentTitleHandler,
 } from "@refinedev/react-router";
@@ -19,17 +9,28 @@ import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
 import { dataProvider } from "./providers/data";
 import { Login } from "./pages/login";
-import { Register } from "./pages/register";
-import { ForgotPassword } from "./pages/forgot-password";
-import { ErrorComponent } from "./components/refine-ui/layout/error-component";
+// import { ErrorComponent } from "./components/refine-ui/layout/error-component";
 import { Layout } from "./components/refine-ui/layout/layout";
-import { Header } from "./components/refine-ui/layout/header";
 import { useNotificationProvider } from "./components/refine-ui/notification/use-notification-provider";
 import { Toaster } from "./components/refine-ui/notification/toaster";
 import { ThemeProvider } from "./components/refine-ui/theme/theme-provider";
+import { useTranslation } from "react-i18next";
+import type { I18nProvider } from "@refinedev/core";
 import "./App.css";
 
 function App() {
+  // I18N (INTERNATIONALIZATION / TRANSLATION)
+  const { t, i18n } = useTranslation();
+
+  const i18nProvider: I18nProvider = {
+    translate: (key: string | string[], params: string) => {
+      return t(key, params);
+    },
+    changeLocale: (lang: string) => i18n.changeLanguage(lang),
+    getLocale: () => i18n.language,
+  };
+
+  // AUTH
   const { isLoading, user, logout, getIdTokenClaims } = useAuth0();
 
   if (isLoading) {
@@ -73,10 +74,10 @@ function App() {
             logout: true,
           };
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         return {
           authenticated: false,
-          error: new Error(error),
+          error: new Error(error as string),
           redirectTo: "/login",
           logout: true,
         };
@@ -94,35 +95,60 @@ function App() {
     },
   };
 
+  // TITLE
+  const websiteTitle = "Pusakawan Backoffice";
+  const formattedWebsiteTitle = (route: string) => `${route} | ${websiteTitle}`;
+
+  const getTitle = () => {
+    switch (location.pathname) {
+      case "/":
+        return formattedWebsiteTitle(t("routes.sign_in"));
+      case "/home":
+        return "Home | Pusakawan Backoffice";
+      default:
+        return "Pusakawan Backoffice";
+    }
+  };
+
   return (
     <BrowserRouter>
-      <GitHubBanner />
-      <RefineKbarProvider>
-        <ThemeProvider>
-          <DevtoolsProvider>
-            <Refine
-              dataProvider={dataProvider}
-              notificationProvider={useNotificationProvider()}
-              routerProvider={routerProvider}
-              authProvider={authProvider}
-              options={{
-                syncWithLocation: true,
-                warnWhenUnsavedChanges: true,
-                projectId: "RTJIz6-9Uxngz-l6qX9H",
-              }}
-            >
-              <Routes>
-                <Route index element={<WelcomePage />} />
-              </Routes>
-              <Toaster />
-              <RefineKbar />
-              <UnsavedChangesNotifier />
-              <DocumentTitleHandler />
-            </Refine>
-            <DevtoolsPanel />
-          </DevtoolsProvider>
-        </ThemeProvider>
-      </RefineKbarProvider>
+      <ThemeProvider>
+        <Refine
+          dataProvider={dataProvider}
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          notificationProvider={useNotificationProvider()}
+          routerProvider={routerProvider}
+          i18nProvider={i18nProvider}
+          authProvider={authProvider}
+          options={{
+            title: {
+              icon: (
+                <img src="/logo.svg" alt="Pusakawan" style={{ height: 24 }} />
+              ),
+              text: websiteTitle,
+            },
+            syncWithLocation: true,
+            warnWhenUnsavedChanges: true,
+            projectId: "RTJIz6-9Uxngz-l6qX9H",
+          }}
+        >
+          <Routes>
+            <Route index element={<Login />} />
+            <Route
+              path="/home"
+              element={
+                <Layout>
+                  <div></div>
+                </Layout>
+              }
+            />
+          </Routes>
+          <Toaster />
+          <UnsavedChangesNotifier />
+          {/* for website's title */}
+          <DocumentTitleHandler handler={getTitle} />
+        </Refine>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

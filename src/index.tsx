@@ -7,6 +7,8 @@ import App from "./App";
 const container = document.getElementById("root") as HTMLElement;
 const root = createRoot(container);
 
+import "./i18n";
+
 root.render(
   <React.StrictMode>
     <Auth0Provider
@@ -14,7 +16,9 @@ root.render(
       clientId="AcinJvjWp1Dr41gPcJeQ20r5vcsteks4"
       redirectUri={window.location.origin}
     >
-      <App />
+      <React.Suspense fallback="loading">
+        <App />
+      </React.Suspense>
     </Auth0Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

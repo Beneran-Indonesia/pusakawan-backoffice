@@ -5,27 +5,46 @@ import { cn } from "@/lib/utils";
 
 type User = {
   id: number;
-  firstName: string;
-  lastName: string;
   fullName: string;
+  role: string;
   email: string;
   avatar?: string;
 };
 
-export function UserAvatar() {
-  const { data: user, isLoading: userIsLoading } = useGetIdentity<User>();
+type UserAvatarProps = {
+  desktopSize: boolean;
+};
+
+export function UserAvatar({ desktopSize = true }: UserAvatarProps) {
+  // const { data: user, isLoading: userIsLoading } = useGetIdentity<User>();
+  const { isLoading: userIsLoading } = useGetIdentity<User>();
+
+  const user = {
+    id: 1,
+    fullName: "Sarah Tanujaya",
+    role: "Super Admin",
+    avatar: null,
+  };
 
   if (userIsLoading || !user) {
     return <Skeleton className={cn("h-10", "w-10", "rounded-full")} />;
   }
 
-  const { fullName, avatar } = user;
+  const { fullName, avatar, role } = user;
 
   return (
-    <Avatar className={cn("h-10", "w-10")}>
-      {avatar && <AvatarImage src={avatar} alt={fullName} />}
-      <AvatarFallback>{getInitials(fullName)}</AvatarFallback>
-    </Avatar>
+    <div className="flex gap-3.5 flex-row">
+      <Avatar className={cn("h-10", "w-10")}>
+        {avatar && <AvatarImage src={avatar} alt={fullName} />}
+        <AvatarFallback>{getInitials(fullName)}</AvatarFallback>
+      </Avatar>
+      {desktopSize && (
+        <div>
+          <p className="text-sm font-medium">{fullName}</p>
+          <p className="text-xs text-slate-500">{role}</p>
+        </div>
+      )}
+    </div>
   );
 }
 

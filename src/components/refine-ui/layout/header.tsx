@@ -2,6 +2,7 @@ import {
   useRefineOptions,
   useActiveAuthProvider,
   useLogout,
+  useTranslation,
 } from "@refinedev/core";
 import {
   DropdownMenu,
@@ -12,8 +13,10 @@ import { DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/refine-ui/theme/theme-toggle";
 import { UserAvatar } from "@/components/refine-ui/layout/user-avatar";
 import { useSidebar, SidebarTrigger } from "@/components/ui/sidebar";
-import { LogOutIcon } from "lucide-react";
+import { Bell, LogOutIcon, UserPen } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LanguageSwitcher } from "./language-switcher";
+import { Separator } from "@/components/ui/separator";
 
 export const Header = () => {
   const { isMobile } = useSidebar();
@@ -28,7 +31,7 @@ function DesktopHeader() {
         "sticky",
         "top-0",
         "flex",
-        "h-16",
+        "h-20",
         "shrink-0",
         "items-center",
         "gap-4",
@@ -37,11 +40,18 @@ function DesktopHeader() {
         "bg-sidebar",
         "pr-3",
         "justify-end",
-        "z-40"
+        "z-40",
+        "shadow-md",
       )}
     >
       <ThemeToggle />
-      <UserDropdown />
+      <LanguageSwitcher />
+      <Bell />
+      <Separator
+        orientation="vertical"
+        className="data-[orientation=vertical]:h-1/2"
+      />
+      <UserDropdown desktopSize={true} />
     </header>
   );
 }
@@ -57,67 +67,51 @@ function MobileHeader() {
         "sticky",
         "top-0",
         "flex",
-        "h-12",
+        "h-16",
         "shrink-0",
         "items-center",
-        "gap-2",
+        "gap-4",
         "border-b",
         "border-border",
         "bg-sidebar",
         "pr-3",
-        "justify-between",
-        "z-40"
+        "justify-end",
+        "z-40",
       )}
     >
       <SidebarTrigger
-        className={cn("text-muted-foreground", "rotate-180", "ml-1", {
-          "opacity-0": open,
-          "opacity-100": !open || isMobile,
-          "pointer-events-auto": !open || isMobile,
-          "pointer-events-none": open && !isMobile,
-        })}
+        className={cn(
+          "text-muted-foreground",
+          "rotate-180",
+          "ml-1",
+          "mr-auto",
+          {
+            "opacity-0": open,
+            "opacity-100": !open || isMobile,
+            "pointer-events-auto": !open || isMobile,
+            "pointer-events-none": open && !isMobile,
+          },
+        )}
       />
 
-      <div
-        className={cn(
-          "whitespace-nowrap",
-          "flex",
-          "flex-row",
-          "h-full",
-          "items-center",
-          "justify-start",
-          "gap-2",
-          "transition-discrete",
-          "duration-200",
-          {
-            "pl-3": !open,
-            "pl-5": open,
-          }
-        )}
-      >
-        <div>{title.icon}</div>
-        <h2
-          className={cn(
-            "text-sm",
-            "font-bold",
-            "transition-opacity",
-            "duration-200",
-            {
-              "opacity-0": !open,
-              "opacity-100": open,
-            }
-          )}
-        >
-          {title.text}
-        </h2>
-      </div>
-
       <ThemeToggle className={cn("h-8", "w-8")} />
+      <LanguageSwitcher />
+      <Bell className={cn("h-8", "w-8")} />
+      <Separator
+        orientation="vertical"
+        className="data-[orientation=vertical]:h-1/2"
+      />
+      <UserDropdown desktopSize={false} />
     </header>
   );
 }
 
-const UserDropdown = () => {
+type UserDropdownProps = {
+  desktopSize: boolean;
+};
+
+const UserDropdown = ({ desktopSize }: UserDropdownProps) => {
+  const { translate } = useTranslation();
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
 
   const authProvider = useActiveAuthProvider();
@@ -129,9 +123,21 @@ const UserDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <UserAvatar />
+        <UserAvatar desktopSize={desktopSize} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        <DropdownMenuItem
+          onClick={() => {
+            // redirect to edit profile
+          }}
+        >
+          <UserPen
+            className={cn("text-destructive", "hover:text-destructive")}
+          />
+          <span className={cn("text-destructive", "hover:text-destructive")}>
+            {translate("header.profile_dropdown.edit_profile")}
+          </span>
+        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => {
             logout();
@@ -141,7 +147,7 @@ const UserDropdown = () => {
             className={cn("text-destructive", "hover:text-destructive")}
           />
           <span className={cn("text-destructive", "hover:text-destructive")}>
-            {isLoggingOut ? "Logging out..." : "Logout"}
+            {isLoggingOut ? "Logging out..." : translate("header.profile_dropdown.logout")}
           </span>
         </DropdownMenuItem>
       </DropdownMenuContent>

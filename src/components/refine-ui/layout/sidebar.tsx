@@ -4,7 +4,6 @@ import React from "react";
 import {
   useMenu,
   useLink,
-  useRefineOptions,
   type TreeMenuItem,
 } from "@refinedev/core";
 import {
@@ -29,6 +28,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ListIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import useThemeOptions from "@/hooks/use-theme-options";
 
 export function Sidebar() {
   const { open } = useShadcnSidebar();
@@ -37,6 +37,16 @@ export function Sidebar() {
   return (
     <ShadcnSidebar collapsible="icon" className={cn("border-none")}>
       <ShadcnSidebarRail />
+      {/* <ShadcnSidebarTrigger
+        className={cn("text-muted-foreground",  
+          "absolute z-auto -right-12 top-8",
+          {
+          "opacity-0": !open,
+          "opacity-100": open || isMobile,
+          "pointer-events-auto": open || isMobile,
+          "pointer-events-none": !open && !isMobile,
+        })}
+      /> */}
       <SidebarHeader />
       <ShadcnSidebarContent
         className={cn(
@@ -63,6 +73,7 @@ export function Sidebar() {
           />
         ))}
       </ShadcnSidebarContent>
+      
     </ShadcnSidebar>
   );
 }
@@ -210,15 +221,16 @@ function SidebarItemLink({ item, selectedKey }: MenuItemProps) {
 }
 
 function SidebarHeader() {
-  const { title } = useRefineOptions();
-  const { open, isMobile } = useShadcnSidebar();
+  const { title } = useThemeOptions();
+  const { open } = useShadcnSidebar();
 
   return (
     <ShadcnSidebarHeader
       className={cn(
+        "mt-4",
         "p-0",
         "h-16",
-        "border-b",
+        // "border-b",
         "border-border",
         "flex-row",
         "items-center",
@@ -238,36 +250,13 @@ function SidebarHeader() {
           "transition-discrete",
           "duration-200",
           {
-            "pl-3": !open,
-            "pl-5": open,
+            "p-3": !open,
+            "p-5": open,
           }
         )}
       >
         <div>{title.icon}</div>
-        <h2
-          className={cn(
-            "text-sm",
-            "font-bold",
-            "transition-opacity",
-            "duration-200",
-            {
-              "opacity-0": !open,
-              "opacity-100": open,
-            }
-          )}
-        >
-          {title.text}
-        </h2>
       </div>
-
-      <ShadcnSidebarTrigger
-        className={cn("text-muted-foreground", "mr-1.5", {
-          "opacity-0": !open,
-          "opacity-100": open || isMobile,
-          "pointer-events-auto": open || isMobile,
-          "pointer-events-none": !open && !isMobile,
-        })}
-      />
     </ShadcnSidebarHeader>
   );
 }
