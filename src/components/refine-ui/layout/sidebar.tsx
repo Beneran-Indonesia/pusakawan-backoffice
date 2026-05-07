@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   useMenu,
   useLink,
@@ -12,7 +12,7 @@ import {
   SidebarContent as ShadcnSidebarContent,
   SidebarHeader as ShadcnSidebarHeader,
   useSidebar as useShadcnSidebar,
-  SidebarTrigger as ShadcnSidebarTrigger,
+  // SidebarTrigger as ShadcnSidebarTrigger,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -26,16 +26,19 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, ListIcon } from "lucide-react";
+import { ChevronRight, ListIcon, Monitor, Smartphone } from "lucide-react";
 import { cn } from "@/lib/utils";
-import useThemeOptions from "@/hooks/use-theme-options";
 
 export function Sidebar() {
   const { open } = useShadcnSidebar();
   const { menuItems, selectedKey } = useMenu();
+  const [platform, setPlatform] = useState<"lms" | "app">("lms");
 
   return (
-    <ShadcnSidebar collapsible="icon" className={cn("border-none")}>
+    <ShadcnSidebar
+      collapsible="offcanvas"
+      className={cn("bg-white", "border-r", "border-slate-200")}
+    >
       <ShadcnSidebarRail />
       {/* <ShadcnSidebarTrigger
         className={cn("text-muted-foreground",  
@@ -49,29 +52,48 @@ export function Sidebar() {
       /> */}
       <SidebarHeader />
       <ShadcnSidebarContent
-        className={cn(
-          "transition-discrete",
-          "duration-200",
-          "flex",
-          "flex-col",
-          "gap-2",
-          "pt-2",
-          "pb-2",
-          "border-r",
-          "border-border",
-          {
-            "px-3": open,
-            "px-1": !open,
-          }
-        )}
+        className={cn("px-3", "py-6", "space-y-6", {
+          "px-3": open,
+          "px-2": !open,
+        })}
       >
-        {menuItems.map((item: TreeMenuItem) => (
-          <SidebarItem
-            key={item.key || item.name}
-            item={item}
-            selectedKey={selectedKey}
-          />
-        ))}
+        <div className="bg-slate-100 p-1 rounded-lg flex">
+          <button
+            className={cn(
+              "flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-md transition-all duration-200",
+              platform === "lms"
+                ? "bg-white text-red-700 shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
+            )}
+            onClick={() => setPlatform("lms")}
+            type="button"
+          >
+            <Monitor className="w-3.5 h-3.5" />
+            LMS
+          </button>
+          <button
+            className={cn(
+              "flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-md transition-all duration-200",
+              platform === "app"
+                ? "bg-white text-red-700 shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
+            )}
+            onClick={() => setPlatform("app")}
+            type="button"
+          >
+            <Smartphone className="w-3.5 h-3.5" />
+            APP
+          </button>
+        </div>
+        <nav className="space-y-1">
+          {menuItems.map((item: TreeMenuItem) => (
+            <SidebarItem
+              key={item.key || item.name}
+              item={item}
+              selectedKey={selectedKey}
+            />
+          ))}
+        </nav>
       </ShadcnSidebarContent>
       
     </ShadcnSidebar>
@@ -221,41 +243,39 @@ function SidebarItemLink({ item, selectedKey }: MenuItemProps) {
 }
 
 function SidebarHeader() {
-  const { title } = useThemeOptions();
   const { open } = useShadcnSidebar();
 
   return (
     <ShadcnSidebarHeader
       className={cn(
-        "mt-4",
-        "p-0",
-        "h-16",
-        // "border-b",
-        "border-border",
-        "flex-row",
+        "p-6",
+        "pb-4",
+        "flex",
         "items-center",
-        "justify-between",
-        "overflow-hidden"
+        "justify-center",
+        "border-b",
+        "border-slate-100"
       )}
     >
       <div
         className={cn(
-          "whitespace-nowrap",
           "flex",
-          "flex-row",
-          "h-full",
           "items-center",
-          "justify-start",
-          "gap-2",
-          "transition-discrete",
+          "justify-center",
+          "transition-opacity",
           "duration-200",
-          {
-            "p-3": !open,
-            "p-5": open,
-          }
+          { "opacity-0": !open, "opacity-100": open }
         )}
       >
-        <div>{title.icon}</div>
+        <img
+          src="/pusakawan.svg"
+          alt="Pusakawan Logo"
+          className="h-12 w-auto object-contain"
+          style={{
+            filter:
+              "brightness(0) saturate(100%) invert(14%) sepia(85%) saturate(3033%) hue-rotate(346deg) brightness(85%) contrast(105%)",
+          }}
+        />
       </div>
     </ShadcnSidebarHeader>
   );
@@ -274,8 +294,8 @@ function ItemIcon({ icon, isSelected }: IconProps) {
   return (
     <div
       className={cn("w-4", {
-        "text-muted-foreground": !isSelected,
-        "text-sidebar-primary-foreground": isSelected,
+        "text-slate-600": !isSelected,
+        "text-white": isSelected,
       })}
     >
       {icon ?? <ListIcon />}
@@ -329,13 +349,10 @@ function SidebarButton({
       variant="ghost"
       size="lg"
       className={cn(
-        "flex w-full items-center justify-start gap-2 py-2 !px-3 text-sm",
-        {
-          "bg-sidebar-primary": isSelected,
-          "hover:!bg-sidebar-primary/90": isSelected,
-          "text-sidebar-primary-foreground": isSelected,
-          "hover:text-sidebar-primary-foreground": isSelected,
-        },
+        "w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200",
+        isSelected
+          ? "bg-red-700 text-white shadow-md shadow-red-200"
+          : "text-slate-600 hover:bg-red-50 hover:text-red-700",
         className
       )}
       onClick={onClick}

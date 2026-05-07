@@ -218,7 +218,7 @@ export const Login: React.FC = () => {
             </Button>
           </form>
 
-          <div className="mt-4 p-3 bg-slate-50 border border-slate-200 rounded-lg">
+          {/* <div className="mt-4 p-3 bg-slate-50 border border-slate-200 rounded-lg">
             <p className="text-xs font-semibold text-slate-700 mb-2">
               {t("sign_in.demo_credentials")}
             </p>
@@ -230,7 +230,7 @@ export const Login: React.FC = () => {
                 <span className="font-medium">Teacher:</span> teacher / teacher
               </p>
             </div>
-          </div>
+          </div> */}
 
           <div className="mt-4 md:mt-8 pt-4 md:pt-6 border-t border-gray-100">
             <Copyright className="mb-4 md:mb-0" />
