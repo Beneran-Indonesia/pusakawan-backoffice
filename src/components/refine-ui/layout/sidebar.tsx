@@ -12,7 +12,6 @@ import {
   SidebarContent as ShadcnSidebarContent,
   SidebarHeader as ShadcnSidebarHeader,
   useSidebar as useShadcnSidebar,
-  // SidebarTrigger as ShadcnSidebarTrigger,
 } from "@/components/ui/sidebar";
 import {
   DropdownMenu,
@@ -40,16 +39,6 @@ export function Sidebar() {
       className={cn("bg-white", "border-r", "border-slate-200")}
     >
       <ShadcnSidebarRail />
-      {/* <ShadcnSidebarTrigger
-        className={cn("text-muted-foreground",  
-          "absolute z-auto -right-12 top-8",
-          {
-          "opacity-0": !open,
-          "opacity-100": open || isMobile,
-          "pointer-events-auto": open || isMobile,
-          "pointer-events-none": !open && !isMobile,
-        })}
-      /> */}
       <SidebarHeader />
       <ShadcnSidebarContent
         className={cn("px-3", "py-6", "space-y-6", {
@@ -58,32 +47,20 @@ export function Sidebar() {
         })}
       >
         <div className="bg-slate-100 p-1 rounded-lg flex">
-          <button
-            className={cn(
-              "flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-md transition-all duration-200",
-              platform === "lms"
-                ? "bg-white text-red-700 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
-            )}
+          <PlatformToggleButton
+            isActive={platform === "lms"}
             onClick={() => setPlatform("lms")}
-            type="button"
+            icon={<Monitor className="w-3.5 h-3.5" />}
           >
-            <Monitor className="w-3.5 h-3.5" />
             LMS
-          </button>
-          <button
-            className={cn(
-              "flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-md transition-all duration-200",
-              platform === "app"
-                ? "bg-white text-red-700 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
-            )}
+          </PlatformToggleButton>
+          <PlatformToggleButton
+            isActive={platform === "app"}
             onClick={() => setPlatform("app")}
-            type="button"
+            icon={<Smartphone className="w-3.5 h-3.5" />}
           >
-            <Smartphone className="w-3.5 h-3.5" />
             APP
-          </button>
+          </PlatformToggleButton>
         </div>
         <nav className="space-y-1">
           {menuItems.map((item: TreeMenuItem) => (
@@ -97,6 +74,39 @@ export function Sidebar() {
       </ShadcnSidebarContent>
       
     </ShadcnSidebar>
+  );
+}
+
+type PlatformToggleButtonProps = {
+  isActive: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  title?: string
+};
+
+function PlatformToggleButton({
+  isActive,
+  onClick,
+  icon,
+  children,
+  title
+}: PlatformToggleButtonProps) {
+  return (
+    <button
+    title={title}
+      className={cn(
+        "cursor-pointer flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-md transition-all duration-200",
+        isActive
+          ? "bg-white text-red-700 shadow-sm"
+          : "text-slate-500 hover:text-slate-700"
+      )}
+      onClick={onClick}
+      type="button"
+    >
+      {icon}
+      {children}
+    </button>
   );
 }
 

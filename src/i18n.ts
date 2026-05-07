@@ -14,7 +14,7 @@ i18n
         },
         ns: ["common"],
         defaultNS: "common",
-        fallbackLng: "en",
+        fallbackLng: ["en", "id"],
     });
 
 export default i18n;

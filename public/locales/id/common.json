@@ -18,8 +18,14 @@
         "demo_credentials": "Kredensial Demo",
         "secure_access": "Akses Aman Admin"
     },
-    "language_switcher": {
-        "en": "Bahasa Inggris",
-        "id": "Bahasa Indonesia"
+    "header": {
+        "profile_dropdown": {
+            "edit_profile": "Edit Profil",
+            "logout": "Keluar"
+        },
+         "language_switcher": {
+            "en": "Bahasa Inggris",
+            "id": "Bahasa Indonesia"
+        }
     }
 }
