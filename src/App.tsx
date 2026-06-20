@@ -1,12 +1,9 @@
 import { Refine, AuthProvider } from "@refinedev/core";
-
 import { BrowserRouter, Route, Routes } from "react-router";
 import routerProvider, {
   UnsavedChangesNotifier,
   DocumentTitleHandler,
 } from "@refinedev/react-router";
-import axios from "axios";
-import { useAuth0 } from "@auth0/auth0-react";
 import { dataProvider } from "./providers/data";
 import { Login } from "./pages/login";
 // import { ErrorComponent } from "./components/refine-ui/layout/error-component";
@@ -17,6 +14,13 @@ import { ThemeProvider } from "./components/refine-ui/theme/theme-provider";
 import { useTranslation } from "react-i18next";
 import type { I18nProvider } from "@refinedev/core";
 import "./App.css";
+import {
+  LOGIN_API_URL,
+  LOGOUT_API_URL,
+  REFRESH_TOKEN_API_URL,
+} from "./lib/urls";
+import { UserContext, UserToken } from "./hooks/use-auth";
+import { useState } from "react";
 
 function App() {
   // I18N (INTERNATIONALIZATION / TRANSLATION)
@@ -31,65 +35,109 @@ function App() {
   };
 
   // AUTH
-  const { isLoading, user, logout, getIdTokenClaims } = useAuth0();
-
-  if (isLoading) {
-    return <span>loading...</span>;
-  }
-
+  const [user, setUser] = useState<null | UserToken>(null);
   const authProvider: AuthProvider = {
-    login: async () => {
+    login: async ({ email, password, rememberMe }) => {
+      const response = await fetch(LOGIN_API_URL, {
+        method: "POST",
+        credentials: rememberMe ? "include" : "omit",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, rememberMe }),
+      });
+
+      // Fail fast if backend rejects credentials or request fails
+      if (!response.ok) {
+        return {
+          success: false,
+          error: {
+            name: "LoginError",
+            message: "Invalid credentials",
+          },
+        };
+      }
+
+      const data = await response.json();
+
+      // Expect backend to return a JWT access token
+      if (data?.accessToken) {
+        // Persist token in memory
+        setUser(data);
+
+        return {
+          success: true,
+          redirectTo: "/home",
+        };
+      }
+
+      // Response succeeded but didn't include expected auth payload
       return {
-        success: true,
+        success: false,
+        error: {
+          name: "LoginError",
+          message: "No token received",
+        },
       };
     },
+
     logout: async () => {
-      logout({ returnTo: window.location.origin });
-      return {
-        success: true,
-      };
+      try {
+        // Notify backend to invalidate session / refresh token
+        await fetch(LOGOUT_API_URL, { method: "POST", credentials: "include" });
+
+        return {
+          success: true,
+          redirectTo: "/",
+        };
+      } catch {
+        return { success: false };
+      }
     },
+
     onError: async (error) => {
-      console.error(error);
+      // Centralized auth-related error logging / handling hook
+      console.error("Auth error:", error);
       return { error };
     },
+
     check: async () => {
       try {
-        const token = await getIdTokenClaims();
-        if (token) {
-          axios.defaults.headers.common = {
-            Authorization: `Bearer ${token.__raw}`,
-          };
-          return {
-            authenticated: true,
-          };
-        } else {
-          return {
-            authenticated: false,
-            error: {
-              message: "Check failed",
-              name: "Token not found",
-            },
-            redirectTo: "/login",
-            logout: true,
-          };
+        // Retrieve stored token in memory
+        if (!user?.accessToken) {
+          // Immediately refresh; if user clicks "rememberMe" -- automatic token rotation.
+          // If not, throw error to log out.
+          const response = await fetch(REFRESH_TOKEN_API_URL, {
+            credentials: "include",
+          });
+
+          const user: UserToken = await response.json();
+          if (user.accessToken) {
+            setUser(user);
+            return {
+              authenticated: true,
+            };
+          }
+          throw Error("No refresh token");
         }
+        return {
+          authenticated: false,
+          error: new Error("No access token, forcing log out."),
+          redirectTo: "/",
+          logout: true,
+        };
       } catch (error: unknown) {
+        // If token missing/invalid/expired → force logout flow
         return {
           authenticated: false,
           error: new Error(error as string),
-          redirectTo: "/login",
+          redirectTo: "/",
           logout: true,
         };
       }
     },
-    getPermissions: async () => null,
+    getPermissions: async () => user?.user.role ?? null,
     getIdentity: async () => {
       if (user) {
-        return {
-          ...user,
-          avatar: user.picture,
-        };
+        return user.user;
       }
       return null;
     },
@@ -115,7 +163,6 @@ function App() {
       <ThemeProvider>
         <Refine
           dataProvider={dataProvider}
-          // eslint-disable-next-line react-hooks/rules-of-hooks
           notificationProvider={useNotificationProvider()}
           routerProvider={routerProvider}
           i18nProvider={i18nProvider}
@@ -132,19 +179,21 @@ function App() {
             projectId: "RTJIz6-9Uxngz-l6qX9H",
           }}
         >
-          <Routes>
-            <Route index element={<Login />} />
-            <Route
-              path="/home"
-              element={
-                <Layout>
-                  <div></div>
-                </Layout>
-              }
-            />
-          </Routes>
-          <Toaster />
-          <UnsavedChangesNotifier />
+          <UserContext.Provider value={user}>
+            <Routes>
+              <Route index element={<Login />} />
+              <Route
+                path="/home"
+                element={
+                  <Layout>
+                    <div></div>
+                  </Layout>
+                }
+              />
+            </Routes>
+            <Toaster />
+            <UnsavedChangesNotifier />
+          </UserContext.Provider>
           {/* for website's title */}
           <DocumentTitleHandler handler={getTitle} />
         </Refine>
