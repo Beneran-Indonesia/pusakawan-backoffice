@@ -6,7 +6,9 @@ export type UserToken = {
   user: {
     id: number;
     email: string;
-    role: "MEMBER" | "ADMIN" | "SUPERADMIN";
+    name: string;
+    role: "ADMIN" | "SUPER_ADMIN";
+    avatar?: string;
     isVerified: boolean;
   };
   profileCompleted: boolean;

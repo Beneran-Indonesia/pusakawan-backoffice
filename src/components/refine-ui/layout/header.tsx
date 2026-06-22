@@ -1,5 +1,4 @@
 import {
-  useRefineOptions,
   useActiveAuthProvider,
   useLogout,
   useTranslation,
@@ -11,12 +10,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/refine-ui/theme/theme-toggle";
-import { UserAvatar } from "@/components/refine-ui/layout/user-avatar";
+import { UserHeader } from "@/components/refine-ui/layout/user-header";
 import { useSidebar, SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, LogOutIcon, UserPen } from "lucide-react";
+import { LogOutIcon, UserPen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LanguageSwitcher } from "./language-switcher";
 import { Separator } from "@/components/ui/separator";
+import NotificationHeader from "@/components/refine-ui/notification/notification-header";
 
 export const Header = () => {
   const { isMobile } = useSidebar();
@@ -46,7 +46,7 @@ function DesktopHeader() {
     >
       <ThemeToggle />
       <LanguageSwitcher />
-      <Bell />
+      <NotificationHeader />
       <Separator
         orientation="vertical"
         className="data-[orientation=vertical]:h-1/2"
@@ -58,8 +58,6 @@ function DesktopHeader() {
 
 function MobileHeader() {
   const { open, isMobile } = useSidebar();
-
-  const { title } = useRefineOptions();
 
   return (
     <header
@@ -94,9 +92,9 @@ function MobileHeader() {
         )}
       />
 
-      <ThemeToggle className={cn("h-8", "w-8")} />
+      <ThemeToggle />
       <LanguageSwitcher />
-      <Bell className={cn("h-8", "w-8")} />
+      <NotificationHeader />
       <Separator
         orientation="vertical"
         className="data-[orientation=vertical]:h-1/2"
@@ -123,7 +121,7 @@ const UserDropdown = ({ desktopSize }: UserDropdownProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <UserAvatar desktopSize={desktopSize} />
+        <UserHeader desktopSize={desktopSize} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem
@@ -147,7 +145,9 @@ const UserDropdown = ({ desktopSize }: UserDropdownProps) => {
             className={cn("text-destructive", "hover:text-destructive")}
           />
           <span className={cn("text-destructive", "hover:text-destructive")}>
-            {isLoggingOut ? "Logging out..." : translate("header.profile_dropdown.logout")}
+            {isLoggingOut
+              ? "Logging out..."
+              : translate("header.profile_dropdown.logout")}
           </span>
         </DropdownMenuItem>
       </DropdownMenuContent>

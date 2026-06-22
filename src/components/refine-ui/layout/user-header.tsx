@@ -3,44 +3,28 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
-type User = {
-  id: number;
-  fullName: string;
-  role: string;
-  email: string;
-  avatar?: string;
-};
-
-type UserAvatarProps = {
+type UserHeaderProps = {
   desktopSize: boolean;
 };
 
-export function UserAvatar({ desktopSize = true }: UserAvatarProps) {
-  // const { data: user, isLoading: userIsLoading } = useGetIdentity<User>();
-  const { isLoading: userIsLoading } = useGetIdentity<User>();
-
-  const user = {
-    id: 1,
-    fullName: "Sarah Tanujaya",
-    role: "Super Admin",
-    avatar: null,
-  };
+export function UserHeader({ desktopSize = true }: UserHeaderProps) {
+  const { data: user, isLoading: userIsLoading } = useGetIdentity();
 
   if (userIsLoading || !user) {
     return <Skeleton className={cn("h-10", "w-10", "rounded-full")} />;
   }
 
-  const { fullName, avatar, role } = user;
+  const { name, avatar, role } = user;
 
   return (
-    <div className="flex gap-3.5 flex-row">
+    <div className="flex gap-3.5 flex-row md:mr-3">
       <Avatar className={cn("h-10", "w-10")}>
-        {avatar && <AvatarImage src={avatar} alt={fullName} />}
-        <AvatarFallback>{getInitials(fullName)}</AvatarFallback>
+        {avatar && <AvatarImage src={avatar} alt={name} />}
+        <AvatarFallback>{getInitials(name)}</AvatarFallback>
       </Avatar>
       {desktopSize && (
         <div>
-          <p className="text-sm font-medium">{fullName}</p>
+          <p className="text-sm font-medium">{name}</p>
           <p className="text-xs text-slate-500">{role}</p>
         </div>
       )}
@@ -58,4 +42,4 @@ const getInitials = (name = "") => {
   return initials;
 };
 
-UserAvatar.displayName = "UserAvatar";
+UserHeader.displayName = "UserHeader";

@@ -27,5 +27,17 @@
             "en": "English",
             "id": "Indonesian"
         }
+    },
+    "menu_bar": {
+        "lms": {
+            "challenge": "Challenge",
+            "programs": "Programs",
+            "our_products": "Our Products"
+        },
+        "app": {
+            "home": "Home",
+            "programs": "Programs",
+            "games": "Games"
+        }
     }
 }

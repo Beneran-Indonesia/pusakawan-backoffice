@@ -5,11 +5,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Moon, Sun, Monitor } from "lucide-react";
 
-type ThemeToggleProps = {
-  className?: string;
-};
-
-export function ThemeToggle({ className }: ThemeToggleProps) {
+export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
   const cycleTheme = () => {
@@ -37,9 +33,8 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         "rounded-full",
         "border-sidebar-border",
         "bg-transparent",
-        className,
         "h-10",
-        "w-10"
+        "w-10",
       )}
     >
       <Sun
@@ -52,7 +47,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
           "duration-200",
           {
             "-rotate-90 scale-0": theme === "dark" || theme === "system",
-          }
+          },
         )}
       />
       <Moon
@@ -67,7 +62,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
           {
             "rotate-0 scale-100": theme === "dark",
             "rotate-90 scale-0": theme === "light" || theme === "system",
-          }
+          },
         )}
       />
       <Monitor
@@ -82,7 +77,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
           {
             "scale-100": theme === "system",
             "scale-0": theme === "light" || theme === "dark",
-          }
+          },
         )}
       />
       <span className="sr-only">Toggle theme (Light → Dark → System)</span>

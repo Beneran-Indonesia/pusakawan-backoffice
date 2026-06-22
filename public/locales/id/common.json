@@ -27,5 +27,17 @@
             "en": "Bahasa Inggris",
             "id": "Bahasa Indonesia"
         }
+    },
+    "menu_bar": {
+        "lms": {
+            "challenge": "Challenge",
+            "programs": "Programs",
+            "our_products": "Produk Kami"
+        },
+        "app": {
+            "home": "Beranda",
+            "programs": "Programs",
+            "games": "Games"
+        }
     }
 }

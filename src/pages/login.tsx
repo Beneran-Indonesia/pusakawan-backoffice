@@ -233,7 +233,7 @@ export const Login: React.FC = () => {
             </div>
           </div> */}
 
-          <div className="mt-4 md:mt-8 pt-4 md:pt-6 border-t border-gray-100">
+          <div className="mt-4 pt-4 border-t border-gray-100">
             <Copyright className="mb-4 md:mb-0" />
           </div>
         </div>

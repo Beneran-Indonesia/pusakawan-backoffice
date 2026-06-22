@@ -21,6 +21,27 @@ import {
 } from "./lib/urls";
 import { UserContext, UserToken } from "./hooks/use-auth";
 import { useState } from "react";
+import {
+  LayoutDashboard,
+  BookOpen,
+  Gamepad2,
+  Trophy,
+  ShoppingBag,
+  Users,
+} from "lucide-react";
+
+const mockUser: UserToken = {
+  accessToken: "abc",
+  expires_in: 900,
+  user: {
+    id: 1,
+    email: "a@g.c",
+    name: "Sarah",
+    role: "ADMIN",
+    isVerified: true,
+  },
+  profileCompleted: true,
+};
 
 function App() {
   // I18N (INTERNATIONALIZATION / TRANSLATION)
@@ -35,9 +56,13 @@ function App() {
   };
 
   // AUTH
-  const [user, setUser] = useState<null | UserToken>(null);
+  const [user, setUser] = useState<null | UserToken>(mockUser);
   const authProvider: AuthProvider = {
     login: async ({ email, password, rememberMe }) => {
+      return {
+        success: true,
+        redirectTo: "/home",
+      };
       const response = await fetch(LOGIN_API_URL, {
         method: "POST",
         credentials: rememberMe ? "include" : "omit",
@@ -100,8 +125,13 @@ function App() {
     },
 
     check: async () => {
+      return {
+        authenticated: true,
+      };
       try {
         // Retrieve stored token in memory
+        if (user?.accessToken) return { authenticated: true };
+        // If no token - we need to do token rotation
         if (!user?.accessToken) {
           // Immediately refresh; if user clicks "rememberMe" -- automatic token rotation.
           // If not, throw error to log out.
@@ -143,6 +173,112 @@ function App() {
     },
   };
 
+  // MENU BAR
+  const lmsNavItems = [
+    {
+      list: "/lms/programs",
+      name: t("menu_bar.lms.programs"),
+      create: "",
+      edit: "",
+      meta: {
+        parent: "LMS",
+        key: "programs",
+        label: t("menu_bar.lms.programs"),
+        icon: <BookOpen className="w-5 h-5" />,
+      },
+    },
+    {
+      list: "/lms/products",
+      name: t("menu_bar.lms.our_products"),
+      create: "",
+      edit: "",
+      meta: {
+        parent: "LMS",
+        key: "products",
+        label: t("menu_bar.lms.our_products"),
+        icon: <ShoppingBag className="w-5 h-5" />,
+      },
+    },
+    {
+      list: "/lms/challenge",
+      name: t("menu_bar.lms.challenge"),
+      create: "",
+      edit: "",
+      meta: {
+        parent: "LMS",
+        key: "challenge",
+        label: t("menu_bar.lms.challenge"),
+        icon: <Trophy className="w-5 h-5" />,
+      },
+    },
+  ];
+
+  const appNavItems = [
+    {
+      list: "/app/home",
+      name: t("menu_bar.app.home"),
+      create: "",
+      edit: "",
+      meta: {
+        parent: "APP",
+        key: "home",
+        label: t("menu_bar.app.home"),
+        icon: <LayoutDashboard className="w-5 h-5" />,
+      },
+    },
+    {
+      list: "/app/programs",
+      name: t("menu_bar.app.programs"),
+      create: "",
+      edit: "",
+      meta: {
+        parent: "APP",
+        key: "programs",
+        label: t("menu_bar.app.programs"),
+        icon: <BookOpen className="w-5 h-5" />,
+      },
+    },
+    {
+      list: "/app/games",
+      name: t("menu_bar.app.games"),
+      create: "",
+      edit: "",
+      meta: {
+        parent: "APP",
+        key: "games",
+        label: t("menu_bar.app.games"),
+        icon: <Gamepad2 className="w-5 h-5" />,
+      },
+    },
+  ];
+
+  const manageUserNavItems = {
+    list: "/manage-users",
+    name: "Manage Users",
+    create: "",
+    edit: "",
+    meta: {
+      parent: "manage-users",
+      key: "manage-users",
+      label: "Manage Users",
+      icon: <Users className="w-5 h-5" />,
+    },
+  };
+
+  const resources = [...appNavItems, ...lmsNavItems, manageUserNavItems];
+
+  // const isMenuAccessible = (item) => {
+  //   if (!user) return false;
+  //   if (user.user.role === "SUPER_ADMIN") {
+  //     return true; // Admin has full access
+  //   }
+  //   // Teacher can only access Programs in LMS
+  //   if (user.user.role === "ADMIN") {
+  //     return platform === "lms" && itemId === "programs";
+  //   }
+  //   return false;
+  // };
+
   // TITLE
   const websiteTitle = "Pusakawan Backoffice";
   const formattedWebsiteTitle = (route: string) => `${route} | ${websiteTitle}`;
@@ -178,6 +314,7 @@ function App() {
             warnWhenUnsavedChanges: true,
             projectId: "RTJIz6-9Uxngz-l6qX9H",
           }}
+          resources={resources}
         >
           <UserContext.Provider value={user}>
             <Routes>
@@ -186,7 +323,9 @@ function App() {
                 path="/home"
                 element={
                   <Layout>
-                    <div></div>
+                    <main className="flex-1 overflow-auto p-4 lg:p-8 bg-slate-50/50">
+                      {/* {children} */}
+                    </main>
                   </Layout>
                 }
               />
