@@ -7,7 +7,7 @@ export type UserToken = {
     id: number;
     email: string;
     name: string;
-    role: "ADMIN" | "SUPER_ADMIN";
+    role: "ADMIN" | "SUPER_ADMIN" | "LMS" | "APP";
     avatar?: string;
     isVerified: boolean;
   };

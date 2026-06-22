@@ -1,43 +1,44 @@
 {
-    "routes": {
-        "sign_in": "Masuk",
-        "dashboard": "Dasbor"
+  "routes": {
+    "sign_in": "Masuk",
+    "dashboard": "Dasbor"
+  },
+  "sign_in": {
+    "title": "Selamat Datang di Pusakawan",
+    "tagline": "Memberdayakan Pemuda, Membangun Bangsa",
+    "description": "Bergabunglah untuk menciptakan dampak positif bagi masa depan Indonesia melalui program pendidikan dan pengembangan pemuda.",
+    "signin_title": "Masuk",
+    "signin_tagline": "Masukkan kredensial Anda untuk mengakses dashboard admin",
+    "email": "Alamat Email",
+    "email_hint": "admin",
+    "password": "Kata Sandi",
+    "password_hint": "Masukkan kata sandi Anda",
+    "remember_me": "Ingat saya",
+    "button": "Masuk ke Dashboard",
+    "demo_credentials": "Kredensial Demo",
+    "secure_access": "Akses Aman Admin"
+  },
+  "header": {
+    "profile_dropdown": {
+      "edit_profile": "Edit Profil",
+      "logout": "Keluar"
     },
-    "sign_in": {
-        "title": "Selamat Datang di Pusakawan",
-        "tagline": "Memberdayakan Pemuda, Membangun Bangsa",
-        "description": "Bergabunglah untuk menciptakan dampak positif bagi masa depan Indonesia melalui program pendidikan dan pengembangan pemuda.",
-        "signin_title": "Masuk",
-        "signin_tagline": "Masukkan kredensial Anda untuk mengakses dashboard admin",
-        "email": "Alamat Email",
-        "email_hint": "admin",
-        "password": "Kata Sandi",
-        "password_hint": "Masukkan kata sandi Anda",
-        "remember_me": "Ingat saya",
-        "button": "Masuk ke Dashboard",
-        "demo_credentials": "Kredensial Demo",
-        "secure_access": "Akses Aman Admin"
-    },
-    "header": {
-        "profile_dropdown": {
-            "edit_profile": "Edit Profil",
-            "logout": "Keluar"
-        },
-         "language_switcher": {
-            "en": "Bahasa Inggris",
-            "id": "Bahasa Indonesia"
-        }
-    },
-    "menu_bar": {
-        "lms": {
-            "challenge": "Challenge",
-            "programs": "Programs",
-            "our_products": "Produk Kami"
-        },
-        "app": {
-            "home": "Beranda",
-            "programs": "Programs",
-            "games": "Games"
-        }
+    "language_switcher": {
+      "en": "Bahasa Inggris",
+      "id": "Bahasa Indonesia"
     }
+  },
+  "menu_bar": {
+    "lms": {
+      "challenge": "Challenge",
+      "programs": "Programs",
+      "our_products": "Produk Kami"
+    },
+    "app": {
+      "home": "Beranda",
+      "programs": "Programs",
+      "games": "Games"
+    }
+  },
+  "under_development": "Halaman ini sedang dalam proses pengembangan. Silakan kunjungi kembali nanti untuk melihat fitur-fitur lengkapnya."
 }

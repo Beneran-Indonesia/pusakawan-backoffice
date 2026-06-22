@@ -16,23 +16,13 @@ import { cn } from "@/lib/utils";
 export function Sidebar() {
   const { open } = useShadcnSidebar();
   const { menuItems, selectedKey } = useMenu();
-  const [platform, setPlatform] = useState<"LMS" | "APP">("LMS");
+  const [platform, setPlatform] = useState<"LMS" | "APP" | "MANAGE_USERS">(
+    "APP",
+  );
 
   const navItems = menuItems.find((it) => it.name === platform) ?? null;
 
-  const manageUserNav = menuItems.find((it) => it.name === "manage-users");
-
-  // Check if menu item is accessible by teacher
-  // const isMenuAccessible = (itemId: string) => {
-  //   if (user.user.role === "SUPERADMIN") {
-  //     return true; // Admin has full access
-  //   }
-  //   // Teacher can only access Programs in LMS
-  //   if (user.user.role === "ADMIN") {
-  //     return platform === "lms" && itemId === "programs";
-  //   }
-  //   return false;
-  // };
+  const manageUserNav = menuItems.find((it) => it.name === "MANAGE_USERS");
 
   return (
     <ShadcnSidebar
@@ -55,18 +45,18 @@ export function Sidebar() {
       >
         <div className="bg-slate-100 p-1 rounded-lg flex">
           <PlatformToggleButton
-            isActive={platform === "LMS"}
-            onClick={() => setPlatform("LMS")}
-            icon={<Monitor className="w-3.5 h-3.5" />}
-          >
-            LMS
-          </PlatformToggleButton>
-          <PlatformToggleButton
             isActive={platform === "APP"}
             onClick={() => setPlatform("APP")}
             icon={<Smartphone className="w-3.5 h-3.5" />}
           >
             APP
+          </PlatformToggleButton>
+          <PlatformToggleButton
+            isActive={platform === "LMS"}
+            onClick={() => setPlatform("LMS")}
+            icon={<Monitor className="w-3.5 h-3.5" />}
+          >
+            LMS
           </PlatformToggleButton>
         </div>
         <nav className="space-y-1 h-full flex flex-col">

@@ -12,7 +12,7 @@ import { useNotificationProvider } from "./components/refine-ui/notification/use
 import { Toaster } from "./components/refine-ui/notification/toaster";
 import { ThemeProvider } from "./components/refine-ui/theme/theme-provider";
 import { useTranslation } from "react-i18next";
-import type { I18nProvider } from "@refinedev/core";
+import type { I18nProvider, ResourceProps } from "@refinedev/core";
 import "./App.css";
 import {
   LOGIN_API_URL,
@@ -215,6 +215,18 @@ function App() {
 
   const appNavItems = [
     {
+      list: "/app/games",
+      name: t("menu_bar.app.games"),
+      create: "",
+      edit: "",
+      meta: {
+        parent: "APP",
+        key: "games",
+        label: t("menu_bar.app.games"),
+        icon: <Gamepad2 className="w-5 h-5" />,
+      },
+    },
+    {
       list: "/app/home",
       name: t("menu_bar.app.home"),
       create: "",
@@ -238,18 +250,6 @@ function App() {
         icon: <BookOpen className="w-5 h-5" />,
       },
     },
-    {
-      list: "/app/games",
-      name: t("menu_bar.app.games"),
-      create: "",
-      edit: "",
-      meta: {
-        parent: "APP",
-        key: "games",
-        label: t("menu_bar.app.games"),
-        icon: <Gamepad2 className="w-5 h-5" />,
-      },
-    },
   ];
 
   const manageUserNavItems = {
@@ -258,26 +258,35 @@ function App() {
     create: "",
     edit: "",
     meta: {
-      parent: "manage-users",
+      parent: "MANAGE_USERS",
       key: "manage-users",
       label: "Manage Users",
       icon: <Users className="w-5 h-5" />,
     },
   };
 
-  const resources = [...appNavItems, ...lmsNavItems, manageUserNavItems];
+  const isMenuAccessible = ({ meta }: ResourceProps): boolean => {
+    const ROLE_ACCESS: Record<
+      UserToken["user"]["role"],
+      (meta: NonNullable<ResourceProps["meta"]>) => boolean
+    > = {
+      SUPER_ADMIN: () => true,
 
-  // const isMenuAccessible = (item) => {
-  //   if (!user) return false;
-  //   if (user.user.role === "SUPER_ADMIN") {
-  //     return true; // Admin has full access
-  //   }
-  //   // Teacher can only access Programs in LMS
-  //   if (user.user.role === "ADMIN") {
-  //     return platform === "lms" && itemId === "programs";
-  //   }
-  //   return false;
-  // };
+      ADMIN: (meta) => meta.parent !== "MANAGE_USERS",
+
+      LMS: (meta) => meta.parent === "LMS" && meta.key === "programs",
+
+      APP: (meta) => meta.parent === "APP" && meta.key === "games",
+    };
+
+    if (!user || !meta) return false;
+
+    return ROLE_ACCESS[user.user.role]?.(meta) ?? false;
+  };
+
+  const resources = [...appNavItems, ...lmsNavItems, manageUserNavItems].filter(
+    (it) => isMenuAccessible(it),
+  );
 
   // TITLE
   const websiteTitle = "Pusakawan Backoffice";

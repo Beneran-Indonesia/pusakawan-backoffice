@@ -1,43 +1,44 @@
 {
-    "routes": {
-        "sign_in": "Sign In",
-        "dashboard": "Dashboard"
+  "routes": {
+    "sign_in": "Sign In",
+    "dashboard": "Dashboard"
+  },
+  "sign_in": {
+    "title": "Welcome to Pusakawan",
+    "tagline": "Empowering Youth, Building the Nation",
+    "description": "Join us in creating positive impact for Indonesia's future through education and youth development programs.",
+    "signin_title": "Sign In",
+    "signin_tagline": "Enter your credentials to access the admin dashboard",
+    "email": "Email Address",
+    "email_hint": "admin",
+    "password": "Password",
+    "password_hint": "Enter your password",
+    "remember_me": "Remember me",
+    "button": "Sign in to Dashboard",
+    "demo_credentials": "Demo Credentials",
+    "secure_access": "Secure Admin Access"
+  },
+  "header": {
+    "profile_dropdown": {
+      "edit_profile": "Edit Profile",
+      "logout": "Logout"
     },
-    "sign_in": {
-        "title": "Welcome to Pusakawan",
-        "tagline": "Empowering Youth, Building the Nation",
-        "description": "Join us in creating positive impact for Indonesia's future through education and youth development programs.",
-        "signin_title": "Sign In",
-        "signin_tagline": "Enter your credentials to access the admin dashboard",
-        "email": "Email Address",
-        "email_hint": "admin",
-        "password": "Password",
-        "password_hint": "Enter your password",
-        "remember_me": "Remember me",
-        "button": "Sign in to Dashboard",
-        "demo_credentials": "Demo Credentials",
-        "secure_access": "Secure Admin Access"
-    },
-    "header": {
-        "profile_dropdown": {
-            "edit_profile": "Edit Profile",
-            "logout": "Logout"
-        },
-        "language_switcher": {
-            "en": "English",
-            "id": "Indonesian"
-        }
-    },
-    "menu_bar": {
-        "lms": {
-            "challenge": "Challenge",
-            "programs": "Programs",
-            "our_products": "Our Products"
-        },
-        "app": {
-            "home": "Home",
-            "programs": "Programs",
-            "games": "Games"
-        }
+    "language_switcher": {
+      "en": "English",
+      "id": "Indonesian"
     }
+  },
+  "menu_bar": {
+    "lms": {
+      "challenge": "Challenge",
+      "programs": "Programs",
+      "our_products": "Our Products"
+    },
+    "app": {
+      "home": "Home",
+      "programs": "Programs",
+      "games": "Games"
+    }
+  },
+  "under_development": "This page is currently under development. Please come back later to see the full features."
 }
