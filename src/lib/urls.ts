@@ -1,4 +1,5 @@
-export const API_URL = "https://api.pusakaapp.id/v1";
+// export const API_URL = "https://api.pusakaapp.id/v1";
+export const API_URL = "";
 
 // AUTH
 const AUTH_API_URL = API_URL + "/auth";

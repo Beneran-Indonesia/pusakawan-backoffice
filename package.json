@@ -119,5 +119,10 @@
   },
   "refine": {
     "projectId": "RTJIz6-9Uxngz-l6qX9H"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

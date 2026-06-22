@@ -19,7 +19,7 @@ import {
   LOGOUT_API_URL,
   REFRESH_TOKEN_API_URL,
 } from "./lib/urls";
-import { UserContext, UserToken } from "./hooks/use-auth";
+import { UserContext } from "./hooks/use-auth";
 import { useState } from "react";
 import {
   LayoutDashboard,
@@ -29,19 +29,7 @@ import {
   ShoppingBag,
   Users,
 } from "lucide-react";
-
-const mockUser: UserToken = {
-  accessToken: "abc",
-  expires_in: 900,
-  user: {
-    id: 1,
-    email: "a@g.c",
-    name: "Sarah",
-    role: "ADMIN",
-    isVerified: true,
-  },
-  profileCompleted: true,
-};
+import { UserToken } from "@/types/users";
 
 function App() {
   // I18N (INTERNATIONALIZATION / TRANSLATION)
@@ -56,13 +44,9 @@ function App() {
   };
 
   // AUTH
-  const [user, setUser] = useState<null | UserToken>(mockUser);
+  const [user, setUser] = useState<null | UserToken>(null);
   const authProvider: AuthProvider = {
     login: async ({ email, password, rememberMe }) => {
-      return {
-        success: true,
-        redirectTo: "/home",
-      };
       const response = await fetch(LOGIN_API_URL, {
         method: "POST",
         credentials: rememberMe ? "include" : "omit",
@@ -81,7 +65,7 @@ function App() {
         };
       }
 
-      const data = await response.json();
+      const { data } = await response.json();
 
       // Expect backend to return a JWT access token
       if (data?.accessToken) {
@@ -107,7 +91,13 @@ function App() {
     logout: async () => {
       try {
         // Notify backend to invalidate session / refresh token
-        await fetch(LOGOUT_API_URL, { method: "POST", credentials: "include" });
+        await fetch(LOGOUT_API_URL, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        });
 
         return {
           success: true,
@@ -125,9 +115,6 @@ function App() {
     },
 
     check: async () => {
-      return {
-        authenticated: true,
-      };
       try {
         // Retrieve stored token in memory
         if (user?.accessToken) return { authenticated: true };
@@ -136,6 +123,7 @@ function App() {
           // Immediately refresh; if user clicks "rememberMe" -- automatic token rotation.
           // If not, throw error to log out.
           const response = await fetch(REFRESH_TOKEN_API_URL, {
+            method: "POST",
             credentials: "include",
           });
 
@@ -330,13 +318,7 @@ function App() {
               <Route index element={<Login />} />
               <Route
                 path="/home"
-                element={
-                  <Layout>
-                    <main className="flex-1 overflow-auto p-4 lg:p-8 bg-slate-50/50">
-                      {/* {children} */}
-                    </main>
-                  </Layout>
-                }
+                element={<Layout>{/* {children} */}</Layout>}
               />
             </Routes>
             <Toaster />
