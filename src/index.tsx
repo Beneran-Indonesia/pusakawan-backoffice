@@ -8,10 +8,16 @@ const root = createRoot(container);
 import "./i18n";
 import { LoadingSpinner } from "./components/Loading";
 
-const { worker } = await import("./mocks/browser");
-await worker.start({
-  onUnhandledRequest: "bypass",
-});
+async function enableMocks() {
+  if (import.meta.env.VITE_ENABLE_MSW !== "true") {
+    return;
+  }
+
+  const { worker } = await import("./mocks/browser");
+  await worker.start();
+}
+
+await enableMocks();
 
 root.render(
   <React.StrictMode>

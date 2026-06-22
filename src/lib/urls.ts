@@ -1,5 +1,6 @@
-// export const API_URL = "https://api.pusakaapp.id/v1";
-export const API_URL = "";
+export const API_URL = import.meta.env.VITE_ENABLE_MSW !== "true"
+    ? import.meta.env.VITE_API_URL
+    : "";
 
 // AUTH
 const AUTH_API_URL = API_URL + "/auth";

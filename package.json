@@ -102,8 +102,7 @@
     "dev": "refine dev",
     "build": "tsc && refine build",
     "start": "refine start",
-    "refine": "refine",
-    "postinstall": "react-flagpack"
+    "refine": "refine"
   },
   "browserslist": {
     "production": [
