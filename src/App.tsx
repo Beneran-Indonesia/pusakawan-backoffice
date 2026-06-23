@@ -1,5 +1,10 @@
-import { Refine, AuthProvider } from "@refinedev/core";
-import { BrowserRouter, Route, Routes } from "react-router";
+import {
+  Refine,
+  AuthProvider,
+  AccessControlProvider,
+  Authenticated,
+} from "@refinedev/core";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import routerProvider, {
   UnsavedChangesNotifier,
   DocumentTitleHandler,
@@ -30,6 +35,13 @@ import {
   Users,
 } from "lucide-react";
 import { UserToken } from "@/types/users";
+
+const allowedResources = (resources: ResourceProps[], resource: string) => {
+  const resourceDef = resources.find((r) => r.list === resource);
+
+  const allowedRoles = resourceDef?.meta?.allowedRoles ?? [];
+  return allowedRoles;
+};
 
 function App() {
   // I18N (INTERNATIONALIZATION / TRANSLATION)
@@ -161,7 +173,7 @@ function App() {
     },
   };
 
-  // MENU BAR
+  // MENU BAR AND ACCESS CONTROL
   const lmsNavItems = [
     {
       list: "/lms/programs",
@@ -173,6 +185,7 @@ function App() {
         key: "programs",
         label: t("menu_bar.lms.programs"),
         icon: <BookOpen className="w-5 h-5" />,
+        allowedRoles: ["SUPER_ADMIN", "ADMIN", "LMS"],
       },
     },
     {
@@ -185,6 +198,7 @@ function App() {
         key: "products",
         label: t("menu_bar.lms.our_products"),
         icon: <ShoppingBag className="w-5 h-5" />,
+        allowedRoles: ["SUPER_ADMIN"],
       },
     },
     {
@@ -197,6 +211,7 @@ function App() {
         key: "challenge",
         label: t("menu_bar.lms.challenge"),
         icon: <Trophy className="w-5 h-5" />,
+        allowedRoles: ["SUPER_ADMIN", "ADMIN", "LMS"],
       },
     },
   ];
@@ -212,6 +227,7 @@ function App() {
         key: "games",
         label: t("menu_bar.app.games"),
         icon: <Gamepad2 className="w-5 h-5" />,
+        allowedRoles: ["SUPER_ADMIN", "ADMIN", "APP"],
       },
     },
     {
@@ -224,6 +240,7 @@ function App() {
         key: "home",
         label: t("menu_bar.app.home"),
         icon: <LayoutDashboard className="w-5 h-5" />,
+        allowedRoles: ["SUPER_ADMIN", "ADMIN", "APP"],
       },
     },
     {
@@ -236,6 +253,7 @@ function App() {
         key: "programs",
         label: t("menu_bar.app.programs"),
         icon: <BookOpen className="w-5 h-5" />,
+        allowedRoles: ["SUPER_ADMIN", "ADMIN", "APP"],
       },
     },
   ];
@@ -250,33 +268,51 @@ function App() {
       key: "manage-users",
       label: "Manage Users",
       icon: <Users className="w-5 h-5" />,
+      allowedRoles: ["SUPER_ADMIN"],
     },
   };
 
-  const isMenuAccessible = ({ meta }: ResourceProps): boolean => {
-    const ROLE_ACCESS: Record<
-      UserToken["user"]["role"],
-      (meta: NonNullable<ResourceProps["meta"]>) => boolean
-    > = {
-      SUPER_ADMIN: () => true,
+  const resources: ResourceProps[] = [
+    ...lmsNavItems,
+    ...appNavItems,
+    manageUserNavItems,
+  ];
 
-      ADMIN: (meta) => meta.parent !== "MANAGE_USERS",
+  const newResourcesfn = (resources: ResourceProps[]) => {
+    if (!user) {
+      return resources;
+    }
 
-      LMS: (meta) => meta.parent === "LMS" && meta.key === "programs",
+    const newResources = resources.filter((r) =>
+      r.meta!.allowedRoles.includes(user.user.role),
+    );
 
-      APP: (meta) => meta.parent === "APP" && meta.key === "games",
-    };
-
-    if (!user || !meta) return false;
-
-    return ROLE_ACCESS[user.user.role]?.(meta) ?? false;
+    return newResources;
   };
 
-  const resources = [...appNavItems, ...lmsNavItems, manageUserNavItems].filter(
-    (it) => isMenuAccessible(it),
-  );
+  const newResources = newResourcesfn(resources);
 
-  // TITLE
+  const accessControlProvider: AccessControlProvider = {
+    can: async ({ resource }) => {
+      if (!user) {
+        return { can: false };
+      }
+
+      if (!resource) {
+        return { can: false };
+      }
+
+      const resourceDef = resources.find((r) => r.list === resource);
+
+      const allowedRoles = resourceDef?.meta?.allowedRoles ?? [];
+
+      return {
+        can: allowedRoles.includes(user.user.role),
+      };
+    },
+  };
+
+  // WEBSITE TITLE
   const websiteTitle = "Pusakawan Backoffice";
   const formattedWebsiteTitle = (route: string) => `${route} | ${websiteTitle}`;
 
@@ -300,6 +336,7 @@ function App() {
           routerProvider={routerProvider}
           i18nProvider={i18nProvider}
           authProvider={authProvider}
+          accessControlProvider={accessControlProvider}
           options={{
             title: {
               icon: (
@@ -311,11 +348,18 @@ function App() {
             warnWhenUnsavedChanges: true,
             projectId: "RTJIz6-9Uxngz-l6qX9H",
           }}
-          resources={resources}
+          resources={newResources}
         >
           <UserContext.Provider value={user}>
             <Routes>
-              <Route index element={<Login />} />
+              <Route
+                index
+                element={
+                  <Authenticated key="app" fallback={<Login />}>
+                    <Navigate to={newResources[0].list ?? "/"} replace />
+                  </Authenticated>
+                }
+              />
               <Route
                 path="/home"
                 element={<Layout>{/* {children} */}</Layout>}

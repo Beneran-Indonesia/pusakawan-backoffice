@@ -7,11 +7,12 @@ const mockUser: UserToken["user"] = {
     id: 1,
     email: "a@g.c",
     name: "Sarah",
-    role: "ADMIN",
+    role: "APP",
     isVerified: true,
 };
 
-const REFRESH_TOKEN = "YU4KmQ3rVzW3LjFaSU6hMrJimy9sQGKj";
+let COUNTER = 0;
+const REFRESH_TOKEN = "YU4KmQ3rVzW3LjFaSU6hMrJimy9sQGKj+0";
 const ACCESS_TOKEN = "uilutMYIHcDkocGj9pTr0eCsLJACt3MT";
 
 const mockToken = (role: UserToken["user"]["role"]): UserToken => ({
@@ -49,7 +50,9 @@ const refreshHandler = http.post(REFRESH_TOKEN_API_URL, async ({ request }) => {
         );
     }
 
+    // in msw I have to put the role in the cookie to return the mockUser.
     const role = (getCookieValue(cookieHeader, "role") ?? "APP") as UserToken["user"]["role"]; 
+    COUNTER += 1;
 
     return new HttpResponse(
         JSON.stringify(mockToken(role)),
@@ -57,7 +60,7 @@ const refreshHandler = http.post(REFRESH_TOKEN_API_URL, async ({ request }) => {
             status: 200,
             headers: {
                 "Content-Type": "application/json",
-                "Set-Cookie": `refresh_token=${REFRESH_TOKEN}; Path=/; HttpOnly`,
+                "Set-Cookie": `refresh_token=${REFRESH_TOKEN + COUNTER}; Path=/; HttpOnly`,
             },
         },
     );
@@ -119,6 +122,8 @@ const loginHandler = http.post(LOGIN_API_URL, async ({ request }) => {
         headers["Set-Cookie"] =
             `role=${role}; refresh_token=${REFRESH_TOKEN}; Path=/; HttpOnly;`;
     }
+
+    console.log(true, headers);
 
     return HttpResponse.json({ data: response }, {
         status: 200,

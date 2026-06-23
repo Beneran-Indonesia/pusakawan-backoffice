@@ -1,8 +1,14 @@
 "use client";
 
 import { Smartphone, Monitor, ListIcon } from "lucide-react";
-import React, { useState } from "react";
-import { useMenu, useLink, type TreeMenuItem } from "@refinedev/core";
+import React, { useState, useEffect } from "react";
+import {
+  useMenu,
+  useLink,
+  CanAccess,
+  type TreeMenuItem,
+  useGetIdentity,
+} from "@refinedev/core";
 import {
   SidebarRail as ShadcnSidebarRail,
   Sidebar as ShadcnSidebar,
@@ -14,15 +20,25 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function Sidebar() {
+  const { data } = useGetIdentity();
   const { open } = useShadcnSidebar();
   const { menuItems, selectedKey } = useMenu();
-  const [platform, setPlatform] = useState<"LMS" | "APP" | "MANAGE_USERS">(
-    "APP",
-  );
+  const [platform, setPlatform] = useState<"LMS" | "APP">("APP");
+  // changing the platform according to user's role :)
+  useEffect(() => {
+    if (data?.role === "LMS") {
+      setPlatform("LMS");
+    }
+  }, [data]);
 
-  const navItems = menuItems.find((it) => it.name === platform) ?? null;
+  const PLATFORM_RULES = {
+    APP: (item: TreeMenuItem) => item.name === "APP",
+    LMS: (item: TreeMenuItem) => item.name === "LMS",
+  };
 
-  const manageUserNav = menuItems.find((it) => it.name === "MANAGE_USERS");
+  const filteredPlatform = menuItems.find(PLATFORM_RULES[platform]) ?? null;
+  const manageUserNav =
+    menuItems.find((it) => it.name === "MANAGE_USERS") ?? null;
 
   return (
     <ShadcnSidebar
@@ -60,24 +76,27 @@ export function Sidebar() {
           </PlatformToggleButton>
         </div>
         <nav className="space-y-1 h-full flex flex-col">
-          {navItems &&
-            navItems.children.map((item: TreeMenuItem) => (
-              <SidebarButton
-                key={item.key || item.name}
-                item={item}
-                isSelected={selectedKey == item.key}
-                // asLink=
-              />
+          {filteredPlatform &&
+            filteredPlatform.children.map((item: TreeMenuItem) => (
+              <CanAccess resource={item.list} action="menu-bar">
+                <SidebarButton
+                  key={item.list}
+                  item={item}
+                  isSelected={selectedKey == item.key}
+                />
+              </CanAccess>
             ))}
           {/* Manage Users - Only for Super Admin */}
           {manageUserNav && (
-            <div className="mt-auto border-t border-t-gray-200 pt-2">
-              <SidebarButton
-                key={manageUserNav.key}
-                item={manageUserNav.children[0]}
-                isSelected={selectedKey == manageUserNav.key}
-              />
-            </div>
+            <CanAccess resource={manageUserNav.list} action="menu-bar">
+              <div className="mt-auto border-t border-t-gray-200 pt-2">
+                <SidebarButton
+                  key={manageUserNav.key}
+                  item={manageUserNav.children[0]}
+                  isSelected={selectedKey == manageUserNav.key}
+                />
+              </div>
+            </CanAccess>
           )}
         </nav>
       </ShadcnSidebarContent>

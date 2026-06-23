@@ -10,6 +10,7 @@ import { Authenticated } from "@refinedev/core";
 import { Navigate } from "react-router";
 
 export function Layout({ children }: PropsWithChildren) {
+  
   return (
     <Authenticated fallback={<Navigate to="/" replace />} key="layout">
       <ThemeProvider>
