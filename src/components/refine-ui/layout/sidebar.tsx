@@ -78,7 +78,11 @@ export function Sidebar() {
         <nav className="space-y-1 h-full flex flex-col">
           {filteredPlatform &&
             filteredPlatform.children.map((item: TreeMenuItem) => (
-              <CanAccess resource={item.list} action="menu-bar">
+              <CanAccess
+                resource={item.list}
+                action="menu-bar"
+                key={`menu-bar-${item.key}`}
+              >
                 <SidebarButton
                   key={item.list}
                   item={item}

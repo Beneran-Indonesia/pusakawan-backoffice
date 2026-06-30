@@ -36,13 +36,6 @@ import {
 } from "lucide-react";
 import { UserToken } from "@/types/users";
 
-const allowedResources = (resources: ResourceProps[], resource: string) => {
-  const resourceDef = resources.find((r) => r.list === resource);
-
-  const allowedRoles = resourceDef?.meta?.allowedRoles ?? [];
-  return allowedRoles;
-};
-
 function App() {
   // I18N (INTERNATIONALIZATION / TRANSLATION)
   const { t, i18n } = useTranslation();
@@ -102,14 +95,25 @@ function App() {
 
     logout: async () => {
       try {
+        setUser(null);
         // Notify backend to invalidate session / refresh token
-        await fetch(LOGOUT_API_URL, {
+        const response = await fetch(LOGOUT_API_URL, {
           method: "POST",
           credentials: "include",
           headers: {
             Authorization: `Bearer ${user?.accessToken}`,
           },
         });
+
+        if (!response.ok) {
+          return {
+            success: false,
+            error: {
+              name: "LogoutError",
+              message: "Invalid credentials",
+            },
+          };
+        }
 
         return {
           success: true,
@@ -129,31 +133,29 @@ function App() {
     check: async () => {
       try {
         // Retrieve stored token in memory
-        if (user?.accessToken) return { authenticated: true };
-        // If no token - we need to do token rotation
-        if (!user?.accessToken) {
-          // Immediately refresh; if user clicks "rememberMe" -- automatic token rotation.
-          // If not, throw error to log out.
-          const response = await fetch(REFRESH_TOKEN_API_URL, {
-            method: "POST",
-            credentials: "include",
-          });
-
-          const user: UserToken = await response.json();
-          if (user.accessToken) {
-            setUser(user);
-            return {
-              authenticated: true,
-            };
-          }
-          throw Error("No refresh token");
+        if (user?.accessToken) {
+          return { authenticated: true };
         }
-        return {
-          authenticated: false,
-          error: new Error("No access token, forcing log out."),
-          redirectTo: "/",
-          logout: true,
-        };
+        // If no token - we need to do token rotation
+        // Immediately refresh; if user clicks "rememberMe" -- automatic token rotation.
+        // If not, throw error to log out.
+        const response = await fetch(REFRESH_TOKEN_API_URL, {
+          method: "POST",
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error("Refresh failed");
+        }
+
+        const refreshedUser: UserToken = await response.json();
+        if (refreshedUser.accessToken) {
+          setUser(refreshedUser);
+          return {
+            authenticated: true,
+          };
+        }
+        throw Error("No refresh token");
       } catch (error: unknown) {
         // If token missing/invalid/expired → force logout flow
         return {

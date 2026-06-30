@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { UserToken } from '@/types/users'
 import { LOGIN_API_URL, LOGOUT_API_URL, REFRESH_TOKEN_API_URL } from '@/lib/urls'
-import { getCookieValue } from '@/lib/utils';
+// import { getCookieValue } from '@/lib/utils';
 
 const mockUser: UserToken["user"] = {
     id: 1,
@@ -11,8 +11,7 @@ const mockUser: UserToken["user"] = {
     isVerified: true,
 };
 
-let COUNTER = 0;
-const REFRESH_TOKEN = "YU4KmQ3rVzW3LjFaSU6hMrJimy9sQGKj+0";
+const REFRESH_TOKEN = "YU4KmQ3rVzW3LjFaSU6hMrJimy9sQGKj+04";
 const ACCESS_TOKEN = "uilutMYIHcDkocGj9pTr0eCsLJACt3MT";
 
 const mockToken = (role: UserToken["user"]["role"]): UserToken => ({
@@ -23,18 +22,17 @@ const mockToken = (role: UserToken["user"]["role"]): UserToken => ({
 });
 
 // REFRESH
-const refreshHandler = http.post(REFRESH_TOKEN_API_URL, async ({ request }) => {
-    // Get the refresh token in the cookie 
-    const cookieHeader = request.headers.get("cookie");
+const refreshHandler = http.post(REFRESH_TOKEN_API_URL, async ({ cookies }) => {
 
-    if (!cookieHeader) {
+    // Get the refresh token in the cookie 
+    if (!cookies) {
         return HttpResponse.json(
-            { message: "No refresh token" },
+            { message: "No cookies" },
             { status: 401 },
         );
     }
 
-    const refreshToken = getCookieValue(cookieHeader, "refresh_token");
+    const refreshToken = cookies["refresh_token"];
 
     if (!refreshToken) {
         return HttpResponse.json(
@@ -42,6 +40,7 @@ const refreshHandler = http.post(REFRESH_TOKEN_API_URL, async ({ request }) => {
             { status: 401 },
         );
     }
+
     // if refresh token is valid, return user.
     if (refreshToken !== REFRESH_TOKEN) {
         return HttpResponse.json(
@@ -51,8 +50,7 @@ const refreshHandler = http.post(REFRESH_TOKEN_API_URL, async ({ request }) => {
     }
 
     // in msw I have to put the role in the cookie to return the mockUser.
-    const role = (getCookieValue(cookieHeader, "role") ?? "APP") as UserToken["user"]["role"]; 
-    COUNTER += 1;
+    const role = ((cookies["role"]) ?? "APP") as UserToken["user"]["role"];
 
     return new HttpResponse(
         JSON.stringify(mockToken(role)),
@@ -60,7 +58,7 @@ const refreshHandler = http.post(REFRESH_TOKEN_API_URL, async ({ request }) => {
             status: 200,
             headers: {
                 "Content-Type": "application/json",
-                "Set-Cookie": `refresh_token=${REFRESH_TOKEN + COUNTER}; Path=/; HttpOnly`,
+                "Set-Cookie": `refresh_token=${REFRESH_TOKEN}; Path=/; HttpOnly`,
             },
         },
     );
@@ -78,9 +76,16 @@ const logoutHandler = http.post(LOGOUT_API_URL, async ({ request }) => {
         );
     }
 
+    const headers = new Headers();
+
+    headers.append("Set-Cookie", `refresh_token=undefined; Path=/; HttpOnly`)
+    headers.append("Set-Cookie", "role=undefined; Path=/");
+
     return HttpResponse.json(
         { message: "Logout successful" },
-        { status: 200 }
+        {
+            status: 200, headers
+        },
     );
 });
 
@@ -114,23 +119,24 @@ const loginHandler = http.post(LOGIN_API_URL, async ({ request }) => {
     }
 
     const response = mockToken(role);
-
-    const headers: Record<string, string> = {};
+    const headers = new Headers();
 
     // simulate refresh token cookie ONLY when rememberMe is true
     if (rememberMe) {
-        headers["Set-Cookie"] =
-            `role=${role}; refresh_token=${REFRESH_TOKEN}; Path=/; HttpOnly;`;
+        headers.append(
+            "Set-Cookie",
+            `refresh_token=${REFRESH_TOKEN}; Max-Age=86400 Path=/; HttpOnly`
+        );
     }
 
-    console.log(true, headers);
+    headers.append(
+        "Set-Cookie",
+        `role=${role}; Path=/`
+    );
 
     return HttpResponse.json({ data: response }, {
         status: 200,
-        headers: {
-            "Content-Type": "application/json",
-            ...headers,
-        },
+        headers
     });
 })
 
