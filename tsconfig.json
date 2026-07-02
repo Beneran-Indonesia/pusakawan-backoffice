@@ -16,6 +16,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "useUnknownInCatchVariables": false, // to remove the unknown types error
     "paths": {
       "@/*": ["./src/*"]
     }

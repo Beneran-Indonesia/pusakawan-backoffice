@@ -16,7 +16,7 @@ const ACCESS_TOKEN = "uilutMYIHcDkocGj9pTr0eCsLJACt3MT";
 
 const mockToken = (role: UserToken["user"]["role"]): UserToken => ({
     accessToken: ACCESS_TOKEN,
-    expires_in: 900,
+    expires_in: 86400,
     user: { ...mockUser, role },
     profileCompleted: true,
 });

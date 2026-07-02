@@ -40,5 +40,20 @@
       "games": "Games"
     }
   },
+  "app": {
+    "home": {
+      "new": {},
+      "title": "App Home Management",
+      "subtitle": "Manage content that will appear on the student mobile app home",
+      "new_button": "New Content",
+      "filter": {
+        "title": "Search content...",
+        "all": "All Content",
+        "published": "Published",
+        "draft": "Draft"
+      },
+      "contents": "Content"
+    }
+  },
   "under_development": "This page is currently under development. Please come back later to see the full features."
 }

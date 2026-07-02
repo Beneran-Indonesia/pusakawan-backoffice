@@ -40,5 +40,20 @@
       "games": "Games"
     }
   },
+  "app": {
+    "home": {
+      "new": {},
+      "title": "Manajemen Beranda Aplikasi",
+      "subtitle": "Kelola konten yang akan ditampilkan di halaman beranda aplikasi siswa",
+      "new_button": "Konten Baru",
+      "filter": {
+        "title": "Cari konten...",
+        "all": "Semua konten",
+        "published": "Dipublikasikan",
+        "draft": "Draf"
+      },
+      "contents": "Konten"
+    }
+  },
   "under_development": "Halaman ini sedang dalam proses pengembangan. Silakan kunjungi kembali nanti untuk melihat fitur-fitur lengkapnya."
 }

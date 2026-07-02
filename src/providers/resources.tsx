@@ -1,0 +1,125 @@
+import {
+  LayoutDashboard,
+  BookOpen,
+  Gamepad2,
+  Trophy,
+  ShoppingBag,
+  Users,
+} from "lucide-react";
+import { UserToken } from "@/types/users";
+import { ResourceProps } from "@refinedev/core";
+import { TFunction } from "i18next";
+
+export const createResources = (t: TFunction): ResourceProps[] => {
+  const lmsNavItems: ResourceProps[] = [
+    {
+      list: "/lms/programs",
+      name: t("menu_bar.lms.programs"),
+      create: "",
+      edit: "",
+      meta: {
+        parent: "LMS",
+        key: "programs",
+        label: t("menu_bar.lms.programs"),
+        icon: <BookOpen className="w-5 h-5" />,
+        allowedRoles: ["SUPER_ADMIN", "ADMIN", "LMS"],
+      },
+    },
+    {
+      list: "/lms/products",
+      name: t("menu_bar.lms.our_products"),
+      create: "",
+      edit: "",
+      meta: {
+        parent: "LMS",
+        key: "products",
+        label: t("menu_bar.lms.our_products"),
+        icon: <ShoppingBag className="w-5 h-5" />,
+        allowedRoles: ["SUPER_ADMIN"],
+      },
+    },
+    {
+      list: "/lms/challenge",
+      name: t("menu_bar.lms.challenge"),
+      create: "",
+      edit: "",
+      meta: {
+        parent: "LMS",
+        key: "challenge",
+        label: t("menu_bar.lms.challenge"),
+        icon: <Trophy className="w-5 h-5" />,
+        allowedRoles: ["SUPER_ADMIN", "ADMIN", "LMS"],
+      },
+    },
+  ];
+
+  const appNavItems: ResourceProps[] = [
+    {
+      list: "/app/games",
+      name: t("menu_bar.app.games"),
+      create: "/app/games/create",
+      edit: "/app/games/edit",
+      meta: {
+        parent: "APP",
+        key: "games",
+        label: t("menu_bar.app.games"),
+        icon: <Gamepad2 className="w-5 h-5" />,
+        allowedRoles: ["SUPER_ADMIN", "ADMIN", "APP"],
+        dataProviderName: "appHomeData",
+      },
+    },
+    {
+      list: "/app/home",
+      name: t("menu_bar.app.home"),
+      create: "/app/home",
+      edit: "/app/edit",
+      meta: {
+        parent: "APP",
+        key: "home",
+        label: t("menu_bar.app.home"),
+        icon: <LayoutDashboard className="w-5 h-5" />,
+        allowedRoles: ["SUPER_ADMIN", "ADMIN", "APP"],
+      },
+    },
+    {
+      list: "/app/programs",
+      name: t("menu_bar.app.programs"),
+      create: "",
+      edit: "",
+      meta: {
+        parent: "APP",
+        key: "programs",
+        label: t("menu_bar.app.programs"),
+        icon: <BookOpen className="w-5 h-5" />,
+        allowedRoles: ["SUPER_ADMIN", "ADMIN", "APP"],
+      },
+    },
+  ];
+
+  const manageUserNavItem: ResourceProps = {
+    list: "/manage-users",
+    name: "Manage Users",
+    create: "",
+    edit: "",
+    meta: {
+      parent: "MANAGE_USERS",
+      key: "manage-users",
+      label: "Manage Users",
+      icon: <Users className="w-5 h-5" />,
+      allowedRoles: ["SUPER_ADMIN"],
+    },
+  };
+
+  return [...lmsNavItems, ...appNavItems, manageUserNavItem];
+};
+
+export const filterResources = (
+  resources: ResourceProps[],
+  user: UserToken | null,
+) => {
+  if (!user) return resources;
+
+  return resources.filter((resource) =>
+    resource.meta?.allowedRoles.includes(user.user.role),
+  );
+};

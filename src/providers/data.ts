@@ -1,5 +1,8 @@
-import { createSimpleRestDataProvider } from "@refinedev/rest/simple-rest";
-import { API_URL } from "@/lib/urls";
-export const { dataProvider, kyInstance } = createSimpleRestDataProvider({
-  apiURL: API_URL,
-});
+import { appGamesDataProvider } from "./app/games";
+import { appHomeDataProvider } from "./app/home";
+
+export const dataProviders = {
+  default: appHomeDataProvider,
+  appHomeData: appHomeDataProvider,
+  appGamesData: appGamesDataProvider,
+}

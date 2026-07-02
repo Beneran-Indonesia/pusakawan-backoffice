@@ -15,7 +15,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "useUnknownInCatchVariables": false, // to remove the unknown types error
   },
   "include": ["vite.config.ts"]
 }

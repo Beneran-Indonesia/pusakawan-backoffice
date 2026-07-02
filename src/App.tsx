@@ -1,15 +1,10 @@
-import {
-  Refine,
-  AuthProvider,
-  AccessControlProvider,
-  Authenticated,
-} from "@refinedev/core";
+import { Refine, AccessControlProvider, Authenticated } from "@refinedev/core";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import routerProvider, {
   UnsavedChangesNotifier,
   DocumentTitleHandler,
 } from "@refinedev/react-router";
-import { dataProvider } from "./providers/data";
+import { dataProviders } from "./providers/data";
 import { Login } from "./pages/login";
 // import { ErrorComponent } from "./components/refine-ui/layout/error-component";
 import { Layout } from "./components/refine-ui/layout/layout";
@@ -17,24 +12,16 @@ import { useNotificationProvider } from "./components/refine-ui/notification/use
 import { Toaster } from "./components/refine-ui/notification/toaster";
 import { ThemeProvider } from "./components/refine-ui/theme/theme-provider";
 import { useTranslation } from "react-i18next";
-import type { I18nProvider, ResourceProps } from "@refinedev/core";
+import type { I18nProvider } from "@refinedev/core";
 import "./App.css";
-import {
-  LOGIN_API_URL,
-  LOGOUT_API_URL,
-  REFRESH_TOKEN_API_URL,
-} from "./lib/urls";
-import { UserContext } from "./hooks/use-auth";
-import { useState } from "react";
-import {
-  LayoutDashboard,
-  BookOpen,
-  Gamepad2,
-  Trophy,
-  ShoppingBag,
-  Users,
-} from "lucide-react";
+import { useMemo, useState } from "react";
 import { UserToken } from "@/types/users";
+import { createAuthProvider } from "./providers/auth";
+import { createResources, filterResources } from "./providers/resources";
+import AppHome from "./pages/app/home";
+import AppHomeNew from "./pages/app/home-new";
+import AppGames from "./pages/app/games";
+import AppGamesNew from "./pages/app/games-new";
 
 function App() {
   // I18N (INTERNATIONALIZATION / TRANSLATION)
@@ -50,269 +37,7 @@ function App() {
 
   // AUTH
   const [user, setUser] = useState<null | UserToken>(null);
-  const authProvider: AuthProvider = {
-    login: async ({ email, password, rememberMe }) => {
-      const response = await fetch(LOGIN_API_URL, {
-        method: "POST",
-        credentials: rememberMe ? "include" : "omit",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, rememberMe }),
-      });
-
-      // Fail fast if backend rejects credentials or request fails
-      if (!response.ok) {
-        return {
-          success: false,
-          error: {
-            name: "LoginError",
-            message: "Invalid credentials",
-          },
-        };
-      }
-
-      const { data } = await response.json();
-
-      // Expect backend to return a JWT access token
-      if (data?.accessToken) {
-        // Persist token in memory
-        setUser(data);
-
-        return {
-          success: true,
-          redirectTo: "/home",
-        };
-      }
-
-      // Response succeeded but didn't include expected auth payload
-      return {
-        success: false,
-        error: {
-          name: "LoginError",
-          message: "No token received",
-        },
-      };
-    },
-
-    logout: async () => {
-      try {
-        setUser(null);
-        // Notify backend to invalidate session / refresh token
-        const response = await fetch(LOGOUT_API_URL, {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        });
-
-        if (!response.ok) {
-          return {
-            success: false,
-            error: {
-              name: "LogoutError",
-              message: "Invalid credentials",
-            },
-          };
-        }
-
-        return {
-          success: true,
-          redirectTo: "/",
-        };
-      } catch {
-        return { success: false };
-      }
-    },
-
-    onError: async (error) => {
-      // Centralized auth-related error logging / handling hook
-      console.error("Auth error:", error);
-      return { error };
-    },
-
-    check: async () => {
-      try {
-        // Retrieve stored token in memory
-        if (user?.accessToken) {
-          return { authenticated: true };
-        }
-        // If no token - we need to do token rotation
-        // Immediately refresh; if user clicks "rememberMe" -- automatic token rotation.
-        // If not, throw error to log out.
-        const response = await fetch(REFRESH_TOKEN_API_URL, {
-          method: "POST",
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          throw new Error("Refresh failed");
-        }
-
-        const refreshedUser: UserToken = await response.json();
-        if (refreshedUser.accessToken) {
-          setUser(refreshedUser);
-          return {
-            authenticated: true,
-          };
-        }
-        throw Error("No refresh token");
-      } catch (error: unknown) {
-        // If token missing/invalid/expired → force logout flow
-        return {
-          authenticated: false,
-          error: new Error(error as string),
-          redirectTo: "/",
-          logout: true,
-        };
-      }
-    },
-    getPermissions: async () => user?.user.role ?? null,
-    getIdentity: async () => {
-      if (user) {
-        return user.user;
-      }
-      return null;
-    },
-  };
-
-  // MENU BAR AND ACCESS CONTROL
-  const lmsNavItems = [
-    {
-      list: "/lms/programs",
-      name: t("menu_bar.lms.programs"),
-      create: "",
-      edit: "",
-      meta: {
-        parent: "LMS",
-        key: "programs",
-        label: t("menu_bar.lms.programs"),
-        icon: <BookOpen className="w-5 h-5" />,
-        allowedRoles: ["SUPER_ADMIN", "ADMIN", "LMS"],
-      },
-    },
-    {
-      list: "/lms/products",
-      name: t("menu_bar.lms.our_products"),
-      create: "",
-      edit: "",
-      meta: {
-        parent: "LMS",
-        key: "products",
-        label: t("menu_bar.lms.our_products"),
-        icon: <ShoppingBag className="w-5 h-5" />,
-        allowedRoles: ["SUPER_ADMIN"],
-      },
-    },
-    {
-      list: "/lms/challenge",
-      name: t("menu_bar.lms.challenge"),
-      create: "",
-      edit: "",
-      meta: {
-        parent: "LMS",
-        key: "challenge",
-        label: t("menu_bar.lms.challenge"),
-        icon: <Trophy className="w-5 h-5" />,
-        allowedRoles: ["SUPER_ADMIN", "ADMIN", "LMS"],
-      },
-    },
-  ];
-
-  const appNavItems = [
-    {
-      list: "/app/games",
-      name: t("menu_bar.app.games"),
-      create: "",
-      edit: "",
-      meta: {
-        parent: "APP",
-        key: "games",
-        label: t("menu_bar.app.games"),
-        icon: <Gamepad2 className="w-5 h-5" />,
-        allowedRoles: ["SUPER_ADMIN", "ADMIN", "APP"],
-      },
-    },
-    {
-      list: "/app/home",
-      name: t("menu_bar.app.home"),
-      create: "",
-      edit: "",
-      meta: {
-        parent: "APP",
-        key: "home",
-        label: t("menu_bar.app.home"),
-        icon: <LayoutDashboard className="w-5 h-5" />,
-        allowedRoles: ["SUPER_ADMIN", "ADMIN", "APP"],
-      },
-    },
-    {
-      list: "/app/programs",
-      name: t("menu_bar.app.programs"),
-      create: "",
-      edit: "",
-      meta: {
-        parent: "APP",
-        key: "programs",
-        label: t("menu_bar.app.programs"),
-        icon: <BookOpen className="w-5 h-5" />,
-        allowedRoles: ["SUPER_ADMIN", "ADMIN", "APP"],
-      },
-    },
-  ];
-
-  const manageUserNavItems = {
-    list: "/manage-users",
-    name: "Manage Users",
-    create: "",
-    edit: "",
-    meta: {
-      parent: "MANAGE_USERS",
-      key: "manage-users",
-      label: "Manage Users",
-      icon: <Users className="w-5 h-5" />,
-      allowedRoles: ["SUPER_ADMIN"],
-    },
-  };
-
-  const resources: ResourceProps[] = [
-    ...lmsNavItems,
-    ...appNavItems,
-    manageUserNavItems,
-  ];
-
-  const newResourcesfn = (resources: ResourceProps[]) => {
-    if (!user) {
-      return resources;
-    }
-
-    const newResources = resources.filter((r) =>
-      r.meta!.allowedRoles.includes(user.user.role),
-    );
-
-    return newResources;
-  };
-
-  const newResources = newResourcesfn(resources);
-
-  const accessControlProvider: AccessControlProvider = {
-    can: async ({ resource }) => {
-      if (!user) {
-        return { can: false };
-      }
-
-      if (!resource) {
-        return { can: false };
-      }
-
-      const resourceDef = resources.find((r) => r.list === resource);
-
-      const allowedRoles = resourceDef?.meta?.allowedRoles ?? [];
-
-      return {
-        can: allowedRoles.includes(user.user.role),
-      };
-    },
-  };
+  const authProvider = useMemo(() => createAuthProvider(user, setUser), [user]);
 
   // WEBSITE TITLE
   const websiteTitle = "Pusakawan Backoffice";
@@ -329,11 +54,30 @@ function App() {
     }
   };
 
+  // MENU BAR AND ACCESS CONTROL
+  const allResources = createResources(t);
+  const resources = filterResources(allResources, user);
+
+  const accessControlProvider: AccessControlProvider = {
+    can: async ({ resource }) => {
+      if (!user || !resource) {
+        return { can: false };
+      }
+
+      const resourceDef = allResources.find((r) => r.list === resource);
+
+      return {
+        can: resourceDef?.meta?.allowedRoles.includes(user.user.role) ?? false,
+      };
+    },
+  };
+
   return (
     <BrowserRouter>
       <ThemeProvider>
         <Refine
-          dataProvider={dataProvider}
+          resources={resources}
+          dataProvider={dataProviders}
           notificationProvider={useNotificationProvider()}
           routerProvider={routerProvider}
           i18nProvider={i18nProvider}
@@ -350,26 +94,55 @@ function App() {
             warnWhenUnsavedChanges: true,
             projectId: "RTJIz6-9Uxngz-l6qX9H",
           }}
-          resources={newResources}
         >
-          <UserContext.Provider value={user}>
-            <Routes>
-              <Route
-                index
-                element={
-                  <Authenticated key="app" fallback={<Login />}>
-                    <Navigate to={newResources[0].list ?? "/"} replace />
-                  </Authenticated>
-                }
-              />
-              <Route
-                path="/home"
-                element={<Layout>{/* {children} */}</Layout>}
-              />
-            </Routes>
-            <Toaster />
-            <UnsavedChangesNotifier />
-          </UserContext.Provider>
+          <Routes>
+            <Route
+              index
+              element={
+                <Authenticated key="app" fallback={<Login />}>
+                  <Navigate to={resources[0].list ?? "/"} replace />
+                </Authenticated>
+              }
+            />
+            {/* READ: home-app.md */}
+            <Route
+              path="/app/home"
+              element={
+                <Layout>
+                  <AppHome />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/app/home/new"
+              element={
+                <Layout>
+                  <AppHomeNew />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/app/games"
+              element={
+                <Layout>
+                  <AppGames />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/app/games/new"
+              element={
+                <Layout>
+                  <AppGamesNew />
+                </Layout>
+              }
+            />
+          </Routes>
+          <Toaster />
+          <UnsavedChangesNotifier />
           {/* for website's title */}
           <DocumentTitleHandler handler={getTitle} />
         </Refine>
