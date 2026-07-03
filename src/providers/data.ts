@@ -1,5 +1,5 @@
-import { appGamesDataProvider } from "./app/games";
-import { appHomeDataProvider } from "./app/home";
+import { appGamesDataProvider } from "./app/app-games-provider";
+import { appHomeDataProvider } from "./app/app-home-provider";
 
 export const dataProviders = {
   default: appHomeDataProvider,

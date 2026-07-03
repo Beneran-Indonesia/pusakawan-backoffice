@@ -3,6 +3,11 @@
 1. Connect dataProvider for every request under: `/app/home/` and `/app/games/`
 2. Create the UI for `/app/home/` and `/app/games`.
 
+## Darwin: 
+Pages: `src\pages\app\home.tsx`, `src\pages\app\home-new.tsx`
+Provider: `src\providers\app\app-home-provider.ts`
+Types: `src\types\app\app-home-type.ts`
+Translation: `t("app.home.[field]")`
 
 Documentation to read:
 * Data Provider **VERY IMPORTANT, UNDERSTAND THIS FIRST**: https://refine.dev/core/docs/data/data-provider/
@@ -10,4 +15,3 @@ Documentation to read:
 * Card component from shadcn + radix: https://ui.shadcn.com/docs/components/radix/card
 * Search and filter implementation: https://refine.dev/core/docs/guides-concepts/tables/
 * (extra) Search field: https://refine.dev/core/docs/advanced-tutorials/search/
-* 

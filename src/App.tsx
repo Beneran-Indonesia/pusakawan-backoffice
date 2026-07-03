@@ -15,13 +15,19 @@ import { useTranslation } from "react-i18next";
 import type { I18nProvider } from "@refinedev/core";
 import "./App.css";
 import { useMemo, useState } from "react";
-import { UserToken } from "@/types/users";
+import { UserToken } from "@/types/users-type";
 import { createAuthProvider } from "./providers/auth";
 import { createResources, filterResources } from "./providers/resources";
 import AppHome from "./pages/app/home";
 import AppHomeNew from "./pages/app/home-new";
 import AppGames from "./pages/app/games";
 import AppGamesNew from "./pages/app/games-new";
+import {
+  APP_GAMES_NEW_ROUTE,
+  APP_GAMES_ROUTE,
+  APP_HOME_NEW_ROUTE,
+  APP_HOME_ROUTE,
+} from "./lib/urls";
 
 function App() {
   // I18N (INTERNATIONALIZATION / TRANSLATION)
@@ -70,7 +76,9 @@ function App() {
         return { can: false };
       }
 
-      const resourceDef = allResources.find((r) => r.list === resource);
+      console.log("resource:", resource);
+
+      const resourceDef = allResources.find((r) => r.name === resource);
 
       return {
         can: resourceDef?.meta?.allowedRoles.includes(user.user.role) ?? false,
@@ -106,13 +114,16 @@ function App() {
               index
               element={
                 <Authenticated key="app" fallback={<Login />}>
-                  <Navigate to={resources[0].list ?? "/"} replace />
+                  <Navigate
+                    to={`${resources[0].identifier + resources[0].name}`}
+                    replace
+                  />
                 </Authenticated>
               }
             />
-            
+
             <Route
-              path="/app/home"
+              path={APP_HOME_ROUTE}
               element={
                 <Layout>
                   <AppHome />
@@ -121,7 +132,7 @@ function App() {
             />
 
             <Route
-              path="/app/home/new"
+              path={APP_HOME_NEW_ROUTE}
               element={
                 <Layout>
                   <AppHomeNew />
@@ -130,7 +141,7 @@ function App() {
             />
 
             <Route
-              path="/app/games"
+              path={APP_GAMES_ROUTE}
               element={
                 <Layout>
                   <AppGames />
@@ -139,7 +150,7 @@ function App() {
             />
 
             <Route
-              path="/app/games/new"
+              path={APP_GAMES_NEW_ROUTE}
               element={
                 <Layout>
                   <AppGamesNew />

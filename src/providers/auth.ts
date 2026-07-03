@@ -45,7 +45,7 @@ export function createAuthProvider(
                 _setUser(data);
                 return {
                     success: true,
-                    redirectTo: "/home",
+                    redirectTo: "/app/home",
                 };
             }
 

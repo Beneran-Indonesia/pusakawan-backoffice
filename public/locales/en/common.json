@@ -40,7 +40,8 @@
       "home": "Home",
       "programs": "Programs",
       "games": "Games"
-    }
+    },
+    "manage_user": "Manage User"
   },
   "app": {
     "home": {

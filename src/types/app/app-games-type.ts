@@ -10,12 +10,12 @@ export const GameSchema = z.object({
     description: z.string().max(500),
     rules: z.array(z.string().max(50)).max(5),
     held_on: z.object({
-        start_date: z.coerce.date(),
-        end_date: z.coerce.date(),
+        start_date: z.string(), // date time
+        end_date: z.string(), // date time
     }),
     time_range: z.object({
-        start_time: z.coerce.date(),
-        end_time: z.coerce.date(),
+        start_time: z.string(), // date time
+        end_time: z.string(), // date time
     }),
     diversity_points: z.boolean(),
     group_size: z.object({

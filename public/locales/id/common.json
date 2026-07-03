@@ -36,7 +36,8 @@
     "app": {
       "home": "Beranda",
       "programs": "Programs",
-      "games": "Games"
+      "games": "Games",
+      "manage_user": "Kelola User"
     }
   },
   "app": {

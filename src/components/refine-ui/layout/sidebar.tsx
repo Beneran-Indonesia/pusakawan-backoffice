@@ -4,7 +4,6 @@ import { Smartphone, Monitor, ListIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import {
   useMenu,
-  useLink,
   CanAccess,
   type TreeMenuItem,
   useGetIdentity,
@@ -79,20 +78,20 @@ export function Sidebar() {
           {filteredPlatform &&
             filteredPlatform.children.map((item: TreeMenuItem) => (
               <CanAccess
-                resource={item.list}
                 action="menu-bar"
                 key={`menu-bar-${item.key}`}
               >
                 <SidebarButton
-                  key={item.list}
+                  key={item.key}
                   item={item}
                   isSelected={selectedKey == item.key}
+                  // onClick={}
                 />
               </CanAccess>
             ))}
           {/* Manage Users - Only for Super Admin */}
           {manageUserNav && (
-            <CanAccess resource={manageUserNav.list} action="menu-bar">
+            <CanAccess action="menu-bar">
               <div className="mt-auto border-t border-t-gray-200 pt-2">
                 <SidebarButton
                   key={manageUserNav.key}
@@ -209,12 +208,10 @@ function SidebarButton({
   item,
   isSelected = false,
   rightIcon,
-  asLink = false,
   className,
   onClick,
   ...props
 }: SidebarButtonProps) {
-  const Link = useLink();
 
   const buttonContent = (
     <>
@@ -238,13 +235,9 @@ function SidebarButton({
       onClick={onClick}
       {...props}
     >
-      {asLink && item.route ? (
-        <Link to={item.route} className={cn("flex w-full items-center gap-2")}>
-          {buttonContent}
-        </Link>
-      ) : (
+      {
         buttonContent
-      )}
+      }
     </button>
   );
 }

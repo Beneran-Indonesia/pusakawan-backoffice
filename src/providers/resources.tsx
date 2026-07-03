@@ -6,9 +6,10 @@ import {
   ShoppingBag,
   Users,
 } from "lucide-react";
-import { UserToken } from "@/types/users";
+import { UserToken } from "@/types/users-type";
 import { ResourceProps } from "@refinedev/core";
 import { TFunction } from "i18next";
+import { APP_GAMES_ROUTE, APP_HOME_ROUTE, APP_PROGRAM_ROUTE } from "@/lib/urls";
 
 export const createResources = (t: TFunction): ResourceProps[] => {
   const lmsNavItems: ResourceProps[] = [
@@ -55,8 +56,8 @@ export const createResources = (t: TFunction): ResourceProps[] => {
 
   const appNavItems: ResourceProps[] = [
     {
-      list: "/app/games",
-      name: t("menu_bar.app.games"),
+      list: APP_GAMES_ROUTE,
+      name: "games",
       create: "/app/games/create",
       edit: "/app/games/edit",
       meta: {
@@ -69,8 +70,8 @@ export const createResources = (t: TFunction): ResourceProps[] => {
       },
     },
     {
-      list: "/app/home",
-      name: t("menu_bar.app.home"),
+      list: APP_HOME_ROUTE,
+      name: "home",
       create: "/app/home",
       edit: "/app/edit",
       meta: {
@@ -82,8 +83,8 @@ export const createResources = (t: TFunction): ResourceProps[] => {
       },
     },
     {
-      list: "/app/programs",
-      name: t("menu_bar.app.programs"),
+      list: APP_PROGRAM_ROUTE,
+      name: "programs",
       create: "",
       edit: "",
       meta: {

@@ -1,10 +1,10 @@
-import { APP_HOME_API_URL } from "@/lib/urls";
+import { APP_API_URL } from "@/lib/urls";
 import { createDataProvider } from "@refinedev/rest";
 import { kyOptions } from "../ky-options";
 
 // appHomeDataProvider
 export const { dataProvider: appHomeDataProvider } = createDataProvider(
-  APP_HOME_API_URL,
+  APP_API_URL,
   {
     getList: {
       // 2. Transform Refine's parameters into your API's query format
@@ -42,7 +42,7 @@ export const { dataProvider: appHomeDataProvider } = createDataProvider(
 
       // 3. Extract the data array from API response
       mapResponse: async (response) => {
-        const json = await response.json();
+        const json = await response.clone().json();
         // Your API returns: { data: [...], total: 123 }
         // Refine needs: [...]
         return json.data;
@@ -50,7 +50,7 @@ export const { dataProvider: appHomeDataProvider } = createDataProvider(
 
       // 4. Extract the total count for pagination
       getTotalCount: async (response) => {
-        const json = await response.json();
+        const json = await response.clone().json();
         // Your API returns: { data: [...], total: 123 }
         // Refine needs: 123
         return json.total;
@@ -68,6 +68,6 @@ export const { dataProvider: appHomeDataProvider } = createDataProvider(
     create: {
       // 
     },
-  }, // Create Data Provider Options
+  }, // Create Data Provider Options,
   kyOptions
 );

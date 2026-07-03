@@ -1,9 +1,9 @@
 import { http, HttpResponse } from 'msw'
-import { UserToken } from '@/types/users'
+import { UserToken } from '@/types/users-type'
 import { LOGIN_API_URL, LOGOUT_API_URL, REFRESH_TOKEN_API_URL } from '@/lib/urls'
 // import { getCookieValue } from '@/lib/utils';
 
-const mockUser: UserToken["user"] = {
+const MOCK_USER: UserToken["user"] = {
     id: 1,
     email: "a@g.c",
     name: "Sarah",
@@ -17,7 +17,7 @@ const ACCESS_TOKEN = "uilutMYIHcDkocGj9pTr0eCsLJACt3MT";
 const mockToken = (role: UserToken["user"]["role"]): UserToken => ({
     accessToken: ACCESS_TOKEN,
     expires_in: 86400,
-    user: { ...mockUser, role },
+    user: { ...MOCK_USER, role },
     profileCompleted: true,
 });
 

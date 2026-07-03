@@ -1,6 +1,6 @@
 import z from "zod";
-import { GameSchema } from "./games";
-import { QuestionSchema } from "./questions";
+import { GameSchema } from "./app-games-type";
+import { QuestionSchema } from "./app-questions-type";
 
 
 export const GameDetailsSchema = z.object({

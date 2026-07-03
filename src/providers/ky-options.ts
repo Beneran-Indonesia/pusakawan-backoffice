@@ -1,6 +1,7 @@
 import { authStore } from "./auth";
 
 export const kyOptions = {
+  
   hooks: {
     beforeError: [
       async (error: unknown) => {
