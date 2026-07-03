@@ -47,10 +47,16 @@ function App() {
     switch (location.pathname) {
       case "/":
         return formattedWebsiteTitle(t("routes.sign_in"));
-      case "/home":
-        return "Home | Pusakawan Backoffice";
+      case "/app/home":
+        return formattedWebsiteTitle(t("routes.app_home"));
+      case "/app/home/new":
+        return formattedWebsiteTitle(t("routes.app_home_new"));
+      case "/app/games":
+        return formattedWebsiteTitle(t("routes.app_games"));
+      case "/app/games/new":
+        return formattedWebsiteTitle(t("routes.app_games_new"));
       default:
-        return "Pusakawan Backoffice";
+        return websiteTitle;
     }
   };
 
@@ -104,7 +110,7 @@ function App() {
                 </Authenticated>
               }
             />
-            {/* READ: home-app.md */}
+            
             <Route
               path="/app/home"
               element={

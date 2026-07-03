@@ -15,7 +15,6 @@
     "password_hint": "Masukkan kata sandi Anda",
     "remember_me": "Ingat saya",
     "button": "Masuk ke Dashboard",
-    "demo_credentials": "Kredensial Demo",
     "secure_access": "Akses Aman Admin"
   },
   "header": {
@@ -42,7 +41,19 @@
   },
   "app": {
     "home": {
-      "new": {},
+      "new": {
+        "title": "Tambah Konten Baru",
+        "subtitle": "Unggah foto dan deskripsi baru untuk beranda aplikasi",
+        "description": {
+          "title": "Deskripsi",
+          "hint": "Tulis deskripsi konten di sini...",
+          "buttons": {
+            "draft": "Simpan sebagai Draf",
+            "cancel": "Batalkan",
+            "publish": "Publikasikan Konten"
+          }
+        }
+      },
       "title": "Manajemen Beranda Aplikasi",
       "subtitle": "Kelola konten yang akan ditampilkan di halaman beranda aplikasi siswa",
       "new_button": "Konten Baru",

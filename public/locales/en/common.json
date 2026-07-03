@@ -1,7 +1,10 @@
 {
   "routes": {
     "sign_in": "Sign In",
-    "dashboard": "Dashboard"
+    "app_home": "App Home",
+    "app_home_new": "New Home App",
+    "app_games": "App Games",
+    "app_games_new": "New Games App"
   },
   "sign_in": {
     "title": "Welcome to Pusakawan",
@@ -15,7 +18,6 @@
     "password_hint": "Enter your password",
     "remember_me": "Remember me",
     "button": "Sign in to Dashboard",
-    "demo_credentials": "Demo Credentials",
     "secure_access": "Secure Admin Access"
   },
   "header": {
@@ -42,7 +44,19 @@
   },
   "app": {
     "home": {
-      "new": {},
+      "new": {
+        "title": "Add New Content",
+        "subtitle": "Upload new photo and description for the app home screen",
+        "description": {
+          "title": "Description",
+          "hint": "Write content description here...",
+          "buttons": {
+            "draft": "Save as Draft",
+            "cancel": "Cancel",
+            "publish": "Publish Content"
+          }
+        }
+      },
       "title": "App Home Management",
       "subtitle": "Manage content that will appear on the student mobile app home",
       "new_button": "New Content",

@@ -217,21 +217,6 @@ export const Login: React.FC = () => {
               {t("sign_in.button")}
             </Button>
           </form>
-
-          {/* <div className="mt-4 p-3 bg-slate-50 border border-slate-200 rounded-lg">
-            <p className="text-xs font-semibold text-slate-700 mb-2">
-              {t("sign_in.demo_credentials")}
-            </p>
-            <div className="space-y-1 text-xs text-slate-600">
-              <p>
-                <span className="font-medium">Super Admin:</span> admin / admin
-              </p>
-              <p>
-                <span className="font-medium">Teacher:</span> teacher / teacher
-              </p>
-            </div>
-          </div> */}
-
           <div className="mt-4 pt-4 border-t border-gray-100">
             <Copyright className="mb-4 md:mb-0" />
           </div>

@@ -7,9 +7,6 @@ export const { dataProvider: appHomeDataProvider } = createDataProvider(
   APP_HOME_API_URL,
   {
     getList: {
-      // 1. Define the endpoint (optional - defaults to resource name)
-      // list: "/app/home",
-      getEndpoint: ({ resource }) => resource,
       // 2. Transform Refine's parameters into your API's query format
       buildQueryParams: async ({ pagination, filters, sorters }) => {
         const query: Record<string, unknown> = {};
@@ -34,7 +31,9 @@ export const { dataProvider: appHomeDataProvider } = createDataProvider(
         // Example API expects: ?status=PUBLISHED&title_like=react
         // In our application, the filters can only be field of: ALL, PUBLISHED, DRAFT
         for (const filter of filters ?? []) {
-          if (filter.operator === 'eq') {
+          if (!("field" in filter)) continue;
+
+          if (filter.operator === "eq") {
             query[filter.field] = filter.value;
           }
         }
