@@ -78,8 +78,15 @@ const logoutHandler = http.post(LOGOUT_API_URL, async ({ request }) => {
 
     const headers = new Headers();
 
-    headers.append("Set-Cookie", `refresh_token=undefined; Path=/; HttpOnly`)
-    headers.append("Set-Cookie", "role=undefined; Path=/");
+    headers.append(
+        "Set-Cookie",
+        "refresh_token=; Max-Age=0; Path=/; HttpOnly"
+    );
+
+    headers.append(
+        "Set-Cookie",
+        "role=; Max-Age=0; Path=/; HttpOnly"
+    );
 
     return HttpResponse.json(
         { message: "Logout successful" },
@@ -131,7 +138,7 @@ const loginHandler = http.post(LOGIN_API_URL, async ({ request }) => {
 
     headers.append(
         "Set-Cookie",
-        `role=${role}; Path=/`
+        `role=${role}; Path=/ Max-Age=86400 Path=/; HttpOnly`
     );
 
     return HttpResponse.json({ data: response }, {

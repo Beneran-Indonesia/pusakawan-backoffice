@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router";
 
 export function Sidebar() {
   const { data } = useGetIdentity();
@@ -77,15 +78,12 @@ export function Sidebar() {
         <nav className="space-y-1 h-full flex flex-col">
           {filteredPlatform &&
             filteredPlatform.children.map((item: TreeMenuItem) => (
-              <CanAccess
-                action="menu-bar"
-                key={`menu-bar-${item.key}`}
-              >
+              <CanAccess action="menu-bar" key={`menu-bar-${item.key}`}>
                 <SidebarButton
                   key={item.key}
                   item={item}
                   isSelected={selectedKey == item.key}
-                  // onClick={}
+                  asLink
                 />
               </CanAccess>
             ))}
@@ -97,6 +95,7 @@ export function Sidebar() {
                   key={manageUserNav.key}
                   item={manageUserNav.children[0]}
                   isSelected={selectedKey == manageUserNav.key}
+                  asLink
                 />
               </div>
             </CanAccess>
@@ -210,10 +209,19 @@ function SidebarButton({
   rightIcon,
   className,
   onClick,
+  asLink = false,
   ...props
 }: SidebarButtonProps) {
+  const classes = cn(
+    "w-full flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
+    "font-bold",
+    isSelected
+      ? "bg-red-700 text-white shadow-md shadow-red-200"
+      : "text-slate-600 hover:bg-red-50 hover:text-red-700",
+    className,
+  );
 
-  const buttonContent = (
+  const content = (
     <>
       <ItemIcon icon={item.meta?.icon ?? item.icon} isSelected={isSelected} />
       <span>{getDisplayName(item)}</span>
@@ -221,25 +229,18 @@ function SidebarButton({
     </>
   );
 
+  if (asLink) {
+    return (
+      <Link to={item.list ?? "/"} className={classes}>
+        {content}
+      </Link>
+    );
+  }
+
   return (
-    <button
-      className={cn(
-        "font-bold",
-        "items-center",
-        "w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200",
-        isSelected
-          ? "bg-red-700 text-white shadow-md shadow-red-200"
-          : "text-slate-600 hover:bg-red-50 hover:text-red-700",
-        className,
-      )}
-      onClick={onClick}
-      {...props}
-    >
-      {
-        buttonContent
-      }
+    <button type="button" className={classes} onClick={onClick} {...props}>
+      {content}
     </button>
   );
 }
-
 Sidebar.displayName = "Sidebar";

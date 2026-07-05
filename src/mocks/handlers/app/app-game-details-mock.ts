@@ -71,7 +71,7 @@ export const MOCK_GAME_DETAILS: GameDetails[] = [
         correct_validation: 'Perfect! Melati (Jasmine) is our national flower!'
       }
     ],
-    created_at: new Date('2024-01-10')
+    created_at: '2024-01-10'
   },
   {
     game: MOCK_GAMES[1],
@@ -93,7 +93,7 @@ export const MOCK_GAME_DETAILS: GameDetails[] = [
         correct_validation: 'Correct! Pancasila has 5 principles!'
       }
     ],
-    created_at: new Date('2024-02-05')
+    created_at: '2024-02-05'
   },
   {
     game: MOCK_GAMES[2],
@@ -128,7 +128,7 @@ export const MOCK_GAME_DETAILS: GameDetails[] = [
         correct_validation: 'Excellent! Papua is indeed the largest island!'
       }
     ],
-    created_at: new Date('2024-02-20')
+    created_at: '2024-02-20'
   }
 ];
 

@@ -1,5 +1,5 @@
 import { AuthProvider } from "@refinedev/core";
-import { UserToken } from "@/types/users";
+import { UserToken } from "@/types/users-type";
 import { LOGIN_API_URL, LOGOUT_API_URL, REFRESH_TOKEN_API_URL } from "@/lib/urls";
 
 let currentUser: UserToken | null = null;

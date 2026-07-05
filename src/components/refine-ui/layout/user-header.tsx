@@ -14,7 +14,7 @@ export function UserHeader({ desktopSize = true }: UserHeaderProps) {
     return <Skeleton className={cn("h-10", "w-10", "rounded-full")} />;
   }
 
-  const { name, avatar, role } = user;
+  const { name, avatar, role } = user.user;
 
   return (
     <div className="flex gap-3.5 flex-row md:mr-3">

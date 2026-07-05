@@ -42,6 +42,7 @@ export function ErrorComponent() {
   return (
     <div
       className={cn(
+        "h-full",
         "flex",
         "items-center",
         "justify-center",

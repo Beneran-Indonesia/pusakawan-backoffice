@@ -16,7 +16,7 @@ import type { I18nProvider } from "@refinedev/core";
 import "./App.css";
 import { useMemo, useState } from "react";
 import { UserToken } from "@/types/users-type";
-import { createAuthProvider } from "./providers/auth";
+import { createAuthProvider } from "./providers/auth-provider";
 import { createResources, filterResources } from "./providers/resources";
 import AppHome from "./pages/app/home";
 import AppHomeNew from "./pages/app/home-new";
@@ -28,6 +28,7 @@ import {
   APP_HOME_NEW_ROUTE,
   APP_HOME_ROUTE,
 } from "./lib/urls";
+import { ErrorComponent } from "./components/refine-ui/layout/error-component";
 
 function App() {
   // I18N (INTERNATIONALIZATION / TRANSLATION)
@@ -76,8 +77,6 @@ function App() {
         return { can: false };
       }
 
-      console.log("resource:", resource);
-
       const resourceDef = allResources.find((r) => r.name === resource);
 
       return {
@@ -114,10 +113,7 @@ function App() {
               index
               element={
                 <Authenticated key="app" fallback={<Login />}>
-                  <Navigate
-                    to={`${resources[0].identifier + resources[0].name}`}
-                    replace
-                  />
+                  <Navigate to={`${resources[0].list}`} replace />
                 </Authenticated>
               }
             />
@@ -154,6 +150,15 @@ function App() {
               element={
                 <Layout>
                   <AppGamesNew />
+                </Layout>
+              }
+            />
+            {/* 404 error, only if authenticated */}
+            <Route
+              path="*"
+              element={
+                <Layout>
+                  <ErrorComponent />
                 </Layout>
               }
             />

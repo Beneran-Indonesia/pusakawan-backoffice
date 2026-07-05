@@ -17,12 +17,16 @@ async function enableMocks() {
   await worker.start();
 }
 
-await enableMocks();
+async function main() {
+  await enableMocks();
 
-root.render(
-  <React.StrictMode>
-    <React.Suspense fallback={<LoadingSpinner />}>
-      <App />
-    </React.Suspense>
-  </React.StrictMode>,
-);
+  root.render(
+    <React.StrictMode>
+      <React.Suspense fallback={<LoadingSpinner />}>
+        <App />
+      </React.Suspense>
+    </React.StrictMode>,
+  );
+}
+
+main();
