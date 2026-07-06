@@ -4,9 +4,8 @@ import { Smartphone, Monitor, ListIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import {
   useMenu,
-  CanAccess,
   type TreeMenuItem,
-  useGetIdentity,
+  usePermissions,
 } from "@refinedev/core";
 import {
   SidebarRail as ShadcnSidebarRail,
@@ -20,16 +19,16 @@ import { cn } from "@/lib/utils";
 import { Link } from "react-router";
 
 export function Sidebar() {
-  const { data } = useGetIdentity();
+  const { data: userRole } = usePermissions({});
   const { open } = useShadcnSidebar();
   const { menuItems, selectedKey } = useMenu();
   const [platform, setPlatform] = useState<"LMS" | "APP">("APP");
   // changing the platform according to user's role :)
   useEffect(() => {
-    if (data?.role === "LMS") {
+    if (userRole === "LMS") {
       setPlatform("LMS");
     }
-  }, [data]);
+  }, [userRole]);
 
   const PLATFORM_RULES = {
     APP: (item: TreeMenuItem) => item.name === "APP",
@@ -39,6 +38,8 @@ export function Sidebar() {
   const filteredPlatform = menuItems.find(PLATFORM_RULES[platform]) ?? null;
   const manageUserNav =
     menuItems.find((it) => it.name === "MANAGE_USERS") ?? null;
+
+  console.log(userRole, filteredPlatform?.children);
 
   return (
     <ShadcnSidebar
@@ -64,6 +65,7 @@ export function Sidebar() {
             isActive={platform === "APP"}
             onClick={() => setPlatform("APP")}
             icon={<Smartphone className="w-3.5 h-3.5" />}
+            disabled={userRole === "LMS"}
           >
             APP
           </PlatformToggleButton>
@@ -71,6 +73,7 @@ export function Sidebar() {
             isActive={platform === "LMS"}
             onClick={() => setPlatform("LMS")}
             icon={<Monitor className="w-3.5 h-3.5" />}
+            disabled={userRole === "APP"}
           >
             LMS
           </PlatformToggleButton>
@@ -78,27 +81,23 @@ export function Sidebar() {
         <nav className="space-y-1 h-full flex flex-col">
           {filteredPlatform &&
             filteredPlatform.children.map((item: TreeMenuItem) => (
-              <CanAccess action="menu-bar" key={`menu-bar-${item.key}`}>
-                <SidebarButton
-                  key={item.key}
-                  item={item}
-                  isSelected={selectedKey == item.key}
-                  asLink
-                />
-              </CanAccess>
+              <SidebarButton
+                key={item.key}
+                item={item}
+                isSelected={selectedKey == item.key}
+                asLink
+              />
             ))}
           {/* Manage Users - Only for Super Admin */}
           {manageUserNav && (
-            <CanAccess action="menu-bar">
-              <div className="mt-auto border-t border-t-gray-200 pt-2">
-                <SidebarButton
-                  key={manageUserNav.key}
-                  item={manageUserNav.children[0]}
-                  isSelected={selectedKey == manageUserNav.key}
-                  asLink
-                />
-              </div>
-            </CanAccess>
+            <div className="mt-auto border-t border-t-gray-200 pt-2">
+              <SidebarButton
+                key={manageUserNav.key}
+                item={manageUserNav.children[0]}
+                isSelected={selectedKey == manageUserNav.key}
+                asLink
+              />
+            </div>
           )}
         </nav>
       </ShadcnSidebarContent>
@@ -111,6 +110,7 @@ type PlatformToggleButtonProps = {
   onClick: () => void;
   icon: React.ReactNode;
   children: React.ReactNode;
+  disabled?: boolean;
   title?: string;
 };
 
@@ -120,9 +120,11 @@ function PlatformToggleButton({
   icon,
   children,
   title,
+  disabled = false,
 }: PlatformToggleButtonProps) {
   return (
     <button
+      disabled={disabled}
       title={title}
       className={cn(
         "cursor-pointer flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-md transition-all duration-200",

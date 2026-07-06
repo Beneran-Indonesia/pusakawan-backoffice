@@ -52,14 +52,24 @@ const refreshHandler = http.post(REFRESH_TOKEN_API_URL, async ({ cookies }) => {
     // in msw I have to put the role in the cookie to return the mockUser.
     const role = ((cookies["role"]) ?? "APP") as UserToken["user"]["role"];
 
+    const response = mockToken(role);
+    const headers = new Headers();
+
+    headers.append(
+        "Set-Cookie",
+        `refresh_token=${REFRESH_TOKEN}; Max-Age=86400; Path=/; HttpOnly`
+    );
+
+    headers.append(
+        "Set-Cookie",
+        `role=${role}; Path=/; Max-Age=86400; HttpOnly`
+    );
+
     return new HttpResponse(
-        JSON.stringify(mockToken(role)),
+        JSON.stringify(response),
         {
             status: 200,
-            headers: {
-                "Content-Type": "application/json",
-                "Set-Cookie": `refresh_token=${REFRESH_TOKEN}; Path=/; HttpOnly`,
-            },
+            headers
         },
     );
 
@@ -132,13 +142,13 @@ const loginHandler = http.post(LOGIN_API_URL, async ({ request }) => {
     if (rememberMe) {
         headers.append(
             "Set-Cookie",
-            `refresh_token=${REFRESH_TOKEN}; Max-Age=86400 Path=/; HttpOnly`
+            `refresh_token=${REFRESH_TOKEN}; Max-Age=86400; Path=/; HttpOnly`
         );
     }
 
     headers.append(
         "Set-Cookie",
-        `role=${role}; Path=/ Max-Age=86400 Path=/; HttpOnly`
+        `role=${role}; Path=/; Max-Age=86400; HttpOnly`
     );
 
     return HttpResponse.json({ data: response }, {

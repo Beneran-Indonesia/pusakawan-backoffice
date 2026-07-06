@@ -28,7 +28,7 @@ import {
   APP_HOME_NEW_ROUTE,
   APP_HOME_ROUTE,
 } from "./lib/urls";
-import { ErrorComponent } from "./components/refine-ui/layout/error-component";
+import { UnderDevelopment } from "./components/refine-ui/layout/under-development";
 
 function App() {
   // I18N (INTERNATIONALIZATION / TRANSLATION)
@@ -72,12 +72,14 @@ function App() {
   const resources = filterResources(allResources, user);
 
   const accessControlProvider: AccessControlProvider = {
-    can: async ({ resource }) => {
+    can: async ({ resource, action }) => {
       if (!user || !resource) {
         return { can: false };
       }
+      if (action !== "access") return { can: false };
 
-      const resourceDef = allResources.find((r) => r.name === resource);
+      // find from the parent (APP | LMS)
+      const resourceDef = allResources.find((r) => r?.meta?.parent === resource);
 
       return {
         can: resourceDef?.meta?.allowedRoles.includes(user.user.role) ?? false,
@@ -97,6 +99,7 @@ function App() {
           authProvider={authProvider}
           accessControlProvider={accessControlProvider}
           options={{
+            disableTelemetry: true,
             title: {
               icon: (
                 <img src="/logo.svg" alt="Pusakawan" style={{ height: 24 }} />
@@ -158,7 +161,7 @@ function App() {
               path="*"
               element={
                 <Layout>
-                  <ErrorComponent />
+                  <UnderDevelopment title="Under Development" />
                 </Layout>
               }
             />
