@@ -1,7 +1,10 @@
 {
   "routes": {
     "sign_in": "Masuk",
-    "dashboard": "Dasbor"
+    "app_home": "Beranda Aplikasi",
+    "app_home_new": "Beranda Baru Aplikasi",
+    "app_games": "Games Aplikasi",
+    "app_games_new": "Games Baru Aplikasi"
   },
   "sign_in": {
     "title": "Selamat Datang di Pusakawan",

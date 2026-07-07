@@ -44,7 +44,7 @@ function DesktopHeader() {
         "shadow-md",
       )}
     >
-      <ThemeToggle />
+      {/* <ThemeToggle /> */}
       <LanguageSwitcher />
       <NotificationHeader />
       <Separator
