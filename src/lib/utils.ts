@@ -10,3 +10,9 @@ export const getCookieValue = (cookie: string, key: string) =>
     .map((c) => c.trim())
     .find((c) => c.startsWith(`${key}=`))
     ?.split("=")[1];
+
+
+export const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+};

@@ -44,6 +44,24 @@
     "manage_user": "Manage User"
   },
   "app": {
+    "games": {
+      "contents": "Content",
+      "title": "Games Management",
+      "subtitle": "Create and manage interactive games for your community",
+      "search_bar": {
+        "placeholder": "Search games...",
+        "status_dropdown": {
+          "all": "All Games",
+          "published": "Active Games",
+          "draft": "Draft Games"
+        },
+        "type_dropdown": {
+          "all": "All Types",
+          "online": "Online Games",
+          "offline": "Offline Games"
+        }
+      }
+    },
     "home": {
       "new": {
         "title": "Add New Content",
@@ -66,8 +84,7 @@
         "all": "All Content",
         "published": "Published",
         "draft": "Draft"
-      },
-      "contents": "Content"
+      }
     }
   },
   "under_development": "This page is currently under development. Please come back later to see the full features."

@@ -4,7 +4,7 @@ import routerProvider, {
   UnsavedChangesNotifier,
   DocumentTitleHandler,
 } from "@refinedev/react-router";
-import { dataProviders } from "./providers/data";
+import { dataProviders } from "./providers/providers";
 import { Login } from "./pages/login";
 // import { ErrorComponent } from "./components/refine-ui/layout/error-component";
 import { Layout } from "./components/refine-ui/layout/layout";
@@ -79,7 +79,9 @@ function App() {
       if (action !== "access") return { can: false };
 
       // find from the parent (APP | LMS)
-      const resourceDef = allResources.find((r) => r?.meta?.parent === resource);
+      const resourceDef = allResources.find(
+        (r) => r?.meta?.parent === resource,
+      );
 
       return {
         can: resourceDef?.meta?.allowedRoles.includes(user.user.role) ?? false,
