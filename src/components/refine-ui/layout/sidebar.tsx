@@ -39,8 +39,6 @@ export function Sidebar() {
   const manageUserNav =
     menuItems.find((it) => it.name === "MANAGE_USERS") ?? null;
 
-  console.log(userRole, filteredPlatform?.children);
-
   return (
     <ShadcnSidebar
       collapsible="offcanvas"

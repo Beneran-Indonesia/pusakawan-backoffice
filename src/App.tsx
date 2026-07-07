@@ -4,7 +4,7 @@ import routerProvider, {
   UnsavedChangesNotifier,
   DocumentTitleHandler,
 } from "@refinedev/react-router";
-import { dataProviders } from "./providers/data";
+import { dataProviders } from "./providers/providers";
 import { Login } from "./pages/login";
 // import { ErrorComponent } from "./components/refine-ui/layout/error-component";
 import { Layout } from "./components/refine-ui/layout/layout";
@@ -21,7 +21,7 @@ import { createResources, filterResources } from "./providers/resources";
 import AppHome from "./pages/app/home";
 import AppHomeNew from "./pages/app/home-new";
 import AppGames from "./pages/app/games";
-import AppGamesNew from "./pages/app/games-new";
+import AppGamesForm from "./pages/app/games-form";
 import {
   APP_GAMES_NEW_ROUTE,
   APP_GAMES_ROUTE,
@@ -79,7 +79,9 @@ function App() {
       if (action !== "access") return { can: false };
 
       // find from the parent (APP | LMS)
-      const resourceDef = allResources.find((r) => r?.meta?.parent === resource);
+      const resourceDef = allResources.find(
+        (r) => r?.meta?.parent === resource,
+      );
 
       return {
         can: resourceDef?.meta?.allowedRoles.includes(user.user.role) ?? false,
@@ -152,7 +154,7 @@ function App() {
               path={APP_GAMES_NEW_ROUTE}
               element={
                 <Layout>
-                  <AppGamesNew />
+                  <AppGamesForm />
                 </Layout>
               }
             />

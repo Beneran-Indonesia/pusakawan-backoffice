@@ -59,7 +59,7 @@ export const createResources = (t: TFunction): ResourceProps[] => {
       list: APP_GAMES_ROUTE,
       name: "games",
       create: "/app/games/create",
-      edit: "/app/games/edit",
+      edit: APP_GAMES_ROUTE,
       meta: {
         parent: "APP",
         key: "games",

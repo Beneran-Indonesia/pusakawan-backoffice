@@ -44,7 +44,34 @@
     }
   },
   "app": {
+    "games": {
+      "contents": "Konten",
+      "title": "Manajemen Game",
+      "subtitle": "Buat dan kelola game interaktif untuk komunitas Anda",
+      "search_bar": {
+        "placeholder": "Cari game...",
+        "status_dropdown": {
+          "all": "Semua Game",
+          "published": "Game Aktif",
+          "draft": "Draf Game"
+        },
+        "type_dropdown": {
+          "all": "Semua Jenis",
+          "online": "Game Online",
+          "offline": "Game Offline"
+        }
+      }
+    },
     "home": {
+      "title": "Manajemen Beranda Aplikasi",
+      "subtitle": "Kelola konten yang akan ditampilkan di halaman beranda aplikasi siswa",
+      "new_button": "Konten Baru",
+      "filter": {
+        "title": "Cari konten...",
+        "all": "Semua konten",
+        "published": "Dipublikasikan",
+        "draft": "Draf"
+      },
       "new": {
         "title": "Tambah Konten Baru",
         "subtitle": "Unggah foto dan deskripsi baru untuk beranda aplikasi",
@@ -57,15 +84,6 @@
             "publish": "Publikasikan Konten"
           }
         }
-      },
-      "title": "Manajemen Beranda Aplikasi",
-      "subtitle": "Kelola konten yang akan ditampilkan di halaman beranda aplikasi siswa",
-      "new_button": "Konten Baru",
-      "filter": {
-        "title": "Cari konten...",
-        "all": "Semua konten",
-        "published": "Dipublikasikan",
-        "draft": "Draf"
       },
       "contents": "Konten"
     }

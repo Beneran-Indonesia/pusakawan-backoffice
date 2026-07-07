@@ -17,15 +17,15 @@ export const GameSchema = z.object({
         start_time: z.string(), // date time
         end_time: z.string(), // date time
     }),
-    diversity_points: z.boolean(),
     group_size: z.object({
         minimum_participants: z.number().int().min(1).max(100),
         maximum_participants: z.number().int().min(2).max(100),
     }),
+    diversity_points: z.boolean(),
     is_offline: z.boolean(), // online or offline
     is_linear_flow: z.boolean(), // linear or non-linear
     is_correct_authentication: z.boolean(), // correct / both authentication
-    is_automatic_start: z.boolean(), // automaic / manual start
+    is_automatic_start: z.boolean(), // automatic / manual start
 }).superRefine((game, ctx) => {
     if (game.held_on.end_date < game.held_on.start_date) {
         ctx.addIssue({
@@ -51,5 +51,7 @@ export const GameSchema = z.object({
         })
     }
 });
+
+export type GameStatus = z.infer<typeof GameStatusSchema>;
 
 export type Game = z.infer<typeof GameSchema>;
