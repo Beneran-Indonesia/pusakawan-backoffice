@@ -21,7 +21,7 @@ import { createResources, filterResources } from "./providers/resources";
 import AppHome from "./pages/app/home";
 import AppHomeNew from "./pages/app/home-new";
 import AppGames from "./pages/app/games";
-import AppGamesNew from "./pages/app/games-new";
+import AppGamesForm from "./pages/app/games-form";
 import {
   APP_GAMES_NEW_ROUTE,
   APP_GAMES_ROUTE,
@@ -154,7 +154,7 @@ function App() {
               path={APP_GAMES_NEW_ROUTE}
               element={
                 <Layout>
-                  <AppGamesNew />
+                  <AppGamesForm />
                 </Layout>
               }
             />
