@@ -18,17 +18,17 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router";
 
+type SidebarPanel = "LMS" | "APP"; 
+
 export function Sidebar() {
   const { data: userRole } = usePermissions({});
   const { open } = useShadcnSidebar();
   const { menuItems, selectedKey } = useMenu();
-  const [platform, setPlatform] = useState<"LMS" | "APP">("APP");
-  // changing the platform according to user's role :)
+  const [platform, setPlatform] = useState<SidebarPanel>("APP");
+  // onmount, change the platform panel according to user's role :)
   useEffect(() => {
-    if (userRole === "LMS") {
-      setPlatform("LMS");
-    }
-  }, [userRole]);
+    setPlatform(menuItems[0].name as SidebarPanel)
+  }, []);
 
   const PLATFORM_RULES = {
     APP: (item: TreeMenuItem) => item.name === "APP",

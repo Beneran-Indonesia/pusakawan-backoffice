@@ -4,7 +4,7 @@ import {
 } from "@/components/refine-ui/views/list-view";
 import { formatDate } from "@/lib/utils";
 import { Game } from "@/types/app/app-games-type";
-import { useCreate, useDelete, useList, useTranslate, useUpdate } from "@refinedev/core";
+import { useList, useTranslate, useUpdate } from "@refinedev/core";
 import { Calendar, Plus, Search, Trophy } from "lucide-react";
 import { useState } from "react";
 
@@ -21,19 +21,16 @@ export default function AppGames() {
   const {
     result: { data: games },
   } = useList<Game>({
-    dataProviderName: "appGamesData",
-    resource: "games",
+    resource: "app-games",
   });
 
   const { mutate } = useUpdate({
-    dataProviderName: "appGamesData",
-    resource: "games",
+    resource: "app-games",
   });
 
   const onCreateGame = () => null;
 
   const onToggleStatus = ({ id, status }: Game) => {
-    console.log("tertekan")
     mutate({
       id,
       values: {

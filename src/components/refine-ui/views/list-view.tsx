@@ -5,10 +5,10 @@ import type { PropsWithChildren } from "react";
 import {
   useResourceParams,
   useTranslate,
-  useUserFriendlyName,
 } from "@refinedev/core";
 import { CreateButton } from "@/components/refine-ui/buttons/create";
 import { cn } from "@/lib/utils";
+import { Plus } from "lucide-react";
 
 type ListViewProps = PropsWithChildren<{
   className?: string;
@@ -22,7 +22,7 @@ export function ListView({ children, className }: ListViewProps) {
 
 type ListHeaderProps = PropsWithChildren<{
   resource?: string;
-  title?: string;
+  listButtonLabel?: string;
   canCreate?: boolean;
   headerClassName?: string;
   wrapperClassName?: string;
@@ -31,7 +31,6 @@ type ListHeaderProps = PropsWithChildren<{
 export const ListViewHeader = ({
   canCreate,
   resource: resourceFromProps,
-  title: titleFromProps,
   wrapperClassName,
   headerClassName,
 }: ListHeaderProps) => {
@@ -40,10 +39,11 @@ export const ListViewHeader = ({
   const { resource, identifier } = useResourceParams({
     resource: resourceFromProps,
   });
+
   const resourceName = identifier ?? resource?.name;
 
   const translateKey =
-    `${resource?.meta?.parent}.${resource?.meta?.label}`.toLowerCase();
+    `${resource?.meta?.parent}.${resource?.meta?.key}.`.toLowerCase();
 
   const isCreateButtonVisible = canCreate ?? !!resource?.create;
 
@@ -51,15 +51,16 @@ export const ListViewHeader = ({
     <div className={cn("flex flex-col", "gap-1", wrapperClassName)}>
       <div className={cn("flex", "justify-between", "gap-4", headerClassName)}>
         <h1 className="text-3xl font-bold text-slate-800">
-          {t(translateKey + ".title")}
+          {t(translateKey + "title")}
         </h1>
         {isCreateButtonVisible && (
-          <div className="flex items-center gap-2">
-            <CreateButton size="lg" resource={resourceName} />
-          </div>
+          <CreateButton size="lg" resource={resourceName}>
+            <Plus className="w-5 h-5" />
+            {t(translateKey + "create_button")}
+          </CreateButton>
         )}
       </div>
-      <p className="text-slate-600 mt-1">{t(translateKey + ".subtitle")}</p>
+      <p className="text-slate-600 mt-1">{t(translateKey + "subtitle")}</p>
     </div>
   );
 };

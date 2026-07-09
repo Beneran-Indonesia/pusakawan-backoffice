@@ -48,6 +48,7 @@
       "contents": "Content",
       "title": "Games Management",
       "subtitle": "Create and manage interactive games for your community",
+      "create_button": "New Game",
       "search_bar": {
         "placeholder": "Search games...",
         "status_dropdown": {

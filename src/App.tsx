@@ -19,16 +19,17 @@ import { UserToken } from "@/types/users-type";
 import { createAuthProvider } from "./providers/auth-provider";
 import { createResources, filterResources } from "./providers/resources";
 import AppHome from "./pages/app/home";
-import AppHomeNew from "./pages/app/home-new";
 import AppGames from "./pages/app/games";
 import AppGamesForm from "./pages/app/games-form";
 import {
+  APP_GAMES_EDIT_ROUTE,
   APP_GAMES_NEW_ROUTE,
   APP_GAMES_ROUTE,
   APP_HOME_NEW_ROUTE,
   APP_HOME_ROUTE,
 } from "./lib/urls";
 import { UnderDevelopment } from "./components/refine-ui/layout/under-development";
+import AppHomeForm from "./pages/app/home-form";
 
 function App() {
   // I18N (INTERNATIONALIZATION / TRANSLATION)
@@ -113,6 +114,7 @@ function App() {
             projectId: "RTJIz6-9Uxngz-l6qX9H",
           }}
         >
+          {/* Login page */}
           <Routes>
             <Route
               index
@@ -122,7 +124,7 @@ function App() {
                 </Authenticated>
               }
             />
-
+            {/* List home */}
             <Route
               path={APP_HOME_ROUTE}
               element={
@@ -131,16 +133,18 @@ function App() {
                 </Layout>
               }
             />
-
+            {/* New home */}
             <Route
               path={APP_HOME_NEW_ROUTE}
               element={
                 <Layout>
-                  <AppHomeNew />
+                  <AppHomeForm />
                 </Layout>
               }
             />
+            {/* Edit home */}
 
+            {/* List games */}
             <Route
               path={APP_GAMES_ROUTE}
               element={
@@ -149,7 +153,16 @@ function App() {
                 </Layout>
               }
             />
-
+            {/* Edit games */}
+            <Route
+              path={APP_GAMES_EDIT_ROUTE}
+              element={
+                <Layout>
+                  <AppGamesForm />
+                </Layout>
+              }
+            />
+            {/* New games */}
             <Route
               path={APP_GAMES_NEW_ROUTE}
               element={
@@ -158,6 +171,7 @@ function App() {
                 </Layout>
               }
             />
+
             {/* 404 error, only if authenticated */}
             <Route
               path="*"

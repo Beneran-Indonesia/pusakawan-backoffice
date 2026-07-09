@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const PostStatusSchema = z.enum(["draft", "published"]);
 
-const PostSchema = z.object({
+export const PostSchema = z.object({
     id: z.string(),
     status: PostStatusSchema,
     thumbnail: z.string().url(),
