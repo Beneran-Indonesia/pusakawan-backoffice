@@ -60,6 +60,58 @@
           "online": "Game Online",
           "offline": "Game Offline"
         }
+      },
+      "questions": {
+        "add_new": {
+          "title": "Tambah Pertanyaan Baru",
+          "subtitle": "Pilih jenis pertanyaan yang ingin ditambahkan",
+          "multiple_choice": {
+            "title": "Pilihan Ganda",
+            "description": "Pertanyaan dengan 4 pilihan jawaban (A, B, C, D)"
+          },
+          "essay": {
+            "title": "Esai",
+            "description": "Pertanyaan jawaban singkat dengan petunjuk"
+          }
+        },
+        "list_title": "Pertanyaan",
+        "empty_state": "Belum ada pertanyaan. Tambahkan pertanyaan pertama Anda di atas.",
+        "question_label": "Pertanyaan {{number}}",
+        "no_question_text": "Belum ada teks pertanyaan",
+        "points_label": "Poin: {{points}}",
+        "edit": "Edit",
+        "delete": "Hapus",
+        "done_editing": "Selesai Edit",
+        "media": {
+          "title": "Tambah Media (Opsional)",
+          "upload_hint": "Unggah JPG, PNG, MP4, atau MP3"
+        },
+        "question_field": {
+          "label": "Pertanyaan",
+          "placeholder": "Masukkan pertanyaan Anda..."
+        },
+        "options": {
+          "label": "Pilihan Jawaban",
+          "placeholder": "Pilihan {{letter}}"
+        },
+        "correct_answer": "Jawaban Benar",
+        "pusaka_point": "Poin Pusaka",
+        "correct_answers": {
+          "label": "Jawaban Benar (3 variasi)",
+          "placeholder": "Jawaban benar {{number}}"
+        },
+        "hints": {
+          "label": "Petunjuk (Opsional)",
+          "subtitle": "Bantu pengguna dengan hingga 3 petunjuk (maks. 100 karakter masing-masing)",
+          "placeholder": "Petunjuk {{number}} (opsional)"
+        },
+        "validation": {
+          "correct_label": "Validasi Benar",
+          "incorrect_label": "Validasi Salah",
+          "correct_placeholder": "Kerja bagus! Jawaban benar!",
+          "incorrect_placeholder": "Jawaban salah. Coba lagi!"
+        },
+        "characters_suffix": "karakter"
       }
     },
     "home": {

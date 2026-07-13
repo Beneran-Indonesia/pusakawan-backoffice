@@ -60,6 +60,58 @@
           "online": "Online Games",
           "offline": "Offline Games"
         }
+      },
+      "questions": {
+        "add_new": {
+          "title": "Add New Question",
+          "subtitle": "Choose the type of question you want to add",
+          "multiple_choice": {
+            "title": "Multiple Choice",
+            "description": "Question with 4 answer options (A, B, C, D)"
+          },
+          "essay": {
+            "title": "Essay Question",
+            "description": "Short answer question with hints"
+          }
+        },
+        "list_title": "Questions",
+        "empty_state": "No questions yet. Add your first question above.",
+        "question_label": "Question {{number}}",
+        "no_question_text": "No question text",
+        "points_label": "Points: {{points}}",
+        "edit": "Edit",
+        "delete": "Delete",
+        "done_editing": "Done Editing",
+        "media": {
+          "title": "Add Media (Optional)",
+          "upload_hint": "Upload JPG, PNG, MP4, or MP3"
+        },
+        "question_field": {
+          "label": "Question",
+          "placeholder": "Enter your question..."
+        },
+        "options": {
+          "label": "Options",
+          "placeholder": "Option {{letter}}"
+        },
+        "correct_answer": "Correct Answer",
+        "pusaka_point": "Pusaka Point",
+        "correct_answers": {
+          "label": "Correct Answers (3 variations)",
+          "placeholder": "Correct answer {{number}}"
+        },
+        "hints": {
+          "label": "Hints (Optional)",
+          "subtitle": "Help users with up to 3 hints (max 100 characters each)",
+          "placeholder": "Hint {{number}} (optional)"
+        },
+        "validation": {
+          "correct_label": "Validasi Benar",
+          "incorrect_label": "Validasi Salah",
+          "correct_placeholder": "Great job! Correct answer!",
+          "incorrect_placeholder": "Incorrect answer. Try again!"
+        },
+        "characters_suffix": "characters"
       }
     },
     "home": {

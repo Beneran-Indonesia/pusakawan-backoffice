@@ -14,7 +14,7 @@ const BaseQuestionSchema = z.object({
 });
 
 const MultipleChoiceQuestionSchema = BaseQuestionSchema.extend({
-    is_essay_question: z.boolean(),
+    is_essay_question: z.literal(false),
     options: z.object({
         a: z.string().min(1).max(100),
         b: z.string().min(1).max(100),
@@ -30,7 +30,7 @@ const MultipleChoiceQuestionSchema = BaseQuestionSchema.extend({
 });
 
 const EssayQuestionSchema = BaseQuestionSchema.extend({
-    is_essay_question: z.boolean(),
+    is_essay_question: z.literal(true),
     correct_answers: z
         .array(z.string().max(300))
         .min(1)
