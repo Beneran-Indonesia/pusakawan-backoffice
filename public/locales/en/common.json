@@ -61,6 +61,25 @@
           "offline": "Offline Games"
         }
       },
+      "form": {
+        "back": "Back",
+        "untitled": "New Game (Untitled)",
+        "save_as_draft": "Save as Draft",
+        "publish": "Publish",
+        "status": {
+          "draft": "Draft",
+          "published": "Published"
+        },
+        "type": {
+          "offline": "Offline Game",
+          "online": "Online Game"
+        },
+        "tabs": {
+          "details": "Game Details",
+          "questions": "Questions",
+          "leaderboard": "Leaderboard"
+        }
+      },
       "questions": {
         "add_new": {
           "title": "Add New Question",

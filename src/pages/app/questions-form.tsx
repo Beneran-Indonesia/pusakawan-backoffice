@@ -97,7 +97,7 @@ export default function QuestionsForm({ control }: QuestionsFormProps) {
           <button
             type="button"
             onClick={() => handleAddQuestion("multiple_choice")}
-            className="flex items-start gap-3 p-4 bg-white border border-slate-200 rounded-xl hover:border-red-300 hover:bg-red-50/30 transition-colors text-left cursor-pointer"
+            className="flex items-start gap-3 p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-300 hover:bg-blue-50/30 transition-colors text-left cursor-pointer"
           >
             <span className="shrink-0 w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
               <ClipboardList className="w-5 h-5" />
@@ -115,7 +115,7 @@ export default function QuestionsForm({ control }: QuestionsFormProps) {
           <button
             type="button"
             onClick={() => handleAddQuestion("essay")}
-            className="flex items-start gap-3 p-4 bg-white border border-slate-200 rounded-xl hover:border-red-300 hover:bg-red-50/30 transition-colors text-left cursor-pointer"
+            className="flex items-start gap-3 p-4 bg-white border border-slate-200 rounded-xl hover:border-purple-300 hover:bg-purple-50/30 transition-colors text-left cursor-pointer"
           >
             <span className="shrink-0 w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center">
               <PenSquare className="w-5 h-5" />

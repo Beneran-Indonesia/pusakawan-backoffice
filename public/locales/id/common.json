@@ -61,6 +61,25 @@
           "offline": "Game Offline"
         }
       },
+      "form": {
+        "back": "Kembali",
+        "untitled": "Game Baru (Tanpa Judul)",
+        "save_as_draft": "Simpan sebagai Draf",
+        "publish": "Terbitkan",
+        "status": {
+          "draft": "Draf",
+          "published": "Diterbitkan"
+        },
+        "type": {
+          "offline": "Game Offline",
+          "online": "Game Online"
+        },
+        "tabs": {
+          "details": "Detail Game",
+          "questions": "Pertanyaan",
+          "leaderboard": "Papan Peringkat"
+        }
+      },
       "questions": {
         "add_new": {
           "title": "Tambah Pertanyaan Baru",
