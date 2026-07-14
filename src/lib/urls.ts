@@ -28,3 +28,7 @@ export const LOGOUT_API_URL = `${AUTH_API_URL}/logout`;
 // --- MANAGE USER ---
 export const MANAGE_USER_ROUTE = "/manage-user";
 export const MANAGE_USER_API_URL = `${API_URL}${MANAGE_USER_ROUTE}`;
+
+// --- EDIT PROFILE ---
+export const EDIT_PROFILE_ROUTE = "/edit-profile/me";
+export const EDIT_PROFILE_API_URL = `${API_URL}${EDIT_PROFILE_ROUTE}`;

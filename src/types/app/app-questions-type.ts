@@ -11,6 +11,8 @@ const BaseQuestionSchema = z.object({
         file_size: z.number().nonnegative(),
     }).optional(),
     pusaka_points: z.number().nonnegative(),
+    correct_validation: z.string().max(500),
+    incorrect_validation: z.string().max(500),
 });
 
 const MultipleChoiceQuestionSchema = BaseQuestionSchema.extend({
@@ -36,8 +38,6 @@ const EssayQuestionSchema = BaseQuestionSchema.extend({
         .min(1)
         .max(3),
     hints: z.array(z.string().max(100)).max(3),
-    correct_validation: z.string().max(500),
-    incorrect_validation: z.string().max(500),
 });
 
 export const QuestionSchema = z.discriminatedUnion("is_essay_question", [

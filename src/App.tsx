@@ -6,7 +6,6 @@ import routerProvider, {
 } from "@refinedev/react-router";
 import { dataProviders } from "./providers/providers";
 import { Login } from "./pages/login";
-// import { ErrorComponent } from "./components/refine-ui/layout/error-component";
 import { Layout } from "./components/refine-ui/layout/layout";
 import { useNotificationProvider } from "./components/refine-ui/notification/use-notification-provider";
 import { Toaster } from "./components/refine-ui/notification/toaster";
@@ -27,9 +26,11 @@ import {
   APP_GAMES_ROUTE,
   APP_HOME_NEW_ROUTE,
   APP_HOME_ROUTE,
+  EDIT_PROFILE_ROUTE,
 } from "./lib/urls";
 import { UnderDevelopment } from "./components/refine-ui/layout/under-development";
 import AppHomeForm from "./pages/app/home-form";
+import EditProfile from "./pages/edit-profile";
 
 function App() {
   // I18N (INTERNATIONALIZATION / TRANSLATION)
@@ -55,13 +56,13 @@ function App() {
     switch (location.pathname) {
       case "/":
         return formattedWebsiteTitle(t("routes.sign_in"));
-      case "/app/home":
+      case APP_HOME_ROUTE:
         return formattedWebsiteTitle(t("routes.app_home"));
-      case "/app/home/new":
+      case APP_HOME_NEW_ROUTE:
         return formattedWebsiteTitle(t("routes.app_home_new"));
-      case "/app/games":
+      case APP_GAMES_ROUTE:
         return formattedWebsiteTitle(t("routes.app_games"));
-      case "/app/games/new":
+      case APP_GAMES_NEW_ROUTE:
         return formattedWebsiteTitle(t("routes.app_games_new"));
       default:
         return websiteTitle;
@@ -77,6 +78,7 @@ function App() {
       if (!user || !resource) {
         return { can: false };
       }
+
       if (action !== "access") return { can: false };
 
       // find from the parent (APP | LMS)
@@ -171,7 +173,8 @@ function App() {
                 </Layout>
               }
             />
-
+            {/* Manage users */}
+            <Route path={EDIT_PROFILE_ROUTE} element={<EditProfile />} />
             {/* 404 error, only if authenticated */}
             <Route
               path="*"

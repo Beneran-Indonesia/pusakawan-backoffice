@@ -1,3 +1,4 @@
+import { CreateButton } from "@/components/refine-ui/buttons/create";
 import {
   ListView,
   ListViewHeader,
@@ -27,8 +28,6 @@ export default function AppGames() {
   const { mutate } = useUpdate({
     resource: "app-games",
   });
-
-  const onCreateGame = () => null;
 
   const onToggleStatus = ({ id, status }: Game) => {
     mutate({
@@ -204,18 +203,15 @@ export default function AppGames() {
         <div className="text-center py-16 bg-white rounded-xl border border-slate-200">
           <Trophy className="w-16 h-16 text-slate-300 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-slate-800 mb-2">
-            No games yet
+            {t("app.games.empty_state.title")}
           </h3>
           <p className="text-slate-600 mb-6">
-            Create your first game to engage your community
+            {t("app.games.empty_state.subtitle")}
           </p>
-          <button
-            onClick={onCreateGame}
-            className="bg-red-700 text-white px-6 py-3 rounded-lg hover:bg-red-800 transition-colors font-medium inline-flex items-center gap-2"
-          >
+          <CreateButton>
             <Plus className="w-5 h-5" />
-            Create First Game
-          </button>
+            {t("app.games.create_button")}
+          </CreateButton>
         </div>
       )}
 
@@ -224,7 +220,7 @@ export default function AppGames() {
         <div className="text-center py-16 bg-white rounded-xl border border-slate-200">
           <Trophy className="w-16 h-16 text-slate-300 mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-slate-800 mb-2">
-            No games found
+            {t("app.games.empty_filter.title")}
           </h3>
           <p className="text-slate-600">
             {filterStatus === "published" && "No published games available"}

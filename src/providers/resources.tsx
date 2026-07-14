@@ -5,11 +5,19 @@ import {
   Trophy,
   ShoppingBag,
   Users,
+  UserPen,
 } from "lucide-react";
 import { UserToken } from "@/types/users-type";
 import { ResourceProps } from "@refinedev/core";
 import { TFunction } from "i18next";
-import { APP_GAMES_EDIT_ROUTE, APP_GAMES_NEW_ROUTE, APP_GAMES_ROUTE, APP_HOME_ROUTE, APP_PROGRAM_ROUTE } from "@/lib/urls";
+import {
+  APP_GAMES_EDIT_ROUTE,
+  APP_GAMES_NEW_ROUTE,
+  APP_GAMES_ROUTE,
+  APP_HOME_ROUTE,
+  APP_PROGRAM_ROUTE,
+  EDIT_PROFILE_ROUTE,
+} from "@/lib/urls";
 
 export const createResources = (t: TFunction): ResourceProps[] => {
   const lmsNavItems: ResourceProps[] = [
@@ -103,7 +111,7 @@ export const createResources = (t: TFunction): ResourceProps[] => {
 
   const manageUserNavItem: ResourceProps = {
     list: "/manage-users",
-    name: "Manage Users",
+    name: "manage-users",
     create: "",
     edit: "",
     identifier: "manage-users",
@@ -116,7 +124,22 @@ export const createResources = (t: TFunction): ResourceProps[] => {
     },
   };
 
-  return [...lmsNavItems, ...appNavItems, manageUserNavItem];
+  const editProfileNavItem: ResourceProps = {
+    list: EDIT_PROFILE_ROUTE,
+    name: "profile",
+    edit: EDIT_PROFILE_ROUTE,
+    identifier: "profile",
+    meta: {
+      parent: "EDIT_PROFILE",
+      key: "edit-profile",
+      label: "Edit Profile",
+      icon: <UserPen className="w-5 h-5" />,
+      allowedRoles: ["SUPER_ADMIN", "ADMIN", "APP", "LMS"],
+      dataProviderName: "editProfileData"
+    },
+  };
+
+  return [...lmsNavItems, ...appNavItems, editProfileNavItem, manageUserNavItem];
 };
 
 export const filterResources = (
