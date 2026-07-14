@@ -1,12 +1,10 @@
-import {
-  GameDetails,
-  GameDetailsSchema,
-} from "@/types/app/app-game-details-type";
+import { Post, PostSchema } from "@/types/app/app-home-type";
 import { zodResolver } from "@hookform/resolvers/zod";
+// import { zodResolver } from "@hookform/resolvers/zod";
 import { HttpError, useTranslate } from "@refinedev/core";
-import { useForm } from "react-hook-form";
+import { useForm } from "@refinedev/react-hook-form";
 
-export default function AppGamesForm() {
+export default function AppHomeForm() {
   const t = useTranslate();
 
   // form:
@@ -15,12 +13,13 @@ export default function AppGamesForm() {
     control,
     handleSubmit,
     register,
-  } = useForm<GameDetails, HttpError, GameDetails>({
-    resolver: zodResolver(GameDetailsSchema),
+  } = useForm<Post, HttpError, Post>({
+    resolver: zodResolver(PostSchema),
   });
 
   const submit = handleSubmit(async (values) => {
     await onFinish(values);
   });
+
   return <></>;
 }

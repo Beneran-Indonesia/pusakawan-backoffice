@@ -17,6 +17,8 @@ import { cn } from "@/lib/utils";
 import { LanguageSwitcher } from "./language-switcher";
 import { Separator } from "@/components/ui/separator";
 import NotificationHeader from "@/components/refine-ui/notification/notification-header";
+import { useNavigate } from "react-router";
+import { EDIT_PROFILE_ROUTE } from "@/lib/urls";
 
 export const Header = () => {
   const { isMobile } = useSidebar();
@@ -111,6 +113,7 @@ type UserDropdownProps = {
 const UserDropdown = ({ desktopSize }: UserDropdownProps) => {
   const { translate } = useTranslation();
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
+  const navigate = useNavigate();
 
   const authProvider = useActiveAuthProvider();
 
@@ -126,7 +129,7 @@ const UserDropdown = ({ desktopSize }: UserDropdownProps) => {
       <DropdownMenuContent align="end">
         <DropdownMenuItem
           onClick={() => {
-            // redirect to edit profile
+            navigate(EDIT_PROFILE_ROUTE);
           }}
         >
           <UserPen
