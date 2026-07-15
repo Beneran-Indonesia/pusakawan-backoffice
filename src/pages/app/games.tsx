@@ -5,7 +5,12 @@ import {
 } from "@/components/refine-ui/views/list-view";
 import { formatDate } from "@/lib/utils";
 import { Game } from "@/types/app/app-games-type";
-import { useList, useTranslate, useUpdate } from "@refinedev/core";
+import {
+  useList,
+  useNavigation,
+  useTranslate,
+  useUpdate,
+} from "@refinedev/core";
 import { Calendar, Plus, Search, Trophy } from "lucide-react";
 import { useState } from "react";
 
@@ -28,6 +33,8 @@ export default function AppGames() {
   const { mutate } = useUpdate({
     resource: "app-games",
   });
+
+  const { edit } = useNavigation();
 
   const onToggleStatus = ({ id, status }: Game) => {
     mutate({
@@ -55,7 +62,7 @@ export default function AppGames() {
   const renderGameCard = (game: Game) => (
     <div
       key={game.id}
-      // onClick={() => onSelectGame(game)}
+      onClick={() => edit("app-games", game.id)}
       className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer"
     >
       <div className="relative h-48 bg-linear-to-br from-red-500 to-red-700 overflow-hidden">

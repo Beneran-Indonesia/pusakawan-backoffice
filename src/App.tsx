@@ -75,11 +75,11 @@ function App() {
 
   const accessControlProvider: AccessControlProvider = {
     can: async ({ resource, action }) => {
+      if (action !== "access") return { can: true };
+
       if (!user || !resource) {
         return { can: false };
       }
-
-      if (action !== "access") return { can: false };
 
       // find from the parent (APP | LMS)
       const resourceDef = allResources.find(
