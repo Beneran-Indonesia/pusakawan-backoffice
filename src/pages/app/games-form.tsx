@@ -4,7 +4,7 @@ import {
 } from "@/types/app/app-game-details-type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HttpError, useTranslate } from "@refinedev/core";
-import { useForm } from "react-hook-form";
+import { useForm } from "@refinedev/react-hook-form";
 
 export default function AppGamesForm() {
   const t = useTranslate();
