@@ -10,7 +10,7 @@ import {
 import { UserToken } from "@/types/users-type";
 import { ResourceProps } from "@refinedev/core";
 import { TFunction } from "i18next";
-import { APP_GAMES_ROUTE, APP_HOME_ROUTE, APP_PROGRAM_ROUTE } from "@/lib/urls";
+import { APP_GAMES_ROUTE, APP_HOME_ROUTE, APP_PROGRAM_ROUTE, EDIT_PROFILE_ROUTE } from "@/lib/urls";
 
 export const createResources = (t: TFunction): ResourceProps[] => {
   const lmsNavItems: ResourceProps[] = [
