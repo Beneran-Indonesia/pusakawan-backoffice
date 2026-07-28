@@ -75,11 +75,18 @@ function App() {
 
   const accessControlProvider: AccessControlProvider = {
     can: async ({ resource, action }) => {
+      // Only the sidebar/menu "access" action is actually gated by role.
+      // Every other action (create, edit, delete, list, show, ...) is
+      // allowed by default — this app doesn't implement per-action
+      // permissions, only per-resource menu visibility. Returning
+      // `{ can: false }` here for non-"access" actions was silently
+      // disabling every CreateButton/EditButton/DeleteButton in the app
+      // (they call `can` with their own action, not "access").
+      if (action !== "access") return { can: true };
+
       if (!user || !resource) {
         return { can: false };
       }
-
-      if (action !== "access") return { can: false };
 
       // find from the parent (APP | LMS)
       const resourceDef = allResources.find(

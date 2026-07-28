@@ -4,8 +4,9 @@ import {
   ListViewHeader,
 } from "@/components/refine-ui/views/list-view";
 import { formatDate } from "@/lib/utils";
+import { APP_GAMES_NEW_ROUTE } from "@/lib/urls";
 import { Game } from "@/types/app/app-games-type";
-import { useList, useTranslate, useUpdate } from "@refinedev/core";
+import { useCreate, useDelete, useList, useTranslate, useUpdate } from "@refinedev/core";
 import { Calendar, Plus, Search, Trophy } from "lucide-react";
 import { useState } from "react";
 
@@ -29,7 +30,10 @@ export default function AppGames() {
     resource: "app-games",
   });
 
+  const onCreateGame = () => null;
+
   const onToggleStatus = ({ id, status }: Game) => {
+    console.log("tertekan")
     mutate({
       id,
       values: {
