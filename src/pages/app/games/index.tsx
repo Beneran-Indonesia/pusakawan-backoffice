@@ -4,7 +4,7 @@ import {
   ListViewHeader,
 } from "@/components/refine-ui/views/list-view";
 import { formatDate } from "@/lib/utils";
-import { GameDetails } from "@/types/app/app-game-details-type";
+import { Game } from "@/types/app/app-games-type";
 import {
   useList,
   useNavigation,
@@ -26,7 +26,7 @@ export default function AppGames() {
 
   const {
     result: { data: games },
-  } = useList<GameDetails>({
+  } = useList<Game>({
     resource: "app-games",
   });
 
@@ -36,7 +36,7 @@ export default function AppGames() {
 
   const { edit } = useNavigation();
 
-  const onToggleStatus = ({ id, status }: GameDetails) => {
+  const onToggleStatus = ({ id, status }: Game) => {
     mutate({
       id,
       values: {
@@ -50,26 +50,26 @@ export default function AppGames() {
     const matchesStatus = filterStatus === "all" || g.status === filterStatus;
 
     const matchesType =
-      filterType === "all" || g.game.is_offline === (filterType === "offline");
+      filterType === "all" || g.is_offline === (filterType === "offline");
 
     const matchesSearch =
       searchTerm === "" ||
-      g.game.title.toLowerCase().includes(searchTerm.toLowerCase());
+      g.title.toLowerCase().includes(searchTerm.toLowerCase());
 
     return matchesStatus && matchesType && matchesSearch;
   });
 
-  const renderGameCard = (gameDetails: GameDetails) => (
+  const renderGameCard = (gameDetails: Game) => (
     <div
-      key={gameDetails.game.id}
-      onClick={() => edit("app-games", gameDetails.game.id)}
+      key={gameDetails.id}
+      onClick={() => edit("app-games", gameDetails.id)}
       className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer"
     >
       <div className="relative h-48 bg-linear-to-br from-red-500 to-red-700 overflow-hidden">
-        {gameDetails.game.banner ? (
+        {gameDetails.banner ? (
           <img
-            src={gameDetails.game.banner}
-            alt={gameDetails.game.title}
+            src={gameDetails.banner}
+            alt={gameDetails.title}
             className="w-full h-full object-cover"
           />
         ) : (
@@ -89,32 +89,32 @@ export default function AppGames() {
           </span>
           <span
             className={`px-3 py-1 rounded-full text-xs font-semibold ${
-              gameDetails.game.is_offline
+              gameDetails.is_offline
                 ? "bg-blue-500 text-white"
                 : "bg-slate-400 text-white"
             }`}
           >
-            {gameDetails.game.is_offline ? "Offline" : "Online"}
+            {gameDetails.is_offline ? "Offline" : "Online"}
           </span>
         </div>
       </div>
 
       <div className="p-5">
         <h3 className="font-bold text-lg mb-2 text-slate-800 line-clamp-1">
-          {gameDetails.game.title}
+          {gameDetails.title}
         </h3>
 
-        {gameDetails.game.description && (
+        {gameDetails.description && (
           <p className="text-sm text-slate-600 mb-4 line-clamp-2">
-            {gameDetails.game.description}
+            {gameDetails.description}
           </p>
         )}
 
         <div className="space-y-2 mb-4">
-          {gameDetails.game.held_on && (
+          {gameDetails.held_on && (
             <div className="flex items-center gap-1 text-xs text-slate-500">
               <Calendar className="w-4 h-4" />
-              <span>{formatDate(gameDetails.game.held_on.start_datetime)}</span>
+              <span>{formatDate(gameDetails.held_on.start_datetime)}</span>
             </div>
           )}
         </div>

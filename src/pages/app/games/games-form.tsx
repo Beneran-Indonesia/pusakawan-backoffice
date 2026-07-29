@@ -114,7 +114,7 @@ export default function AppGamesForm() {
               Questions
             </TabsTrigger>
             <TabsTrigger value="leaderboard" className={tabTriggerClass}>
-              Leaderboard
+              Leaderboard 
             </TabsTrigger>
           </TabsList>
 

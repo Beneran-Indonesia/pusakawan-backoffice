@@ -1,8 +1,10 @@
 import { z } from "zod";
+import { GameStatusSchema } from "./app-game-details-type";
 
 export const GameSchema = z
   .object({
     id: z.string(),
+    status: GameStatusSchema,
     title: z.string().max(100),
     banner: z.string().url(),
     description: z.string().max(500),
