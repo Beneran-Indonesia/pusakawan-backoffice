@@ -18,8 +18,8 @@ import { UserToken } from "@/types/users-type";
 import { createAuthProvider } from "./providers/auth-provider";
 import { createResources, filterResources } from "./providers/resources";
 import AppHome from "./pages/app/home";
-import AppGames from "./pages/app/games";
-import AppGamesForm from "./pages/app/games-form";
+import AppGames from "./pages/app/games/index";
+import AppGamesForm from "./pages/app/games/games-form";
 import {
   APP_GAMES_EDIT_ROUTE,
   APP_GAMES_NEW_ROUTE,
