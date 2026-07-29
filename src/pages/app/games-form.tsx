@@ -1,8 +1,8 @@
-import { Game, GameSchema } from "@/types/app/app-games-type";
+import { Game, GameSchema, GameStatus } from "@/types/app/app-games-type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HttpError } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
-import { Controller } from "react-hook-form";
+import { Controller, Control, FieldPath, FieldValues } from "react-hook-form";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import {
@@ -17,29 +17,8 @@ import {
 import { LoadingOverlay } from "@/components/refine-ui/layout/loading-overlay";
 import { UnderDevelopment } from "@/components/refine-ui/layout/under-development";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-
-const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
-  const hour = String(Math.floor(i / 2)).padStart(2, "0");
-  const minute = i % 2 === 0 ? "00" : "30";
-  return `${hour}:${minute}`;
-});
-
-const DEFAULT_GAME: Game = {
-  id: "",
-  title: "",
-  status: "draft",
-  banner: "",
-  description: "",
-  rules: [],
-  held_on: { start_date: "", end_date: "" },
-  time_range: { start_time: "09:00", end_time: "17:00" },
-  group_size: { minimum_participants: 1, maximum_participants: 2 },
-  diversity_points: false,
-  is_offline: true,
-  is_linear_flow: true,
-  is_correct_authentication: true,
-  is_automatic_start: true,
-};
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const tabTriggerClass =
   "flex-1 rounded-lg py-3 text-sm font-semibold text-slate-600 transition-colors " +
@@ -49,6 +28,8 @@ const tabTriggerClass =
 export default function AppGamesForm() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("details");
+
+  const notValid = true;
 
   const {
     refineCore: { onFinish, formLoading },
@@ -60,12 +41,18 @@ export default function AppGamesForm() {
     formState: { errors, isSubmitting },
   } = useForm<Game, HttpError, Game>({
     resolver: zodResolver(GameSchema),
-    defaultValues: DEFAULT_GAME,
+    defaultValues: {
+      is_offline: true,
+      is_linear_flow: true,
+      is_correct_authentication: true,
+      is_automatic_start: true,
+      diversity_points: true,
+    },
   });
 
   const title = watch("title") ?? "";
   const description = watch("description") ?? "";
-  const banner = watch("banner");
+  const banner = watch("banner") ?? "";
   const status = watch("status");
   const isOffline = watch("is_offline");
   const rules = watch("rules") ?? [];
@@ -98,13 +85,14 @@ export default function AppGamesForm() {
     });
   };
 
-  const onSaveDraft = handleSubmit(async (values) => {
-    await onFinish({ ...values, status: "draft" });
-  });
+  const onFinishWithStatus = (status: GameStatus) =>
+    handleSubmit(async (values) => {
+      await onFinish({
+        ...values,
+        status,
+      });
+    })();
 
-  const onPublish = handleSubmit(async (values) => {
-    await onFinish({ ...values, status: "published" });
-  });
 
   return (
     <LoadingOverlay loading={formLoading}>
@@ -120,7 +108,7 @@ export default function AppGamesForm() {
               <ArrowLeft className="w-5 h-5 text-slate-700" />
             </button>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-slate-900">
+              <h1 className="text-xl md:text-2xl font-bold text-slate-900">
                 {title || "New Game"}
               </h1>
               <p className="text-slate-500 mt-1">
@@ -130,11 +118,11 @@ export default function AppGamesForm() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center justify-center gap-3 shrink-0 mt-2">
             <button
               type="button"
               disabled={isSubmitting}
-              onClick={onSaveDraft}
+              onClick={() => onFinishWithStatus("draft")}
               className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition-colors disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
@@ -142,8 +130,8 @@ export default function AppGamesForm() {
             </button>
             <button
               type="button"
-              disabled={isSubmitting}
-              onClick={onPublish}
+              disabled={isSubmitting || notValid}
+              onClick={() => onFinishWithStatus("published")}
               className="flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
             >
               <Eye className="w-4 h-4" />
@@ -170,9 +158,9 @@ export default function AppGamesForm() {
           <TabsContent value="details" className="mt-6 space-y-6">
             {/* Game Type */}
             <section className="bg-white rounded-xl border border-slate-200 p-6">
-              <label className="block text-sm font-semibold text-slate-700 mb-3">
+              <Label className="block text-sm font-semibold text-slate-700 mb-3">
                 Game Type
-              </label>
+              </Label>
               <Controller
                 control={control}
                 name="is_offline"
@@ -215,15 +203,15 @@ export default function AppGamesForm() {
 
             {/* Game Title */}
             <section className="bg-white rounded-xl border border-slate-200 p-6">
-              <label className="block text-sm font-semibold text-slate-700 mb-3">
+              <Label className="block text-sm font-semibold text-slate-700 mb-3">
                 Game Title
-              </label>
-              <input
+              </Label>
+              <Input
+                className="px-4"
                 {...register("title")}
                 type="text"
                 maxLength={100}
                 placeholder="Enter game title"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-white transition-all"
               />
               <div className="flex items-center justify-between mt-1">
                 {errors.title && (
@@ -237,9 +225,9 @@ export default function AppGamesForm() {
 
             {/* Banner */}
             <section className="bg-white rounded-xl border border-slate-200 p-6">
-              <label className="block text-sm font-semibold text-slate-700 mb-3">
+              <Label className="block text-sm font-semibold text-slate-700 mb-3">
                 Banner
-              </label>
+              </Label>
               {banner ? (
                 <div className="relative rounded-xl overflow-hidden border border-slate-200">
                   <img
@@ -261,16 +249,16 @@ export default function AppGamesForm() {
                   </button>
                 </div>
               ) : (
-                <label className="flex flex-col items-center justify-center gap-2 h-40 rounded-xl border-2 border-dashed border-slate-300 text-slate-400 hover:border-red-400 hover:text-red-500 cursor-pointer transition-colors">
+                <Label className="flex flex-col items-center justify-center gap-2 h-40 rounded-xl border-2 border-dashed border-slate-300 text-slate-400 hover:border-red-400 hover:text-red-500 cursor-pointer transition-colors">
                   <ImagePlus className="w-8 h-8" />
                   <span className="text-sm font-medium">Upload banner</span>
-                  <input
+                  <Input
+                    className="px-4 hidden"
                     type="file"
                     accept="image/*"
-                    className="hidden"
                     onChange={handleBannerUpload}
                   />
-                </label>
+                </Label>
               )}
               {errors.banner && (
                 <p className="text-xs text-red-600 mt-1">
@@ -281,9 +269,9 @@ export default function AppGamesForm() {
 
             {/* About the Game */}
             <section className="bg-white rounded-xl border border-slate-200 p-6">
-              <label className="block text-sm font-semibold text-slate-700 mb-3">
+              <Label className="block text-sm font-semibold text-slate-700 mb-3">
                 About the Game
-              </label>
+              </Label>
               <textarea
                 {...register("description")}
                 maxLength={500}
@@ -305,20 +293,20 @@ export default function AppGamesForm() {
 
             {/* Game Rules */}
             <section className="bg-white rounded-xl border border-slate-200 p-6">
-              <label className="block text-sm font-semibold text-slate-700 mb-3">
-                Game Rules (Max 5)
-              </label>
+              <Label className="block text-sm font-semibold text-slate-700 mb-3">
+                Game Rules (Max 5) - Not Required
+              </Label>
               <div className="space-y-4">
                 {rules.map((rule, index) => (
                   <div key={index} className="flex items-start gap-3">
                     <div className="flex-1">
-                      <input
+                      <Input
+                        className="px-4"
                         type="text"
                         value={rule}
                         maxLength={200}
                         onChange={(e) => updateRule(index, e.target.value)}
                         placeholder={`Rule ${index + 1}`}
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-white transition-all"
                       />
                       <p className="text-xs text-slate-400 text-right mt-1">
                         {rule.length}/200 characters
@@ -338,10 +326,10 @@ export default function AppGamesForm() {
                   <button
                     type="button"
                     onClick={addRule}
-                    className="flex items-center gap-2 px-4 py-2.5 border border-dashed border-slate-300 text-slate-500 rounded-xl hover:border-red-400 hover:text-red-500 transition-colors text-sm font-medium"
+                    className="flex w-full justify-center items-center gap-2 px-4 py-2.5 border border-dashed border-slate-300 text-slate-500 rounded-xl hover:border-red-400 hover:text-red-500 transition-colors text-sm font-medium"
                   >
                     <Plus className="w-4 h-4" />
-                    Add Rule
+                    Add Custom Rules
                   </button>
                 )}
               </div>
@@ -352,162 +340,126 @@ export default function AppGamesForm() {
               )}
             </section>
 
-            {/* Held On (Date Range) */}
-            <section className="bg-white rounded-xl border border-slate-200 p-6">
-              <label className="block text-sm font-semibold text-slate-700 mb-3">
-                Held On (Date Range)
-              </label>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs text-slate-500 mb-1.5">
-                    Start Date
-                  </label>
-                  <input
-                    {...register("held_on.start_date")}
-                    type="date"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-white transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-slate-500 mb-1.5">
-                    End Date
-                  </label>
-                  <input
-                    {...register("held_on.end_date")}
-                    type="date"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-white transition-all"
-                  />
-                </div>
-              </div>
-              {errors.held_on?.end_date && (
-                <p className="text-xs text-red-600 mt-2">
-                  {errors.held_on.end_date.message}
-                </p>
-              )}
-            </section>
+            <div className="grid grid-cols-1 lg:grid-cols-10 gap-6">
+              {/* Date Range */}
+              <section className="lg:col-span-7 bg-white rounded-xl border border-slate-200 p-6">
+                <Label className="block text-sm font-semibold text-slate-700 mb-3">
+                  Held On (Datetime Range)
+                </Label>
 
-            {/* Time Range */}
-            <section className="bg-white rounded-xl border border-slate-200 p-6">
-              <label className="block text-sm font-semibold text-slate-700 mb-3">
-                Time Range
-              </label>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs text-slate-500 mb-1.5">
-                    Start Time
-                  </label>
-                  <select
-                    {...register("time_range.start_time")}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-white transition-all"
-                  >
-                    {TIME_OPTIONS.map((time) => (
-                      <option key={time} value={time}>
-                        {time}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs text-slate-500 mb-1.5">
-                    End Time
-                  </label>
-                  <select
-                    {...register("time_range.end_time")}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-white transition-all"
-                  >
-                    {TIME_OPTIONS.map((time) => (
-                      <option key={time} value={time}>
-                        {time}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              {errors.time_range?.end_time && (
-                <p className="text-xs text-red-600 mt-2">
-                  {errors.time_range.end_time.message}
-                </p>
-              )}
-            </section>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="block text-xs text-slate-500 mb-1.5">
+                      Start Date
+                    </Label>
+                    <Input
+                      className="px-4"
+                      {...register("held_on.start_datetime")}
+                      type="datetime-local"
+                    />
+                  </div>
 
-            {/* Diversity Points */}
-            <section className="bg-white rounded-xl border border-slate-200 p-6">
-              <label className="block text-sm font-semibold text-slate-700 mb-3">
-                Diversity Points
-              </label>
-              <Controller
+                  <div>
+                    <Label className="block text-xs text-slate-500 mb-1.5">
+                      End Date
+                    </Label>
+                    <Input
+                      className="px-4"
+                      {...register("held_on.end_datetime")}
+                      type="datetime-local"
+                    />
+                  </div>
+                </div>
+
+                {errors.held_on?.end_datetime && (
+                  <p className="text-xs text-red-600 mt-2">
+                    {errors.held_on.end_datetime.message}
+                  </p>
+                )}
+              </section>
+
+              {/* Group Size */}
+              <section className="lg:col-span-3 bg-white rounded-xl border border-slate-200 p-6">
+                <Label className="block text-sm font-semibold text-slate-700 mb-3">
+                  Group Size (Members per Group)
+                </Label>
+
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <Label className="block text-xs text-slate-500 mb-1.5">
+                      Minimum Members
+                    </Label>
+                    <Input
+                      className="px-4"
+                      {...register("group_size.minimum_participants", {
+                        valueAsNumber: true,
+                      })}
+                      type="number"
+                      min={1}
+                      max={100}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label className="block text-xs text-slate-500 mb-1.5">
+                      Maximum Members
+                    </Label>
+                    <Input
+                      className="px-4"
+                      {...register("group_size.maximum_participants", {
+                        valueAsNumber: true,
+                      })}
+                      type="number"
+                      min={2}
+                      max={100}
+                    />
+                  </div>
+                </div>
+
+                {errors.group_size?.maximum_participants && (
+                  <p className="text-xs text-red-600 mt-2">
+                    {errors.group_size.maximum_participants.message}
+                  </p>
+                )}
+              </section>
+            </div>
+
+            <div className="block lg:grid grid-cols-2 grid-rows-2 gap-4">
+              {/* Diversity Points */}
+              <BooleanToggleField
                 control={control}
                 name="diversity_points"
-                render={({ field }) => (
-                  <div className="flex justify-center gap-4">
-                    <button
-                      type="button"
-                      onClick={() => field.onChange(true)}
-                      className={`w-56 py-3 rounded-xl border-2 font-semibold transition-all ${
-                        field.value
-                          ? "border-red-600 bg-red-50 text-red-600"
-                          : "border-slate-200 text-slate-600 hover:border-slate-300"
-                      }`}
-                    >
-                      ON
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => field.onChange(false)}
-                      className={`w-56 py-3 rounded-xl border-2 font-semibold transition-all ${
-                        !field.value
-                          ? "border-red-600 bg-red-50 text-red-600"
-                          : "border-slate-200 text-slate-600 hover:border-slate-300"
-                      }`}
-                    >
-                      OFF
-                    </button>
-                  </div>
-                )}
+                label="Diversity Points"
+                trueLabel="ON"
+                falseLabel="OFF"
               />
-            </section>
 
-            {/* Group Size */}
-            <section className="bg-white rounded-xl border border-slate-200 p-6">
-              <label className="block text-sm font-semibold text-slate-700 mb-3">
-                Group Size (Members per Group)
-              </label>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs text-slate-500 mb-1.5">
-                    Minimum Members
-                  </label>
-                  <input
-                    {...register("group_size.minimum_participants", {
-                      valueAsNumber: true,
-                    })}
-                    type="number"
-                    min={1}
-                    max={100}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-white transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-slate-500 mb-1.5">
-                    Maximum Members
-                  </label>
-                  <input
-                    {...register("group_size.maximum_participants", {
-                      valueAsNumber: true,
-                    })}
-                    type="number"
-                    min={2}
-                    max={100}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-white transition-all"
-                  />
-                </div>
-              </div>
-              {errors.group_size?.maximum_participants && (
-                <p className="text-xs text-red-600 mt-2">
-                  {errors.group_size.maximum_participants.message}
-                </p>
-              )}
-            </section>
+              {/* Linear Flow */}
+              <BooleanToggleField
+                control={control}
+                name="is_linear_flow"
+                label="Linear Flow"
+                trueLabel="Linear"
+                falseLabel="Non-Linear"
+              />
+
+              {/* Correct Authentication */}
+              <BooleanToggleField
+                control={control}
+                name="is_correct_authentication"
+                label="Correct Authentication"
+                trueLabel="Correct"
+                falseLabel="Both Authentication"
+              />
+
+              {/* Automation Start */}
+              <BooleanToggleField
+                control={control}
+                name="is_automatic_start"
+                label="Automatic Start"
+                trueLabel="Automatic"
+                falseLabel="Manual"
+              />
+            </div>
           </TabsContent>
 
           {/* QUESTIONS TAB */}
@@ -528,5 +480,61 @@ export default function AppGamesForm() {
         </Tabs>
       </form>
     </LoadingOverlay>
+  );
+}
+
+type BooleanToggleFieldProps<T extends FieldValues> = {
+  control: Control<T>;
+  name: FieldPath<T>;
+  label: string;
+  trueLabel?: string;
+  falseLabel?: string;
+};
+
+export function BooleanToggleField<T extends FieldValues>({
+  control,
+  name,
+  label,
+  trueLabel = "ON",
+  falseLabel = "OFF",
+}: BooleanToggleFieldProps<T>) {
+  return (
+    <section className="bg-white rounded-xl border border-slate-200 p-6">
+      <Label className="block text-sm font-semibold text-slate-700 mb-5">
+        {label}
+      </Label>
+
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <div className="flex justify-center gap-4">
+            <button
+              type="button"
+              onClick={() => field.onChange(true)}
+              className={`w-1/2 py-3 rounded-xl border-2 font-semibold transition-all ${
+                field.value
+                  ? "border-red-600 bg-red-50 text-red-600"
+                  : "border-slate-200 text-slate-600 hover:border-slate-300"
+              }`}
+            >
+              {trueLabel}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => field.onChange(false)}
+              className={`w-1/2 py-3 rounded-xl border-2 font-semibold transition-all ${
+                !field.value
+                  ? "border-red-600 bg-red-50 text-red-600"
+                  : "border-slate-200 text-slate-600 hover:border-slate-300"
+              }`}
+            >
+              {falseLabel}
+            </button>
+          </div>
+        )}
+      />
+    </section>
   );
 }

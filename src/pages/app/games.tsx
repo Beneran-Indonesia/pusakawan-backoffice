@@ -114,7 +114,7 @@ export default function AppGames() {
           {game.held_on && (
             <div className="flex items-center gap-1 text-xs text-slate-500">
               <Calendar className="w-4 h-4" />
-              <span>{formatDate(game.held_on.start_date)}</span>
+              <span>{formatDate(game.held_on.start_datetime)}</span>
             </div>
           )}
         </div>
