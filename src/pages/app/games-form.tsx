@@ -1,4 +1,3 @@
-import { Game, GameSchema, GameStatus } from "@/types/app/app-games-type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HttpError } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
@@ -19,6 +18,11 @@ import { UnderDevelopment } from "@/components/refine-ui/layout/under-developmen
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  GameDetails,
+  GameDetailsSchema,
+  GameStatus
+} from "@/types/app/app-game-details-type";
 
 const tabTriggerClass =
   "flex-1 rounded-lg py-3 text-sm font-semibold text-slate-600 transition-colors " +
@@ -39,33 +43,35 @@ export default function AppGamesForm() {
     watch,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<Game, HttpError, Game>({
-    resolver: zodResolver(GameSchema),
+  } = useForm<GameDetails, HttpError, GameDetails>({
+    resolver: zodResolver(GameDetailsSchema),
     defaultValues: {
-      is_offline: true,
-      is_linear_flow: true,
-      is_correct_authentication: true,
-      is_automatic_start: true,
-      diversity_points: true,
+      game: {
+        is_offline: true,
+        is_linear_flow: true,
+        is_correct_authentication: true,
+        is_automatic_start: true,
+        diversity_points: true,
+      },
     },
   });
 
-  const title = watch("title") ?? "";
-  const description = watch("description") ?? "";
-  const banner = watch("banner") ?? "";
+  const title = watch("game.title") ?? "";
+  const description = watch("game.description") ?? "";
+  const banner = watch("game.banner") ?? "";
   const status = watch("status");
-  const isOffline = watch("is_offline");
-  const rules = watch("rules") ?? [];
+  const isOffline = watch("game.is_offline");
+  const rules = watch("game.rules") ?? [];
 
   const updateRule = (index: number, value: string) => {
     const next = [...rules];
     next[index] = value;
-    setValue("rules", next, { shouldDirty: true, shouldValidate: true });
+    setValue("game.rules", next, { shouldDirty: true, shouldValidate: true });
   };
 
   const removeRule = (index: number) => {
     setValue(
-      "rules",
+      "game.rules",
       rules.filter((_, i) => i !== index),
       { shouldDirty: true, shouldValidate: true },
     );
@@ -73,13 +79,13 @@ export default function AppGamesForm() {
 
   const addRule = () => {
     if (rules.length >= 5) return;
-    setValue("rules", [...rules, ""], { shouldDirty: true });
+    setValue("game.rules", [...rules, ""], { shouldDirty: true });
   };
 
   const handleBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setValue("banner", URL.createObjectURL(file), {
+    setValue("game.banner", URL.createObjectURL(file), {
       shouldDirty: true,
       shouldValidate: true,
     });
@@ -92,7 +98,6 @@ export default function AppGamesForm() {
         status,
       });
     })();
-
 
   return (
     <LoadingOverlay loading={formLoading}>
@@ -163,7 +168,7 @@ export default function AppGamesForm() {
               </Label>
               <Controller
                 control={control}
-                name="is_offline"
+                name="game.is_offline"
                 render={({ field }) => (
                   <div className="grid grid-cols-2 gap-4">
                     <button
@@ -208,14 +213,14 @@ export default function AppGamesForm() {
               </Label>
               <Input
                 className="px-4"
-                {...register("title")}
+                {...register("game.title")}
                 type="text"
                 maxLength={100}
                 placeholder="Enter game title"
               />
               <div className="flex items-center justify-between mt-1">
-                {errors.title && (
-                  <p className="text-xs text-red-600">{errors.title.message}</p>
+                {errors.game && errors.game.title && (
+                  <p className="text-xs text-red-600">{errors.game.title.message}</p>
                 )}
                 <p className="text-xs text-slate-400 ml-auto">
                   {title.length}/100 characters
@@ -238,7 +243,7 @@ export default function AppGamesForm() {
                   <button
                     type="button"
                     onClick={() =>
-                      setValue("banner", "", {
+                      setValue("game.banner", "", {
                         shouldDirty: true,
                         shouldValidate: true,
                       })
@@ -260,9 +265,9 @@ export default function AppGamesForm() {
                   />
                 </Label>
               )}
-              {errors.banner && (
+              {errors.game && errors.game.banner && (
                 <p className="text-xs text-red-600 mt-1">
-                  {errors.banner.message}
+                  {errors.game.banner.message}
                 </p>
               )}
             </section>
@@ -273,16 +278,16 @@ export default function AppGamesForm() {
                 About the Game
               </Label>
               <textarea
-                {...register("description")}
+                {...register("game.description")}
                 maxLength={500}
                 rows={4}
                 placeholder="Describe the game..."
                 className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-white transition-all resize-none"
               />
               <div className="flex items-center justify-between mt-1">
-                {errors.description && (
+                {errors.game && errors.game.description && (
                   <p className="text-xs text-red-600">
-                    {errors.description.message}
+                    {errors.game.description.message}
                   </p>
                 )}
                 <p className="text-xs text-slate-400 ml-auto">
@@ -333,9 +338,9 @@ export default function AppGamesForm() {
                   </button>
                 )}
               </div>
-              {errors.rules && (
+              {errors.game && errors.game.rules && (
                 <p className="text-xs text-red-600 mt-2">
-                  {errors.rules.message as string}
+                  {errors.game.rules.message as string}
                 </p>
               )}
             </section>
@@ -354,7 +359,7 @@ export default function AppGamesForm() {
                     </Label>
                     <Input
                       className="px-4"
-                      {...register("held_on.start_datetime")}
+                      {...register("game.held_on.start_datetime")}
                       type="datetime-local"
                     />
                   </div>
@@ -365,15 +370,15 @@ export default function AppGamesForm() {
                     </Label>
                     <Input
                       className="px-4"
-                      {...register("held_on.end_datetime")}
+                      {...register("game.held_on.end_datetime")}
                       type="datetime-local"
                     />
                   </div>
                 </div>
 
-                {errors.held_on?.end_datetime && (
+                {errors.game && errors.game.held_on?.end_datetime && (
                   <p className="text-xs text-red-600 mt-2">
-                    {errors.held_on.end_datetime.message}
+                    {errors.game.held_on.end_datetime.message}
                   </p>
                 )}
               </section>
@@ -391,7 +396,7 @@ export default function AppGamesForm() {
                     </Label>
                     <Input
                       className="px-4"
-                      {...register("group_size.minimum_participants", {
+                      {...register("game.group_size.minimum_participants", {
                         valueAsNumber: true,
                       })}
                       type="number"
@@ -405,7 +410,7 @@ export default function AppGamesForm() {
                     </Label>
                     <Input
                       className="px-4"
-                      {...register("group_size.maximum_participants", {
+                      {...register("game.group_size.maximum_participants", {
                         valueAsNumber: true,
                       })}
                       type="number"
@@ -415,9 +420,9 @@ export default function AppGamesForm() {
                   </div>
                 </div>
 
-                {errors.group_size?.maximum_participants && (
+                {errors.game && errors.game.group_size?.maximum_participants && (
                   <p className="text-xs text-red-600 mt-2">
-                    {errors.group_size.maximum_participants.message}
+                    {errors.game.group_size.maximum_participants.message}
                   </p>
                 )}
               </section>
@@ -427,7 +432,7 @@ export default function AppGamesForm() {
               {/* Diversity Points */}
               <BooleanToggleField
                 control={control}
-                name="diversity_points"
+                name="game.diversity_points"
                 label="Diversity Points"
                 trueLabel="ON"
                 falseLabel="OFF"
@@ -436,7 +441,7 @@ export default function AppGamesForm() {
               {/* Linear Flow */}
               <BooleanToggleField
                 control={control}
-                name="is_linear_flow"
+                name="game.is_linear_flow"
                 label="Linear Flow"
                 trueLabel="Linear"
                 falseLabel="Non-Linear"
@@ -445,7 +450,7 @@ export default function AppGamesForm() {
               {/* Correct Authentication */}
               <BooleanToggleField
                 control={control}
-                name="is_correct_authentication"
+                name="game.is_correct_authentication"
                 label="Correct Authentication"
                 trueLabel="Correct"
                 falseLabel="Both Authentication"
@@ -454,7 +459,7 @@ export default function AppGamesForm() {
               {/* Automation Start */}
               <BooleanToggleField
                 control={control}
-                name="is_automatic_start"
+                name="game.is_automatic_start"
                 label="Automatic Start"
                 trueLabel="Automatic"
                 falseLabel="Manual"

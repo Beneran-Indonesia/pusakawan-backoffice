@@ -1,12 +1,9 @@
 import { z } from "zod";
 
-const GameStatusSchema = z.enum(["draft", "published"]);
-
 export const GameSchema = z
   .object({
     id: z.string(),
     title: z.string().max(100),
-    status: GameStatusSchema,
     banner: z.string().url(),
     description: z.string().max(500),
     rules: z.array(z.string().max(200)).max(5).nullable(),
@@ -45,7 +42,5 @@ export const GameSchema = z
       });
     }
   });
-
-export type GameStatus = z.infer<typeof GameStatusSchema>;
 
 export type Game = z.infer<typeof GameSchema>;
