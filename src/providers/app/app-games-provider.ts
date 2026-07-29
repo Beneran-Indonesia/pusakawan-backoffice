@@ -47,7 +47,7 @@ export const { dataProvider: appGamesDataProvider } = createDataProvider(
 
     },
     getOne: {
-      
+            
 
     },
     // PATCH / PUT METHOD

@@ -10,8 +10,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   GameDetails,
   GameDetailsSchema,
-  GameStatus,
 } from "@/types/app/app-game-details-type";
+import { GameStatus } from "@/types/app/app-games-type";
 import GameDetailsTab from "./game-details";
 
 const tabTriggerClass =

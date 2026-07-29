@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { GameStatusSchema } from "./app-game-details-type";
 
+export const GameStatusSchema = z.enum(["draft", "published"]);
 export const GameSchema = z
   .object({
     id: z.string(),
@@ -44,5 +44,6 @@ export const GameSchema = z
       });
     }
   });
+export type GameStatus = z.infer<typeof GameStatusSchema>;
 
 export type Game = z.infer<typeof GameSchema>;
