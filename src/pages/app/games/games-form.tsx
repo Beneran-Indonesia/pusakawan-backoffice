@@ -35,6 +35,10 @@ export default function AppGamesForm() {
     formState: { errors, isSubmitting },
   } = useForm<GameDetails, HttpError, GameDetails>({
     resolver: zodResolver(GameDetailsSchema),
+    refineCoreProps: {
+      action: "edit",
+      resource: "games",
+    },
     defaultValues: {
       game: {
         is_offline: true,
@@ -114,7 +118,7 @@ export default function AppGamesForm() {
               Questions
             </TabsTrigger>
             <TabsTrigger value="leaderboard" className={tabTriggerClass}>
-              Leaderboard 
+              Leaderboard
             </TabsTrigger>
           </TabsList>
 
