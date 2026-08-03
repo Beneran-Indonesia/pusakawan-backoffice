@@ -24,6 +24,7 @@ export const MOCK_GAME_DETAILS: GameDetails[] = [
         },
         correct_answer: 'b',
         pusaka_points: 10,
+        
         incorrect_validation: 'Oops! That\'s not correct. Try again!',
         correct_validation: 'Great job! Jakarta is indeed the capital!'
       },

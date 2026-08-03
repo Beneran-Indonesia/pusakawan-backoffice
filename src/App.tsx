@@ -6,7 +6,6 @@ import routerProvider, {
 } from "@refinedev/react-router";
 import { dataProviders } from "./providers/providers";
 import { Login } from "./pages/login";
-// import { ErrorComponent } from "./components/refine-ui/layout/error-component";
 import { Layout } from "./components/refine-ui/layout/layout";
 import { useNotificationProvider } from "./components/refine-ui/notification/use-notification-provider";
 import { Toaster } from "./components/refine-ui/notification/toaster";
@@ -19,16 +18,19 @@ import { UserToken } from "@/types/users-type";
 import { createAuthProvider } from "./providers/auth-provider";
 import { createResources, filterResources } from "./providers/resources";
 import AppHome from "./pages/app/home";
-import AppHomeNew from "./pages/app/home-new";
-import AppGames from "./pages/app/games";
-import AppGamesForm from "./pages/app/games-form";
+import AppGames from "./pages/app/games/index";
+import AppGamesForm from "./pages/app/games/games-form";
 import {
+  APP_GAMES_EDIT_ROUTE,
   APP_GAMES_NEW_ROUTE,
   APP_GAMES_ROUTE,
   APP_HOME_NEW_ROUTE,
   APP_HOME_ROUTE,
+  EDIT_PROFILE_ROUTE,
 } from "./lib/urls";
 import { UnderDevelopment } from "./components/refine-ui/layout/under-development";
+import AppHomeForm from "./pages/app/home-form";
+import EditProfile from "./pages/edit-profile";
 
 function App() {
   // I18N (INTERNATIONALIZATION / TRANSLATION)
@@ -54,13 +56,13 @@ function App() {
     switch (location.pathname) {
       case "/":
         return formattedWebsiteTitle(t("routes.sign_in"));
-      case "/app/home":
+      case APP_HOME_ROUTE:
         return formattedWebsiteTitle(t("routes.app_home"));
-      case "/app/home/new":
+      case APP_HOME_NEW_ROUTE:
         return formattedWebsiteTitle(t("routes.app_home_new"));
-      case "/app/games":
+      case APP_GAMES_ROUTE:
         return formattedWebsiteTitle(t("routes.app_games"));
-      case "/app/games/new":
+      case APP_GAMES_NEW_ROUTE:
         return formattedWebsiteTitle(t("routes.app_games_new"));
       default:
         return websiteTitle;
@@ -73,13 +75,6 @@ function App() {
 
   const accessControlProvider: AccessControlProvider = {
     can: async ({ resource, action }) => {
-      // Only the sidebar/menu "access" action is actually gated by role.
-      // Every other action (create, edit, delete, list, show, ...) is
-      // allowed by default — this app doesn't implement per-action
-      // permissions, only per-resource menu visibility. Returning
-      // `{ can: false }` here for non-"access" actions was silently
-      // disabling every CreateButton/EditButton/DeleteButton in the app
-      // (they call `can` with their own action, not "access").
       if (action !== "access") return { can: true };
 
       if (!user || !resource) {
@@ -121,6 +116,7 @@ function App() {
             projectId: "RTJIz6-9Uxngz-l6qX9H",
           }}
         >
+          {/* Login page */}
           <Routes>
             <Route
               index
@@ -130,7 +126,7 @@ function App() {
                 </Authenticated>
               }
             />
-
+            {/* List home */}
             <Route
               path={APP_HOME_ROUTE}
               element={
@@ -139,16 +135,18 @@ function App() {
                 </Layout>
               }
             />
-
+            {/* New home */}
             <Route
               path={APP_HOME_NEW_ROUTE}
               element={
                 <Layout>
-                  <AppHomeNew />
+                  <AppHomeForm />
                 </Layout>
               }
             />
+            {/* Edit home */}
 
+            {/* List games */}
             <Route
               path={APP_GAMES_ROUTE}
               element={
@@ -157,7 +155,16 @@ function App() {
                 </Layout>
               }
             />
-
+            {/* Edit games */}
+            <Route
+              path={APP_GAMES_EDIT_ROUTE}
+              element={
+                <Layout>
+                  <AppGamesForm />
+                </Layout>
+              }
+            />
+            {/* New games */}
             <Route
               path={APP_GAMES_NEW_ROUTE}
               element={
@@ -166,6 +173,8 @@ function App() {
                 </Layout>
               }
             />
+            {/* Manage users */}
+            <Route path={EDIT_PROFILE_ROUTE} element={<EditProfile />} />
             {/* 404 error, only if authenticated */}
             <Route
               path="*"

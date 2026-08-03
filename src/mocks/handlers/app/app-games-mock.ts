@@ -18,15 +18,11 @@ export const MOCK_GAMES: Game[] = [
       'Have fun and learn about Indonesia!'
     ],
     held_on: {
-      start_date: '2026-03-15',
-      end_date: '2026-03-17'
+      start_datetime: '2026-03-15T09:00',
+      end_datetime: '2026-03-17T19:00'
     },
     is_linear_flow: true,
     is_correct_authentication: true,
-    time_range: {
-      start_time: '09:00',
-      end_time: '17:00'
-    },
     is_automatic_start: true,
     diversity_points: true,
     group_size: {
@@ -48,15 +44,12 @@ export const MOCK_GAMES: Game[] = [
       'Learn from wrong answers'
     ],
     held_on: {
-      start_date: '2026-03-20T00:00:00+07:00',
-      end_date: '2026-03-22T00:00:00+07:00'
+      start_datetime: '2026-03-20T09:00',
+      end_datetime: '2026-03-22T19:00'
     },
     is_linear_flow: false,
     is_correct_authentication: true,
-    time_range: {
-      start_time: new Date('2026-03-20T10:00:00+07:00').toISOString(),
-      end_time: '2026-03-20T16:00:00+07:00'
-    },
+
     is_automatic_start: false,
     diversity_points: false,
     group_size: {
@@ -79,15 +72,11 @@ export const MOCK_GAMES: Game[] = [
       'Team collaboration is encouraged'
     ],
     held_on: {
-      start_date: '2026-04-01',
-      end_date: '2026-04-05'
+      start_datetime: '2026-04-01T09:00',
+      end_datetime: '2026-04-05T19:00'
     },
     is_linear_flow: true,
     is_correct_authentication: true,
-    time_range: {
-      start_time: '08:00',
-      end_time: '18:00'
-    },
     is_automatic_start: true,
     diversity_points: true,
     group_size: {

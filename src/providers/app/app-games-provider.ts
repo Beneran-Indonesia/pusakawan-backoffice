@@ -47,13 +47,12 @@ export const { dataProvider: appGamesDataProvider } = createDataProvider(
 
     },
     getOne: {
-      
+            
 
     },
     // PATCH / PUT METHOD
     update: {
       getEndpoint: ({ resource, id }) => {
-        console.log("resource", resource)
         return `${resource}/${id}`
       }, // "posts/123"
       getRequestMethod: () => 'put'

@@ -5,10 +5,12 @@ export default function AppHome() {
   const t = useTranslate();
   const {
     result,
-    query: { isLoading,},
-  } = useList({ dataProviderName: "appHomeData"});
+    query: { isLoading },
+  } = useList({ resource: "app-home" });
 
-  return <LoadingOverlay loading={isLoading}>
-    <h1>{t("app.home.title")}</h1>
-  </LoadingOverlay>
+  return (
+    <LoadingOverlay loading={isLoading}>
+      <h1>{t("app.home.title")}</h1>
+    </LoadingOverlay>
+  );
 }

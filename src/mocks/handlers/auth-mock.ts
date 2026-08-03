@@ -4,11 +4,10 @@ import { LOGIN_API_URL, LOGOUT_API_URL, REFRESH_TOKEN_API_URL } from '@/lib/urls
 // import { getCookieValue } from '@/lib/utils';
 
 const MOCK_USER: UserToken["user"] = {
-    id: 1,
     email: "a@g.c",
     name: "Sarah",
     role: "APP",
-    isVerified: true,
+    avatar: "https://avatars.githubusercontent.com/u/84066712?v=4",
 };
 
 const REFRESH_TOKEN = "YU4KmQ3rVzW3LjFaSU6hMrJimy9sQGKj+04";
@@ -16,7 +15,7 @@ const ACCESS_TOKEN = "uilutMYIHcDkocGj9pTr0eCsLJACt3MT";
 
 const mockToken = (role: UserToken["user"]["role"]): UserToken => ({
     accessToken: ACCESS_TOKEN,
-    expires_in: 86400,
+    expiresIn: 86400,
     user: { ...MOCK_USER, role },
     profileCompleted: true,
 });
@@ -139,6 +138,8 @@ const loginHandler = http.post(LOGIN_API_URL, async ({ request }) => {
     const headers = new Headers();
 
     // simulate refresh token cookie ONLY when rememberMe is true
+    // current problem: msw parse this into 1 cookie -- role is 
+    // an extension of the refresh_token cookie :(
     if (rememberMe) {
         headers.append(
             "Set-Cookie",

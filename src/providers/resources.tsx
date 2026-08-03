@@ -5,15 +5,18 @@ import {
   Trophy,
   ShoppingBag,
   Users,
+  UserPen,
 } from "lucide-react";
 import { UserToken } from "@/types/users-type";
 import { ResourceProps } from "@refinedev/core";
 import { TFunction } from "i18next";
 import {
+  APP_GAMES_EDIT_ROUTE,
   APP_GAMES_NEW_ROUTE,
   APP_GAMES_ROUTE,
   APP_HOME_ROUTE,
   APP_PROGRAM_ROUTE,
+  EDIT_PROFILE_ROUTE,
 } from "@/lib/urls";
 
 export const createResources = (t: TFunction): ResourceProps[] => {
@@ -64,14 +67,15 @@ export const createResources = (t: TFunction): ResourceProps[] => {
       list: APP_GAMES_ROUTE,
       name: "games",
       create: APP_GAMES_NEW_ROUTE,
-      edit: APP_GAMES_ROUTE,
+      edit: APP_GAMES_EDIT_ROUTE,
+      identifier: "app-games",
       meta: {
         parent: "APP",
         key: "games",
         label: t("menu_bar.app.games"),
         icon: <Gamepad2 className="w-5 h-5" />,
         allowedRoles: ["SUPER_ADMIN", "ADMIN", "APP"],
-        dataProviderName: "appHomeData",
+        dataProviderName: "appGamesData",
       },
     },
     {
@@ -79,12 +83,14 @@ export const createResources = (t: TFunction): ResourceProps[] => {
       name: "home",
       create: "/app/home",
       edit: "/app/edit",
+      identifier: "app-home",
       meta: {
         parent: "APP",
         key: "home",
         label: t("menu_bar.app.home"),
         icon: <LayoutDashboard className="w-5 h-5" />,
         allowedRoles: ["SUPER_ADMIN", "ADMIN", "APP"],
+        dataProviderName: "appHomeData",
       },
     },
     {
@@ -92,6 +98,7 @@ export const createResources = (t: TFunction): ResourceProps[] => {
       name: "programs",
       create: "",
       edit: "",
+      identifier: "app-program",
       meta: {
         parent: "APP",
         key: "programs",
@@ -104,9 +111,10 @@ export const createResources = (t: TFunction): ResourceProps[] => {
 
   const manageUserNavItem: ResourceProps = {
     list: "/manage-users",
-    name: "Manage Users",
+    name: "manage-users",
     create: "",
     edit: "",
+    identifier: "manage-users",
     meta: {
       parent: "MANAGE_USERS",
       key: "manage-users",
@@ -116,7 +124,22 @@ export const createResources = (t: TFunction): ResourceProps[] => {
     },
   };
 
-  return [...lmsNavItems, ...appNavItems, manageUserNavItem];
+  const editProfileNavItem: ResourceProps = {
+    list: EDIT_PROFILE_ROUTE,
+    name: "profile",
+    edit: EDIT_PROFILE_ROUTE,
+    identifier: "profile",
+    meta: {
+      parent: "EDIT_PROFILE",
+      key: "edit-profile",
+      label: "Edit Profile",
+      icon: <UserPen className="w-5 h-5" />,
+      allowedRoles: ["SUPER_ADMIN", "ADMIN", "APP", "LMS"],
+      dataProviderName: "editProfileData"
+    },
+  };
+
+  return [...lmsNavItems, ...appNavItems, editProfileNavItem, manageUserNavItem];
 };
 
 export const filterResources = (

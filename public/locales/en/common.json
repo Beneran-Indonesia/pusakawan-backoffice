@@ -13,7 +13,7 @@
     "signin_title": "Sign In",
     "signin_tagline": "Enter your credentials to access the admin dashboard",
     "email": "Email Address",
-    "email_hint": "admin",
+    "email_hint": "test@domain.com",
     "password": "Password",
     "password_hint": "Enter your password",
     "remember_me": "Remember me",
@@ -48,6 +48,14 @@
       "contents": "Content",
       "title": "Games Management",
       "subtitle": "Create and manage interactive games for your community",
+      "create_button": "New Game",
+      "empty_state": {
+        "title": "No games yet",
+        "subtitle": "Create your first game to engage your community"
+      },
+      "empty_filter": {
+        "title": "No games found"
+      },
       "search_bar": {
         "placeholder": "Search games...",
         "status_dropdown": {
@@ -156,6 +164,81 @@
         "published": "Published",
         "draft": "Draft"
       }
+    }
+  },
+  "edit_profile": {
+    "header": {
+      "title": "Edit Profile",
+      "subtitle": "Update your personal information"
+    },
+    "profile_photo": {
+      "title": "Profile Photo",
+      "upload": "Upload Photo",
+      "description": "Recommended size: 400x400px",
+      "choose_photo": "Choose Photo"
+    },
+    "personal_information": {
+      "title": "Personal Information",
+      "full_name": {
+        "label": "Full Name",
+        "title": "Insert your full name",
+        "placeholder": "Andy Smith"
+      },
+      "birthdate": "Birth Date",
+      "gender": {
+        "label": "Gender",
+        "male": "Male",
+        "female": "Female"
+      }
+    },
+    "contact_information": {
+      "title": "Contact Information",
+      "email": {
+        "label": "Email Address",
+        "locked": "🔒 Contact Administrator to change your email."
+      },
+      "phone_number": {
+        "label": "Phone Number"
+      },
+      "institution": {
+        "label": "Institution",
+        "placeholder": "Enter your institution name"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "save": "Save Changes",
+        "saving": "Saving..."
+      }
+    },
+    "errors": {
+      "email": {
+        "required": "Email is required",
+        "valid": "Enter a valid email address"
+      },
+      "name": {
+        "required": "Name is required"
+      },
+      "birthdate": {
+        "required": "Birthdate is required"
+      },
+      "institution": {
+        "required": "Institution is required"
+      },
+      "phone_number": {
+        "required": "Phone number is required"
+      },
+      "avatar": {
+        "only_image": "Only image files are allowed",
+        "too_large": "Image size must be less than 5MB"
+      }
+    },
+    "success_notification": {
+      "message": "Profile updated",
+      "description": "Your profile has been updated successfully"
+    },
+    "error_notification": {
+      "message": "Profile failed to update",
+      "description": "Server error. Your profile was not updated."
     }
   },
   "under_development": "This page is currently under development. Please come back later to see the full features."

@@ -13,7 +13,7 @@
     "signin_title": "Masuk",
     "signin_tagline": "Masukkan kredensial Anda untuk mengakses dashboard admin",
     "email": "Alamat Email",
-    "email_hint": "admin",
+    "email_hint": "test@domain.com",
     "password": "Kata Sandi",
     "password_hint": "Masukkan kata sandi Anda",
     "remember_me": "Ingat saya",
@@ -48,6 +48,13 @@
       "contents": "Konten",
       "title": "Manajemen Game",
       "subtitle": "Buat dan kelola game interaktif untuk komunitas Anda",
+       "empty_state": {
+        "title": "Belum ada game",
+        "subtitle": "Bikin game pertama untuk berinteraksi dengan komunitas Anda!"
+      },
+      "empty_filter": {
+        "title": "Tidak ada games yang ditemukan"
+      },
       "search_bar": {
         "placeholder": "Cari game...",
         "status_dropdown": {
@@ -158,6 +165,9 @@
       },
       "contents": "Konten"
     }
+  },
+  "edit_profile": {
+
   },
   "under_development": "Halaman ini sedang dalam proses pengembangan. Silakan kunjungi kembali nanti untuk melihat fitur-fitur lengkapnya."
 }
