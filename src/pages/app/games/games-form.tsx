@@ -13,6 +13,7 @@ import {
 } from "@/types/app/app-game-details-type";
 import { GameStatus } from "@/types/app/app-games-type";
 import GameDetailsTab from "./game-details";
+import QuestionsForm from "./questions-form";
 
 const tabTriggerClass =
   "flex-1 rounded-lg py-3 text-sm font-semibold text-slate-600 transition-colors " +
@@ -23,8 +24,6 @@ export default function AppGamesForm() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("details");
 
-  const notValid = true;
-
   const {
     refineCore: { onFinish, formLoading },
     control,
@@ -32,11 +31,15 @@ export default function AppGamesForm() {
     register,
     watch,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<GameDetails, HttpError, GameDetails>({
     resolver: zodResolver(GameDetailsSchema),
+    mode: "onChange",
     defaultValues: {
+      status: "draft",
+      questions: [],
       game: {
+        status: "draft",
         is_offline: true,
         is_linear_flow: true,
         is_correct_authentication: true,
@@ -49,12 +52,23 @@ export default function AppGamesForm() {
   const title = watch("game.title") ?? "";
   const isOffline = watch("game.is_offline");
   const status = watch("status");
+  const questions = watch("questions") ?? [];
+
+  // Publishing requires both the game details AND at least one question to
+  // be filled in correctly — this is what actually connects the two tabs:
+  // the questions form's data lives on the same `questions` field of this
+  // form, so its errors/emptiness directly gate the Publish action below.
+  const notValid = !isValid || questions.length === 0;
 
   const onFinishWithStatus = (status: GameStatus) =>
     handleSubmit(async (values) => {
       await onFinish({
         ...values,
         status,
+        game: {
+          ...values.game,
+          status,
+        },
       });
     })();
 
@@ -114,7 +128,7 @@ export default function AppGamesForm() {
               Questions
             </TabsTrigger>
             <TabsTrigger value="leaderboard" className={tabTriggerClass}>
-              Leaderboard 
+              Leaderboard
             </TabsTrigger>
           </TabsList>
 
@@ -128,11 +142,8 @@ export default function AppGamesForm() {
           />
 
           {/* QUESTIONS TAB */}
-          <TabsContent
-            value="questions"
-            className="mt-6 bg-white rounded-xl border border-slate-200 min-h-96"
-          >
-            <UnderDevelopment title="Questions" />
+          <TabsContent value="questions" className="mt-6">
+            <QuestionsForm control={control} />
           </TabsContent>
 
           {/* LEADERBOARD TAB */}

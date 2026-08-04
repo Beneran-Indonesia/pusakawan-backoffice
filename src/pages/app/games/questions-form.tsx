@@ -24,6 +24,8 @@ import {
   FieldErrorsImpl,
   UseFormSetValue,
   UseFormWatch,
+  useFieldArray,
+  useWatch,
 } from "react-hook-form";
 
 type QuestionType = "multiple_choice" | "essay";
@@ -62,6 +64,8 @@ function createEmptyQuestion(type: QuestionType): Question {
       is_essay_question: false,
       options: { a: "", b: "", c: "", d: "" },
       correct_answer: "a",
+      correct_validation: "",
+      incorrect_validation: "",
     };
   }
 
