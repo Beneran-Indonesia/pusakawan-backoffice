@@ -37,11 +37,11 @@ export default function AppGames() {
     resource: "app-games",
   });
 
-  const go = useGo();
-  const onCreateGame = () => go({ to: APP_GAMES_NEW_ROUTE });
+const go = useGo();
+const onCreateGame = () => go({ to: APP_GAMES_NEW_ROUTE });
 
-  const onToggleStatus = ({ id, status }: Game) => {
-    console.log("tertekan");
+const onToggleStatus = ({ id, status }: Game) => {
+  console.log("tertekan");
     mutate({
       id,
       values: {

@@ -130,6 +130,13 @@ const loginHandler = http.post(LOGIN_API_URL, async ({ request }) => {
 
     let role: UserToken["user"]["role"] = "APP";
 
+    if (!(email in users)) {
+        return HttpResponse.json(
+            { message: "Credentials not found" },
+            { status: 404 }
+        )
+    }
+
     if (password === "password" && email in users) {
         role = users[email];
     }
