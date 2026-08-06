@@ -68,6 +68,69 @@
           "online": "Online Games",
           "offline": "Offline Games"
         }
+      },
+      "details": {
+        "game_type": {
+          "label": "Game Type",
+          "offline": {
+            "title": "Offline",
+            "description": "Physical location game"
+          },
+          "online": {
+            "title": "Online",
+            "description": "Under development"
+          }
+        },
+        "title": {
+          "label": "Game Title",
+          "placeholder": "Enter game title",
+          "character_count": "{{count}}/100 characters"
+        },
+        "banner": {
+          "label": "Banner",
+          "upload_cta": "Upload banner"
+        },
+        "about": {
+          "label": "About the Game",
+          "placeholder": "Describe the game...",
+          "character_count": "{{count}}/500 characters"
+        },
+        "rules": {
+          "label": "Game Rules (Max 5)",
+          "placeholder": "Rule {{number}}",
+          "character_count": "{{count}}/200 characters",
+          "add_button": "Add Custom Rules"
+        },
+        "held_on": {
+          "label": "Held On (Datetime Range)",
+          "start_label": "Start Date",
+          "end_label": "End Date"
+        },
+        "group_size": {
+          "label": "Group Size (Members per Group)",
+          "min_label": "Minimum Members",
+          "max_label": "Maximum Members"
+        },
+        "diversity_points": {
+          "label": "Diversity Points",
+          "on": "ON",
+          "off": "OFF"
+        },
+        "linear_flow": {
+          "label": "Linear Flow",
+          "linear": "Linear",
+          "non_linear": "Non-Linear"
+        },
+        "correct_authentication": {
+          "label": "Correct Authentication",
+          "correct": "Correct",
+          "both": "Both Authentication"
+        },
+        "automatic_start": {
+          "label": "Automatic Start",
+          "automatic": "Automatic",
+          "manual": "Manual"
+        }
       }
     },
     "home": {

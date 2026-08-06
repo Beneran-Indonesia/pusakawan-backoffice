@@ -48,7 +48,7 @@
       "contents": "Konten",
       "title": "Manajemen Game",
       "subtitle": "Buat dan kelola game interaktif untuk komunitas Anda",
-       "empty_state": {
+      "empty_state": {
         "title": "Belum ada game",
         "subtitle": "Bikin game pertama untuk berinteraksi dengan komunitas Anda!"
       },
@@ -66,6 +66,69 @@
           "all": "Semua Jenis",
           "online": "Game Online",
           "offline": "Game Offline"
+        }
+      },
+      "details": {
+        "game_type": {
+          "label": "Tipe Game",
+          "offline": {
+            "title": "Offline",
+            "description": "Game di lokasi fisik"
+          },
+          "online": {
+            "title": "Online",
+            "description": "Sedang dalam pengembangan"
+          }
+        },
+        "title": {
+          "label": "Judul Game",
+          "placeholder": "Masukkan judul game",
+          "character_count": "{{count}}/100 karakter"
+        },
+        "banner": {
+          "label": "Banner",
+          "upload_cta": "Unggah banner"
+        },
+        "about": {
+          "label": "Tentang Game",
+          "placeholder": "Deskripsikan game ini...",
+          "character_count": "{{count}}/500 karakter"
+        },
+        "rules": {
+          "label": "Aturan Game (Maks 5)",
+          "placeholder": "Aturan {{number}}",
+          "character_count": "{{count}}/200 karakter",
+          "add_button": "Tambah Aturan Kustom"
+        },
+        "held_on": {
+          "label": "Diselenggarakan Pada (Rentang Tanggal & Waktu)",
+          "start_label": "Tanggal Mulai",
+          "end_label": "Tanggal Selesai"
+        },
+        "group_size": {
+          "label": "Ukuran Grup (Anggota per Grup)",
+          "min_label": "Anggota Minimum",
+          "max_label": "Anggota Maksimum"
+        },
+        "diversity_points": {
+          "label": "Poin Keberagaman",
+          "on": "AKTIF",
+          "off": "NONAKTIF"
+        },
+        "linear_flow": {
+          "label": "Alur Linear",
+          "linear": "Linear",
+          "non_linear": "Non-Linear"
+        },
+        "correct_authentication": {
+          "label": "Autentikasi Benar",
+          "correct": "Benar",
+          "both": "Kedua Autentikasi"
+        },
+        "automatic_start": {
+          "label": "Mulai Otomatis",
+          "automatic": "Otomatis",
+          "manual": "Manual"
         }
       }
     },
@@ -95,8 +158,6 @@
       "contents": "Konten"
     }
   },
-  "edit_profile": {
-
-  },
+  "edit_profile": {},
   "under_development": "Halaman ini sedang dalam proses pengembangan. Silakan kunjungi kembali nanti untuk melihat fitur-fitur lengkapnya."
 }

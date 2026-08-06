@@ -128,7 +128,15 @@ export const appGamesHandlers = [
       return new HttpResponse(null, { status: 404 });
     }
 
-    return HttpResponse.json({ data: item });
+    return HttpResponse.json({
+      data: {
+        id: item.id,
+        game: item,
+        status: item.status,
+        questions: [],
+        created_at: new Date().toISOString(),
+      },
+    });
   }),
 
   // -------------------------
@@ -152,7 +160,10 @@ export const appGamesHandlers = [
   // UPDATE
   // -------------------------
   http.put(`${APP_GAMES_API_URL}/:id`, async ({ request, params }) => {
-    const body = (await request.json()) as Partial<Game>;
+    const body = (await request.json()) as Partial<Game> & {
+      game?: Partial<Game>;
+      status?: Game["status"];
+    };
 
     const index = db.findIndex((g) => g.id === params.id);
 
@@ -160,30 +171,13 @@ export const appGamesHandlers = [
       return new HttpResponse(null, { status: 404 });
     }
 
-    db[index] = {
-      ...db[index],
-      ...body,
-    };
-
-    return HttpResponse.json(db[index]);
-  }),
-
-  // -------------------------
-  // DELETE
-  // -------------------------
-
-  http.put(`${APP_GAMES_API_URL}/:id`, async ({ request, params }) => {
-    const body = (await request.json()) as Partial<Game>;
-
-    const index = db.findIndex((g) => g.id === params.id);
-
-    if (index === -1) {
-      return new HttpResponse({ data: null }, { status: 404 });
-    }
+    const { game: nestedGame, status, ...flatRest } = body;
 
     db[index] = {
       ...db[index],
-      ...body,
+      ...flatRest,
+      ...(nestedGame ?? {}),
+      ...(status ? { status } : {}),
     };
 
     return HttpResponse.json({ data: db[index] });
