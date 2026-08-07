@@ -2,25 +2,44 @@ import { Lock, Trash2, Plus, ImagePlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { TabsContent } from "@radix-ui/react-tabs";
 import { Label } from "@/components/ui/label";
-import { Controller, Control, FieldPath, FieldValues, UseFormRegister, FieldError, Merge, FieldErrorsImpl, UseFormSetValue, UseFormWatch } from "react-hook-form";
+import {
+  Controller,
+  Control,
+  FieldPath,
+  FieldValues,
+  UseFormRegister,
+  FieldError,
+  Merge,
+  FieldErrorsImpl,
+  UseFormSetValue,
+  UseFormWatch,
+} from "react-hook-form";
 import { GameDetails } from "@/types/app/app-game-details-type";
 import { Game } from "@/types/app/app-games-type";
+import { useTranslate } from "@refinedev/core";
 
 type GameDetailsTabProps = {
-    control: Control<GameDetails>;
-    register: UseFormRegister<GameDetails>;
-    errors: Merge<FieldError, FieldErrorsImpl<Game>> | undefined;
-    watch: UseFormWatch<GameDetails>;
-    setValue: UseFormSetValue<GameDetails>;
-}
+  control: Control<GameDetails>;
+  register: UseFormRegister<GameDetails>;
+  errors: Merge<FieldError, FieldErrorsImpl<Game>> | undefined;
+  watch: UseFormWatch<GameDetails>;
+  setValue: UseFormSetValue<GameDetails>;
+};
 
-export default function GameDetailsTab({ control, register, errors, watch, setValue }: GameDetailsTabProps) {
+export default function GameDetailsTab({
+  control,
+  register,
+  errors,
+  watch,
+  setValue,
+}: GameDetailsTabProps) {
+  const t = useTranslate();
+
   const description = watch("game.description") ?? "";
   const banner = watch("game.banner") ?? "";
   const rules = watch("game.rules") ?? [];
 
   const title = watch("game.title") ?? "";
-
 
   const updateRule = (index: number, value: string) => {
     const next = [...rules];
@@ -55,7 +74,7 @@ export default function GameDetailsTab({ control, register, errors, watch, setVa
       {/* Game Type */}
       <section className="bg-white rounded-xl border border-slate-200 p-6">
         <Label className="block text-sm font-semibold text-slate-700 mb-3">
-          Game Type
+          {t("app.games.details.game_type.label")}
         </Label>
         <Controller
           control={control}
@@ -76,18 +95,20 @@ export default function GameDetailsTab({ control, register, errors, watch, setVa
                     field.value ? "text-red-600" : "text-slate-700"
                   }`}
                 >
-                  Offline
+                  {t("app.games.details.game_type.offline.title")}
                 </div>
                 <div className="text-sm text-slate-500 mt-1">
-                  Physical location game
+                  {t("app.games.details.game_type.offline.description")}
                 </div>
               </button>
 
               <div className="relative rounded-xl border-2 border-slate-200 bg-slate-50 p-6 text-center opacity-70 cursor-not-allowed">
                 <Lock className="w-4 h-4 text-slate-400 absolute top-3 right-3" />
-                <div className="text-lg font-bold text-slate-400">Online</div>
+                <div className="text-lg font-bold text-slate-400">
+                  {t("app.games.details.game_type.online.title")}
+                </div>
                 <div className="text-sm text-slate-400 mt-1">
-                  Under development
+                  {t("app.games.details.game_type.online.description")}
                 </div>
               </div>
             </div>
@@ -98,21 +119,23 @@ export default function GameDetailsTab({ control, register, errors, watch, setVa
       {/* Game Title */}
       <section className="bg-white rounded-xl border border-slate-200 p-6">
         <Label className="block text-sm font-semibold text-slate-700 mb-3">
-          Game Title
+          {t("app.games.details.title.label")}
         </Label>
         <Input
           className="px-4"
           {...register("game.title")}
           type="text"
           maxLength={100}
-          placeholder="Enter game title"
+          placeholder={t("app.games.details.title.placeholder")}
         />
         <div className="flex items-center justify-between mt-1">
           {errors && errors.title && (
             <p className="text-xs text-red-600">{errors.title.message}</p>
           )}
           <p className="text-xs text-slate-400 ml-auto">
-            {title.length}/100 characters
+            {t("app.games.details.title.character_count", {
+              count: title.length,
+            })}
           </p>
         </div>
       </section>
@@ -120,7 +143,7 @@ export default function GameDetailsTab({ control, register, errors, watch, setVa
       {/* Banner */}
       <section className="bg-white rounded-xl border border-slate-200 p-6">
         <Label className="block text-sm font-semibold text-slate-700 mb-3">
-          Banner
+          {t("app.games.details.banner.label")}
         </Label>
         {banner ? (
           <div className="relative rounded-xl overflow-hidden border border-slate-200">
@@ -145,7 +168,9 @@ export default function GameDetailsTab({ control, register, errors, watch, setVa
         ) : (
           <Label className="flex flex-col items-center justify-center gap-2 h-40 rounded-xl border-2 border-dashed border-slate-300 text-slate-400 hover:border-red-400 hover:text-red-500 cursor-pointer transition-colors">
             <ImagePlus className="w-8 h-8" />
-            <span className="text-sm font-medium">Upload banner</span>
+            <span className="text-sm font-medium">
+              {t("app.games.details.banner.upload_cta")}
+            </span>
             <Input
               className="px-4 hidden"
               type="file"
@@ -155,32 +180,30 @@ export default function GameDetailsTab({ control, register, errors, watch, setVa
           </Label>
         )}
         {errors && errors.banner && (
-          <p className="text-xs text-red-600 mt-1">
-            {errors.banner.message}
-          </p>
+          <p className="text-xs text-red-600 mt-1">{errors.banner.message}</p>
         )}
       </section>
 
       {/* About the Game */}
       <section className="bg-white rounded-xl border border-slate-200 p-6">
         <Label className="block text-sm font-semibold text-slate-700 mb-3">
-          About the Game
+          {t("app.games.details.about.label")}
         </Label>
         <textarea
           {...register("game.description")}
           maxLength={500}
           rows={4}
-          placeholder="Describe the game..."
+          placeholder={t("app.games.details.about.placeholder")}
           className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-white transition-all resize-none"
         />
         <div className="flex items-center justify-between mt-1">
           {errors && errors.description && (
-            <p className="text-xs text-red-600">
-              {errors.description.message}
-            </p>
+            <p className="text-xs text-red-600">{errors.description.message}</p>
           )}
           <p className="text-xs text-slate-400 ml-auto">
-            {description.length}/500 characters
+            {t("app.games.details.about.character_count", {
+              count: description.length,
+            })}
           </p>
         </div>
       </section>
@@ -188,7 +211,7 @@ export default function GameDetailsTab({ control, register, errors, watch, setVa
       {/* Game Rules */}
       <section className="bg-white rounded-xl border border-slate-200 p-6">
         <Label className="block text-sm font-semibold text-slate-700 mb-3">
-          Game Rules (Max 5) - Not Required
+          {t("app.games.details.rules.label")}
         </Label>
         <div className="space-y-4">
           {rules.map((rule, index) => (
@@ -200,10 +223,14 @@ export default function GameDetailsTab({ control, register, errors, watch, setVa
                   value={rule}
                   maxLength={200}
                   onChange={(e) => updateRule(index, e.target.value)}
-                  placeholder={`Rule ${index + 1}`}
+                  placeholder={t("app.games.details.rules.placeholder", {
+                    number: index + 1,
+                  })}
                 />
                 <p className="text-xs text-slate-400 text-right mt-1">
-                  {rule.length}/200 characters
+                  {t("app.games.details.rules.character_count", {
+                    count: rule.length,
+                  })}
                 </p>
               </div>
               <button
@@ -223,7 +250,7 @@ export default function GameDetailsTab({ control, register, errors, watch, setVa
               className="flex w-full justify-center items-center gap-2 px-4 py-2.5 border border-dashed border-slate-300 text-slate-500 rounded-xl hover:border-red-400 hover:text-red-500 transition-colors text-sm font-medium"
             >
               <Plus className="w-4 h-4" />
-              Add Custom Rules
+              {t("app.games.details.rules.add_button")}
             </button>
           )}
         </div>
@@ -238,13 +265,13 @@ export default function GameDetailsTab({ control, register, errors, watch, setVa
         {/* Date Range */}
         <section className="lg:col-span-7 bg-white rounded-xl border border-slate-200 p-6">
           <Label className="block text-sm font-semibold text-slate-700 mb-3">
-            Held On (Datetime Range)
+            {t("app.games.details.held_on.label")}
           </Label>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label className="block text-xs text-slate-500 mb-1.5">
-                Start Date
+                {t("app.games.details.held_on.start_label")}
               </Label>
               <Input
                 className="px-4"
@@ -255,7 +282,7 @@ export default function GameDetailsTab({ control, register, errors, watch, setVa
 
             <div>
               <Label className="block text-xs text-slate-500 mb-1.5">
-                End Date
+                {t("app.games.details.held_on.end_label")}
               </Label>
               <Input
                 className="px-4"
@@ -275,13 +302,13 @@ export default function GameDetailsTab({ control, register, errors, watch, setVa
         {/* Group Size */}
         <section className="lg:col-span-3 bg-white rounded-xl border border-slate-200 p-6">
           <Label className="block text-sm font-semibold text-slate-700 mb-3">
-            Group Size (Members per Group)
+            {t("app.games.details.group_size.label")}
           </Label>
 
           <div className="flex gap-2">
             <div className="flex-1">
               <Label className="block text-xs text-slate-500 mb-1.5">
-                Minimum Members
+                {t("app.games.details.group_size.min_label")}
               </Label>
               <Input
                 className="px-4"
@@ -295,7 +322,7 @@ export default function GameDetailsTab({ control, register, errors, watch, setVa
             </div>
             <div className="flex-1">
               <Label className="block text-xs text-slate-500 mb-1.5">
-                Maximum Members
+                {t("app.games.details.group_size.max_label")}
               </Label>
               <Input
                 className="px-4"
@@ -322,36 +349,36 @@ export default function GameDetailsTab({ control, register, errors, watch, setVa
         <BooleanToggleField
           control={control}
           name="game.diversity_points"
-          label="Diversity Points"
-          trueLabel="ON"
-          falseLabel="OFF"
+          label={t("app.games.details.diversity_points.label")}
+          trueLabel={t("app.games.details.diversity_points.on")}
+          falseLabel={t("app.games.details.diversity_points.off")}
         />
 
         {/* Linear Flow */}
         <BooleanToggleField
           control={control}
           name="game.is_linear_flow"
-          label="Linear Flow"
-          trueLabel="Linear"
-          falseLabel="Non-Linear"
+          label={t("app.games.details.linear_flow.label")}
+          trueLabel={t("app.games.details.linear_flow.linear")}
+          falseLabel={t("app.games.details.linear_flow.non_linear")}
         />
 
         {/* Correct Authentication */}
         <BooleanToggleField
           control={control}
           name="game.is_correct_authentication"
-          label="Correct Authentication"
-          trueLabel="Correct"
-          falseLabel="Both Authentication"
+          label={t("app.games.details.correct_authentication.label")}
+          trueLabel={t("app.games.details.correct_authentication.correct")}
+          falseLabel={t("app.games.details.correct_authentication.both")}
         />
 
         {/* Automation Start */}
         <BooleanToggleField
           control={control}
           name="game.is_automatic_start"
-          label="Automatic Start"
-          trueLabel="Automatic"
-          falseLabel="Manual"
+          label={t("app.games.details.automatic_start.label")}
+          trueLabel={t("app.games.details.automatic_start.automatic")}
+          falseLabel={t("app.games.details.automatic_start.manual")}
         />
       </div>
     </TabsContent>

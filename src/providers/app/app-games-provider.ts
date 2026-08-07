@@ -6,7 +6,6 @@ export const { dataProvider: appGamesDataProvider } = createDataProvider(
   {
     getList: {
       buildQueryParams: async ({ pagination, filters, sorters }) => {
-
         const query: Record<string, unknown> = {};
         // /games?page=1&total=10
 
@@ -16,7 +15,7 @@ export const { dataProvider: appGamesDataProvider } = createDataProvider(
         if (sorters?.length) {
           query.sort = sorters.map(({ field, order }) => ({
             [field]: order,
-          }))
+          }));
         }
 
         for (const filter of filters ?? []) {
@@ -44,21 +43,26 @@ export const { dataProvider: appGamesDataProvider } = createDataProvider(
         // Refine needs: 123
         return json.total;
       },
-
     },
     getOne: {
-            
-
+      getEndpoint: ({ resource, id }) => {
+        console.log("getOne", resource, id);
+        return `${resource}/${id}`;
+      }, // "posts/123"
+      mapResponse: async (response) => {
+        const json = await response.clone().json();
+        return json.data;
+      },
     },
+
     // PATCH / PUT METHOD
     update: {
       getEndpoint: ({ resource, id }) => {
-        return `${resource}/${id}`
+        return `${resource}/${id}`;
       }, // "posts/123"
-      getRequestMethod: () => 'put'
+      getRequestMethod: () => "put",
 
       // buildBodyParams: {
-
 
       // },
       // mapResponse: {
@@ -69,13 +73,9 @@ export const { dataProvider: appGamesDataProvider } = createDataProvider(
       // }
     },
     // DELETE METHOD
-    deleteOne: {
-
-    },
+    deleteOne: {},
     // POST METHOD
-    create: {
-
-    },
+    create: {},
   },
-  kyOptions
+  kyOptions,
 );

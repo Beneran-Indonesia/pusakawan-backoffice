@@ -34,7 +34,10 @@ export default function AppGamesForm() {
     formState: { errors, isSubmitting, isValid },
   } = useForm<GameDetails, HttpError, GameDetails>({
     resolver: zodResolver(GameDetailsSchema),
-    mode: "onChange",
+    refineCoreProps: {
+      action: "edit",
+      resource: "games",
+    },
     defaultValues: {
       status: "draft",
       questions: [],

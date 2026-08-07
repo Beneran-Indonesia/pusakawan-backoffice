@@ -4,13 +4,10 @@ import {
   ListViewHeader,
 } from "@/components/refine-ui/views/list-view";
 import { formatDate } from "@/lib/utils";
-import { APP_GAMES_NEW_ROUTE } from "@/lib/urls";
 import { Game } from "@/types/app/app-games-type";
 import {
-  useCreate,
-  useDelete,
-  useGo,
   useList,
+  useNavigation,
   useTranslate,
   useUpdate,
 } from "@refinedev/core";
@@ -37,11 +34,9 @@ export default function AppGames() {
     resource: "app-games",
   });
 
-const go = useGo();
-const onCreateGame = () => go({ to: APP_GAMES_NEW_ROUTE });
+  const { edit } = useNavigation();
 
-const onToggleStatus = ({ id, status }: Game) => {
-  console.log("tertekan");
+  const onToggleStatus = ({ id, status }: Game) => {
     mutate({
       id,
       values: {
