@@ -10,7 +10,14 @@ import {
 import { UserToken } from "@/types/users-type";
 import { ResourceProps } from "@refinedev/core";
 import { TFunction } from "i18next";
-import { APP_GAMES_ROUTE, APP_HOME_ROUTE, APP_PROGRAM_ROUTE, EDIT_PROFILE_ROUTE } from "@/lib/urls";
+import {
+  APP_GAMES_EDIT_ROUTE,
+  APP_GAMES_NEW_ROUTE,
+  APP_GAMES_ROUTE,
+  APP_HOME_ROUTE,
+  APP_PROGRAM_ROUTE,
+  EDIT_PROFILE_ROUTE,
+} from "@/lib/urls";
 
 export const createResources = (t: TFunction): ResourceProps[] => {
   const lmsNavItems: ResourceProps[] = [
@@ -59,8 +66,9 @@ export const createResources = (t: TFunction): ResourceProps[] => {
     {
       list: APP_GAMES_ROUTE,
       name: "games",
-      create: "/app/games/create",
-      edit: APP_GAMES_ROUTE,
+      create: APP_GAMES_NEW_ROUTE,
+      edit: APP_GAMES_EDIT_ROUTE,
+      identifier: "app-games",
       meta: {
         parent: "APP",
         key: "games",

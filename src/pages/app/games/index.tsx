@@ -4,9 +4,13 @@ import {
   ListViewHeader,
 } from "@/components/refine-ui/views/list-view";
 import { formatDate } from "@/lib/utils";
-import { APP_GAMES_NEW_ROUTE } from "@/lib/urls";
 import { Game } from "@/types/app/app-games-type";
-import { useCreate, useDelete, useList, useTranslate, useUpdate } from "@refinedev/core";
+import {
+  useList,
+  useNavigation,
+  useTranslate,
+  useUpdate,
+} from "@refinedev/core";
 import { Calendar, Plus, Search, Trophy } from "lucide-react";
 import { useState } from "react";
 
@@ -30,10 +34,9 @@ export default function AppGames() {
     resource: "app-games",
   });
 
-  const onCreateGame = () => null;
+  const { edit } = useNavigation();
 
   const onToggleStatus = ({ id, status }: Game) => {
-    console.log("tertekan")
     mutate({
       id,
       values: {
@@ -56,17 +59,17 @@ export default function AppGames() {
     return matchesStatus && matchesType && matchesSearch;
   });
 
-  const renderGameCard = (game: Game) => (
+  const renderGameCard = (gameDetails: Game) => (
     <div
-      key={game.id}
-      // onClick={() => onSelectGame(game)}
+      key={gameDetails.id}
+      onClick={() => edit("app-games", gameDetails.id)}
       className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer"
     >
       <div className="relative h-48 bg-linear-to-br from-red-500 to-red-700 overflow-hidden">
-        {game.banner ? (
+        {gameDetails.banner ? (
           <img
-            src={game.banner}
-            alt={game.title}
+            src={gameDetails.banner}
+            alt={gameDetails.title}
             className="w-full h-full object-cover"
           />
         ) : (
@@ -77,41 +80,41 @@ export default function AppGames() {
         <div className="absolute top-3 right-3 flex gap-2">
           <span
             className={`px-3 py-1 rounded-full text-xs font-semibold ${
-              game.status === "published"
+              gameDetails.status === "published"
                 ? "bg-green-500 text-white"
                 : "bg-yellow-500 text-white"
             }`}
           >
-            {game.status === "published" ? "Active" : "Draft"}
+            {gameDetails.status === "published" ? "Active" : "Draft"}
           </span>
           <span
             className={`px-3 py-1 rounded-full text-xs font-semibold ${
-              game.is_offline
+              gameDetails.is_offline
                 ? "bg-blue-500 text-white"
                 : "bg-slate-400 text-white"
             }`}
           >
-            {game.is_offline ? "Offline" : "Online"}
+            {gameDetails.is_offline ? "Offline" : "Online"}
           </span>
         </div>
       </div>
 
       <div className="p-5">
         <h3 className="font-bold text-lg mb-2 text-slate-800 line-clamp-1">
-          {game.title}
+          {gameDetails.title}
         </h3>
 
-        {game.description && (
+        {gameDetails.description && (
           <p className="text-sm text-slate-600 mb-4 line-clamp-2">
-            {game.description}
+            {gameDetails.description}
           </p>
         )}
 
         <div className="space-y-2 mb-4">
-          {game.held_on && (
+          {gameDetails.held_on && (
             <div className="flex items-center gap-1 text-xs text-slate-500">
               <Calendar className="w-4 h-4" />
-              <span>{formatDate(game.held_on.start_date)}</span>
+              <span>{formatDate(gameDetails.held_on.start_datetime)}</span>
             </div>
           )}
         </div>
@@ -120,15 +123,15 @@ export default function AppGames() {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onToggleStatus(game);
+              onToggleStatus(gameDetails);
             }}
             className={`px-4 py-2 border rounded-lg transition-colors font-medium text-sm ${
-              game.status === "published"
+              gameDetails.status === "published"
                 ? "border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100"
                 : "border-green-300 bg-green-50 text-green-700 hover:bg-green-100"
             }`}
           >
-            {game.status === "published" ? "Unpublish" : "Publish"}
+            {gameDetails.status === "published" ? "Unpublish" : "Publish"}
           </button>
         </div>
       </div>

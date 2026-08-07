@@ -13,11 +13,32 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { Control, Controller, useFieldArray, useWatch } from "react-hook-form";
+import {
+  Controller,
+  Control,
+  FieldPath,
+  FieldValues,
+  UseFormRegister,
+  FieldError,
+  Merge,
+  FieldErrorsImpl,
+  UseFormSetValue,
+  UseFormWatch,
+  useFieldArray,
+  useWatch,
+} from "react-hook-form";
 
 type QuestionType = "multiple_choice" | "essay";
 
 type Translate = ReturnType<typeof useTranslate>;
+
+type GameDetailsTabProps = {
+  control: Control<GameDetails>;
+  register: UseFormRegister<GameDetails>;
+  errors: Merge<FieldError, FieldErrorsImpl<Question>> | undefined;
+  watch: UseFormWatch<GameDetails>;
+  setValue: UseFormSetValue<GameDetails>;
+};
 
 // Options/correct_answer/correct_answers/hints/validation fields only exist on
 // one side of the Question discriminated union, so react-hook-form's `Path<T>`
@@ -43,6 +64,8 @@ function createEmptyQuestion(type: QuestionType): Question {
       is_essay_question: false,
       options: { a: "", b: "", c: "", d: "" },
       correct_answer: "a",
+      correct_validation: "",
+      incorrect_validation: "",
     };
   }
 

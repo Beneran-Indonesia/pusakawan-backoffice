@@ -18,8 +18,8 @@ import { UserToken } from "@/types/users-type";
 import { createAuthProvider } from "./providers/auth-provider";
 import { createResources, filterResources } from "./providers/resources";
 import AppHome from "./pages/app/home";
-import AppGames from "./pages/app/games";
-import AppGamesForm from "./pages/app/games-form";
+import AppGames from "./pages/app/games/index";
+import AppGamesForm from "./pages/app/games/games-form";
 import {
   APP_GAMES_EDIT_ROUTE,
   APP_GAMES_NEW_ROUTE,
@@ -75,13 +75,6 @@ function App() {
 
   const accessControlProvider: AccessControlProvider = {
     can: async ({ resource, action }) => {
-      // Only the sidebar/menu "access" action is actually gated by role.
-      // Every other action (create, edit, delete, list, show, ...) is
-      // allowed by default — this app doesn't implement per-action
-      // permissions, only per-resource menu visibility. Returning
-      // `{ can: false }` here for non-"access" actions was silently
-      // disabling every CreateButton/EditButton/DeleteButton in the app
-      // (they call `can` with their own action, not "access").
       if (action !== "access") return { can: true };
 
       if (!user || !resource) {
