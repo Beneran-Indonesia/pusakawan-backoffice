@@ -12,6 +12,10 @@ export const APP_EDIT_EDIT_ROUTE = APP_HOME_ROUTE + "/edit/:id"
 export const APP_GAMES_ROUTE = APP_ROUTE + "/games";
 export const APP_GAMES_NEW_ROUTE = APP_GAMES_ROUTE + "/new";
 export const APP_GAMES_EDIT_ROUTE = APP_GAMES_ROUTE + "/edit/:id"
+// --- APP GAME DETAILS ROUTES ---
+export const APP_GAMES_DETAILS_ROUTE = APP_ROUTE + "/game-details";
+export const APP_GAMES_DETAILS_NEW_ROUTE = APP_GAMES_DETAILS_ROUTE + "/new";
+export const APP_GAMES_DETAILS_EDIT_ROUTE = APP_GAMES_DETAILS_ROUTE + "/edit/:id"
 // --- APP PROGRAM ROUTES ---
 export const APP_PROGRAM_ROUTE = APP_GAMES_ROUTE + "/program";
 

@@ -74,7 +74,7 @@ export const appHomeHandlers = [
       return new HttpResponse(null, { status: 404 });
     }
 
-    return HttpResponse.json(item);
+    return HttpResponse.json({ data: item });
   }),
 
   // -------------------------
@@ -90,7 +90,7 @@ export const appHomeHandlers = [
 
     db.unshift(newItem);
 
-    return HttpResponse.json(newItem, { status: 201 });
+    return HttpResponse.json({ data: newItem }, { status: 201 });
   }),
 
   // -------------------------
@@ -111,7 +111,7 @@ export const appHomeHandlers = [
       ...body,
     };
 
-    return HttpResponse.json(db[index]);
+    return HttpResponse.json({ data: db[index] });
   }),
 
   // -------------------------
@@ -128,6 +128,6 @@ export const appHomeHandlers = [
 
     const deleted = db.splice(index, 1);
 
-    return HttpResponse.json(deleted[0]);
+    return HttpResponse.json({ data: deleted[0] });
   }),
 ];

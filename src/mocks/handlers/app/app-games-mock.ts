@@ -92,12 +92,14 @@ export const MOCK_GAMES: Game[] = [
   },
 ];
 
+
 const db: Game[] = [...MOCK_GAMES];
 
 // -------------------------
 // GET LIST
 // -------------------------
 export const appGamesHandlers = [
+  
   http.get(`${APP_GAMES_API_URL}`, ({ request }) => {
     const url = new URL(request.url);
 
@@ -128,15 +130,7 @@ export const appGamesHandlers = [
       return new HttpResponse(null, { status: 404 });
     }
 
-    return HttpResponse.json({
-      data: {
-        id: item.id,
-        game: item,
-        status: item.status,
-        questions: [],
-        created_at: new Date().toISOString(),
-      },
-    });
+    return HttpResponse.json({ data: item });
   }),
 
   // -------------------------
@@ -160,10 +154,7 @@ export const appGamesHandlers = [
   // UPDATE
   // -------------------------
   http.put(`${APP_GAMES_API_URL}/:id`, async ({ request, params }) => {
-    const body = (await request.json()) as Partial<Game> & {
-      game?: Partial<Game>;
-      status?: Game["status"];
-    };
+    const body = (await request.json()) as Partial<Game>;
 
     const index = db.findIndex((g) => g.id === params.id);
 
@@ -171,15 +162,30 @@ export const appGamesHandlers = [
       return new HttpResponse(null, { status: 404 });
     }
 
-    const { game: nestedGame, status, ...flatRest } = body;
-
     db[index] = {
       ...db[index],
-      ...flatRest,
-      ...(nestedGame ?? {}),
-      ...(status ? { status } : {}),
+      ...body,
     };
 
     return HttpResponse.json({ data: db[index] });
   }),
-];
+
+  // -------------------------
+  // DELETE
+  // -------------------------
+
+  http.delete(`${APP_GAMES_API_URL}/:id`, async ({ params }) => {
+
+    const index = db.findIndex((p) => p.id === params.id);
+
+    if (index === -1) {
+      return new HttpResponse(null, { status: 404 });
+    }
+
+    const deleted = db.splice(index, 1);
+
+    return HttpResponse.json({ data: deleted[0] });
+
+  })
+
+]
