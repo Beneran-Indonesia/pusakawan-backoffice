@@ -5,8 +5,8 @@ import { QuestionSchema } from "./app-questions-type";
 
 export const GameDetailsSchema = z.object({
     id: z.string(),
-    game: GameSchema,
     status: GameStatusSchema,
+    game: GameSchema,
     questions: z.array(QuestionSchema),
     created_at: z.string(), // date
 })

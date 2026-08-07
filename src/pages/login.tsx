@@ -87,9 +87,6 @@ export const Login: React.FC = () => {
               </div>
             </div>
           </div>
-
-          <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute -left-20 -top-20 w-60 h-60 bg-white/10 rounded-full blur-3xl" />
         </div>
 
         <div className="lg:col-span-2 p-6 md:p-8 flex flex-col justify-center">
@@ -189,13 +186,16 @@ export const Login: React.FC = () => {
                       id="remember"
                       checked={field.value}
                       onCheckedChange={(checked) =>
-                        field.onChange(
-                          checked === "indeterminate" ? false : checked,
-                        )
+                      {
+                        console.log(checked)
+                        return field.onChange(checked === true)
+                      }
+                        
                       }
                     />
                   )}
                 />
+
                 <Label htmlFor="remember" className="text-sm text-gray-600">
                   {t("sign_in.remember_me")}
                 </Label>
