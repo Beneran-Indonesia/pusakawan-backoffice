@@ -107,7 +107,6 @@ const logoutHandler = http.post(LOGOUT_API_URL, async ({ request }) => {
 
 // LOGIN
 const loginHandler = http.post(LOGIN_API_URL, async ({ request }) => {
-    console.log('gappens')
     const body = await request.json() as {
         email: string;
         password: string;

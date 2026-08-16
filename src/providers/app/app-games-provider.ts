@@ -5,6 +5,7 @@ export const { dataProvider: appGamesDataProvider } = createDataProvider(
   APP_API_URL,
   {
     getList: {
+      getEndpoint: () => "games",
       buildQueryParams: async ({ pagination, filters, sorters }) => {
         const query: Record<string, unknown> = {};
         // /games?page=1&total=10
@@ -45,9 +46,8 @@ export const { dataProvider: appGamesDataProvider } = createDataProvider(
       },
     },
     getOne: {
-      getEndpoint: ({ resource, id }) => {
-        console.log("getOne", resource, id);
-        return `${resource}/${id}`;
+      getEndpoint: ({ id }) => {
+        return `game-details/${id}`;
       }, // "posts/123"
       mapResponse: async (response) => {
         const json = await response.clone().json();
@@ -57,8 +57,8 @@ export const { dataProvider: appGamesDataProvider } = createDataProvider(
 
     // PATCH / PUT METHOD
     update: {
-      getEndpoint: ({ resource, id }) => {
-        return `${resource}/${id}`;
+      getEndpoint: ({ id }) => {
+        return `game-details/${id}`;
       }, // "posts/123"
       getRequestMethod: () => "put",
 
