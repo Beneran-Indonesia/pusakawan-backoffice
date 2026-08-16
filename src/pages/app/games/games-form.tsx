@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HttpError } from "@refinedev/core";
+import { HttpError, useResourceParams, useTranslate } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 import { useState } from "react";
 import { useNavigate } from "react-router";
@@ -23,6 +23,9 @@ const tabTriggerClass =
 export default function AppGamesForm() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("details");
+  const { id } = useResourceParams();
+
+  const t = useTranslate()
 
   const {
     refineCore: { onFinish, formLoading },
@@ -37,6 +40,7 @@ export default function AppGamesForm() {
     refineCoreProps: {
       action: "edit",
       resource: "games",
+      id,
     },
     defaultValues: {
       status: "draft",
@@ -90,11 +94,11 @@ export default function AppGamesForm() {
             </button>
             <div>
               <h1 className="text-xl md:text-2xl font-bold text-slate-900">
-                {title || "New Game"}
+                {title || t("app.games.form.untitled")}
               </h1>
               <p className="text-slate-500 mt-1">
-                {status === "published" ? "Published" : "Draft"} •{" "}
-                {isOffline ? "Offline" : "Online"} Game
+                {status === "published" ? t("app.games.form.status.published") : t("app.games.form.status.draft")} •{" "}
+                {isOffline ? t("app.games.form.type.offline") : t("app.games.form.type.online")}
               </p>
             </div>
           </div>
@@ -107,7 +111,7 @@ export default function AppGamesForm() {
               className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition-colors disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
-              Save as Draft
+              {t("app.games.form.save_as_draft")}
             </button>
             <button
               type="button"
@@ -116,7 +120,7 @@ export default function AppGamesForm() {
               className="flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
             >
               <Eye className="w-4 h-4" />
-              Publish
+              {t("app.games.form.publish")}
             </button>
           </div>
         </div>
@@ -125,13 +129,13 @@ export default function AppGamesForm() {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="w-full h-auto p-2 bg-white border border-slate-200 rounded-xl gap-1">
             <TabsTrigger value="details" className={tabTriggerClass}>
-              Game Details
+              {t("app.games.form.tabs.details")}
             </TabsTrigger>
             <TabsTrigger value="questions" className={tabTriggerClass}>
-              Questions
+              {t("app.games.form.tabs.questions")}
             </TabsTrigger>
             <TabsTrigger value="leaderboard" className={tabTriggerClass}>
-              Leaderboard
+              {t("app.games.form.tabs.leaderboard")}
             </TabsTrigger>
           </TabsList>
 

@@ -185,13 +185,9 @@ export const Login: React.FC = () => {
                     <Checkbox
                       id="remember"
                       checked={field.value}
-                      onCheckedChange={(checked) =>
-                      {
-                        console.log(checked)
-                        return field.onChange(checked === true)
-                      }
-                        
-                      }
+                      onCheckedChange={(checked) => {
+                        return field.onChange(checked === true);
+                      }}
                     />
                   )}
                 />

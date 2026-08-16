@@ -139,7 +139,7 @@ export const createResources = (t: TFunction): ResourceProps[] => {
     },
   };
 
-  return [...lmsNavItems, ...appNavItems, editProfileNavItem, manageUserNavItem];
+  return [...appNavItems, ...lmsNavItems, editProfileNavItem, manageUserNavItem];
 };
 
 export const filterResources = (

@@ -1,6 +1,8 @@
 import { GameDetails } from "@/types/app/app-game-details-type";
 import { MOCK_GAMES } from "./app-games-mock";
 import { Question } from "@/types/app/app-questions-type";
+import { http, HttpResponse } from "msw";
+import { APP_GAME_DETAILS_API_URL } from "@/lib/urls";
 
 export const MOCK_QUESTIONS: Question[][] = [
 
@@ -144,21 +146,21 @@ export const MOCK_QUESTIONS: Question[][] = [
 
 export const MOCK_GAME_DETAILS: GameDetails[] = [
   {
-    id: "gd1",
+    id: "g1",
     status: MOCK_GAMES[0].status,
     game: MOCK_GAMES[0],
     questions: MOCK_QUESTIONS[0],
     created_at: '2024-01-10'
   },
   {
-    id: "gd2",
+    id: "g2",
     status: MOCK_GAMES[1].status,
     game: MOCK_GAMES[1],
     questions: MOCK_QUESTIONS[1],
     created_at: '2024-02-05'
   },
   {
-    id: "gd3",
+    id: "g3",
     status: MOCK_GAMES[2].status,
     game: MOCK_GAMES[2],
     questions: MOCK_QUESTIONS[2],
@@ -166,4 +168,96 @@ export const MOCK_GAME_DETAILS: GameDetails[] = [
   }
 ];
 
-export const appGamesDetailsHandlers = [];
+const db: GameDetails[] = [...MOCK_GAME_DETAILS];
+
+export const appGamesDetailsHandlers = [
+
+  http.get(`${APP_GAME_DETAILS_API_URL}`, ({ request }) => {
+    const url = new URL(request.url);
+
+    const page = Number(url.searchParams.get("page") ?? 1);
+    const size = Number(url.searchParams.get("size") ?? 10);
+
+    const items = [...db];
+
+    const total = items.length;
+
+    const start = (page - 1) * size;
+    const end = start + size;
+
+    return HttpResponse.json({
+      data: items.slice(start, end),
+      total,
+    });
+  }),
+
+  // -------------------------
+  // GET ONE
+  // -------------------------
+
+  http.get(`${APP_GAME_DETAILS_API_URL}/:id`, ({ params }) => {
+    const item = db.find((g) => g.id === params.id);
+
+    if (!item) {
+      return new HttpResponse(null, { status: 404 });
+    }
+
+    return HttpResponse.json({ data: item });
+  }),
+
+  // -------------------------
+  // CREATE
+  // -------------------------
+
+  http.post(`${APP_GAME_DETAILS_API_URL}/new`, async ({ request }) => {
+    const body = (await request.json()) as GameDetails;
+
+    const newGame: GameDetails = {
+      ...body,
+      id: `g_${Date.now()}`,
+    };
+
+    db.unshift(newGame);
+
+    return HttpResponse.json({ data: newGame }, { status: 201 });
+  }),
+
+  // -------------------------
+  // UPDATE
+  // -------------------------
+  http.put(`${APP_GAME_DETAILS_API_URL}/:id`, async ({ request, params }) => {
+    const body = (await request.json()) as Partial<GameDetails>;
+
+    const index = db.findIndex((g) => g.id === params.id);
+
+    if (index === -1) {
+      return new HttpResponse(null, { status: 404 });
+    }
+
+    db[index] = {
+      ...db[index],
+      ...body,
+    };
+
+    return HttpResponse.json({ data: db[index] });
+  }),
+
+  // -------------------------
+  // DELETE
+  // -------------------------
+
+  http.delete(`${APP_GAME_DETAILS_API_URL}/:id`, async ({ params }) => {
+
+    const index = db.findIndex((p) => p.id === params.id);
+
+    if (index === -1) {
+      return new HttpResponse(null, { status: 404 });
+    }
+
+    const deleted = db.splice(index, 1);
+
+    return HttpResponse.json({ data: deleted[0] });
+
+  })
+
+];
