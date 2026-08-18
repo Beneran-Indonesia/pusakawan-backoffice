@@ -146,7 +146,13 @@ export default function AppGamesForm() {
 
           {/* QUESTIONS TAB */}
           <TabsContent value="questions" className="mt-6">
-            <QuestionsForm control={control} />
+            <QuestionsForm
+              control={control}
+              register={register}
+              errors={errors.questions}
+              watch={watch}
+              setValue={setValue}
+            />
           </TabsContent>
 
           {/* LEADERBOARD TAB */}
