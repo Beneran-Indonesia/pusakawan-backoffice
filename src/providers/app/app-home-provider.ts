@@ -7,6 +7,8 @@ export const { dataProvider: appHomeDataProvider } = createDataProvider(
   APP_API_URL,
   {
     getList: {
+      getEndpoint: () => "home",
+
       // 2. Transform Refine's parameters into your API's query format
       buildQueryParams: async ({ pagination, filters, sorters }) => {
         const query: Record<string, unknown> = {};
@@ -23,7 +25,7 @@ export const { dataProvider: appHomeDataProvider } = createDataProvider(
         if (sorters?.length) {
           query.sort = sorters.map(({ field, order }) => ({
             [field]: order,
-          }))
+          }));
         }
 
         // Handle filters -- on get all list. Maybe will filter in frontend also (?)
@@ -57,17 +59,34 @@ export const { dataProvider: appHomeDataProvider } = createDataProvider(
       },
     },
     getOne: {
-      // Get one
+      getEndpoint: ({ id }) => `home/${id}`,
+      mapResponse: async (response) => {
+        const json = await response.clone().json();
+        return json.data;
+      },
     },
     update: {
-      // Update function after getOne
+      getEndpoint: ({ id }) => `home/${id}`,
+      getRequestMethod: () => "put",
+      mapResponse: async (response) => {
+        const json = await response.clone().json();
+        return json.data;
+      },
     },
     deleteOne: {
-      // 
+      getEndpoint: ({ id }) => `home/${id}`,
+      mapResponse: async (response) => {
+        const json = await response.clone().json();
+        return json.data;
+      },
     },
     create: {
-      // 
+      getEndpoint: () => "home",
+      mapResponse: async (response) => {
+        const json = await response.clone().json();
+        return json.data;
+      },
     },
   }, // Create Data Provider Options,
-  kyOptions // KY Options
+  kyOptions, // KY Options
 );

@@ -223,10 +223,46 @@
             "draft": "Simpan sebagai Draf",
             "cancel": "Batalkan",
             "publish": "Publikasikan Konten"
-          }
+          },
+          "save_as_draft": "Simpan sebagai Draf (tidak akan muncul di aplikasi mobile sampai dipublikasikan)"
+        },
+        "editing_content": "Mengubah konten",
+        "creating_content": "Membuat konten baru",
+        "picture_min_error": "Silakan unggah minimal 1 foto.",
+        "pictures": {
+          "title": "Foto (maksimal 10)",
+          "upload_cta": "Unggah foto"
         }
       },
-      "contents": "Konten"
+      "contents": "Konten",
+      "create_button": "Konten Baru",
+      "card": {
+        "edit": "Ubah",
+        "duplicate": "Duplikat",
+        "publish": "Publikasikan",
+        "unpublish": "Batalkan Publikasi",
+        "delete": "Hapus"
+      },
+      "empty_state": {
+        "title": "Belum ada konten",
+        "subtitle": "Buat konten pertama Anda untuk ditampilkan di beranda aplikasi siswa"
+      },
+      "empty_filter": {
+        "title": "Konten tidak ditemukan"
+      },
+      "delete_modal": {
+        "title": "Hapus Konten",
+        "description": "Apakah Anda yakin ingin menghapus konten ini? Semua data akan dihapus secara permanen dari beranda aplikasi.",
+        "item_label": "Item yang akan dihapus:",
+        "warning_label": "Peringatan:",
+        "warning": "Tindakan ini tidak dapat dibatalkan.",
+        "cancel": "Batalkan",
+        "confirm": "Hapus Konten"
+      },
+      "edit": {
+        "title": "Ubah Konten",
+        "subtitle": "Perbarui foto dan deskripsi untuk beranda aplikasi."
+      }
     }
   },
   "edit_profile": {},

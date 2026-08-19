@@ -215,7 +215,15 @@
             "draft": "Save as Draft",
             "cancel": "Cancel",
             "publish": "Publish Content"
-          }
+          },
+          "save_as_draft": "Save as Draft (won't appear in mobile app until published)"
+        },
+        "editing_content": "Editing content",
+        "creating_content": "Creating new content",
+        "picture_min_error": "Please upload at least 1 photo.",
+        "pictures": {
+          "title": "Photos (up to 10)",
+          "upload_cta": "Upload photo(s)"
         }
       },
       "title": "App Home Management",
@@ -226,6 +234,34 @@
         "all": "All Content",
         "published": "Published",
         "draft": "Draft"
+      },
+      "create_button": "New Content",
+      "card": {
+        "edit": "Edit",
+        "duplicate": "Duplicate",
+        "publish": "Publish",
+        "unpublish": "Unpublish",
+        "delete": "Delete"
+      },
+      "empty_state": {
+        "title": "No content yet",
+        "subtitle": "Create your first content to show it on the student app home"
+      },
+      "empty_filter": {
+        "title": "No content found"
+      },
+      "delete_modal": {
+        "title": "Delete Content",
+        "description": "Are you sure you want to delete this content? All data will be permanently removed from the app home.",
+        "item_label": "Item to be deleted:",
+        "warning_label": "Warning:",
+        "warning": "This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete Content"
+      },
+      "edit": {
+        "title": "Edit Content",
+        "subtitle": "Update the photo and description for the app home screen."
       }
     }
   },

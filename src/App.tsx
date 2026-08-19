@@ -24,6 +24,7 @@ import {
   APP_GAMES_EDIT_ROUTE,
   APP_GAMES_NEW_ROUTE,
   APP_GAMES_ROUTE,
+  APP_HOME_EDIT_ROUTE,
   APP_HOME_NEW_ROUTE,
   APP_HOME_ROUTE,
   EDIT_PROFILE_ROUTE,
@@ -145,6 +146,14 @@ function App() {
               }
             />
             {/* Edit home */}
+            <Route
+              path={APP_HOME_EDIT_ROUTE}
+              element={
+                <Layout>
+                  <AppHomeForm />
+                </Layout>
+              }
+            />
 
             {/* List games */}
             <Route
