@@ -8,6 +8,7 @@ export const GameDetailsSchema = z.object({
     status: GameStatusSchema,
     game: GameSchema,
     questions: z.array(QuestionSchema),
+    author: z.string(),
     created_at: z.string(), // date
 })
 

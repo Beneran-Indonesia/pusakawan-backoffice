@@ -150,21 +150,24 @@ export const MOCK_GAME_DETAILS: GameDetails[] = [
     status: MOCK_GAMES[0].status,
     game: MOCK_GAMES[0],
     questions: MOCK_QUESTIONS[0],
-    created_at: '2024-01-10'
+    created_at: '2024-01-10',
+    author: "Pusakawan"
   },
   {
     id: "g2",
     status: MOCK_GAMES[1].status,
     game: MOCK_GAMES[1],
     questions: MOCK_QUESTIONS[1],
-    created_at: '2024-02-05'
+    created_at: '2024-02-05',
+    author: "Pusakawan"
   },
   {
     id: "g3",
     status: MOCK_GAMES[2].status,
     game: MOCK_GAMES[2],
     questions: MOCK_QUESTIONS[2],
-    created_at: '2024-02-20'
+    created_at: '2024-02-20',
+    author: "Pusakawan"
   }
 ];
 

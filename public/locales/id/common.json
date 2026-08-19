@@ -221,7 +221,7 @@
           "hint": "Tulis deskripsi konten di sini...",
           "buttons": {
             "draft": "Simpan sebagai Draf",
-            "cancel": "Batalkan",
+            "cancel": "Kembali",
             "publish": "Publikasikan Konten"
           },
           "save_as_draft": "Simpan sebagai Draf (tidak akan muncul di aplikasi mobile sampai dipublikasikan)"
@@ -256,7 +256,7 @@
         "item_label": "Item yang akan dihapus:",
         "warning_label": "Peringatan:",
         "warning": "Tindakan ini tidak dapat dibatalkan.",
-        "cancel": "Batalkan",
+        "cancel": "Kembali",
         "confirm": "Hapus Konten"
       },
       "edit": {
