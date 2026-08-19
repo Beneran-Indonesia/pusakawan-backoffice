@@ -1,7 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { UserToken } from '@/types/users-type'
 import { LOGIN_API_URL, LOGOUT_API_URL, REFRESH_TOKEN_API_URL } from '@/lib/urls'
-// import { getCookieValue } from '@/lib/utils';
 
 const MOCK_USER: UserToken["user"] = {
     email: "a@g.c",

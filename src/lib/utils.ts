@@ -5,12 +5,15 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const getCookieValue = (cookie: string, key: string) =>
-  cookie.split(";")
-    .map((c) => c.trim())
-    .find((c) => c.startsWith(`${key}=`))
-    ?.split("=")[1];
+export const getInitials = (name = "") => {
+  const names = name.split(" ");
+  let initials = names[0].substring(0, 1).toUpperCase();
 
+  if (names.length > 1) {
+    initials += names[names.length - 1].substring(0, 1).toUpperCase();
+  }
+  return initials;
+};
 
 export const formatDate = (dateString: string) => {
   const date = new Date(dateString);

@@ -41,17 +41,9 @@ import {
   Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { getInitials } from "@/lib/utils";
 
 type FilterStatus = "all" | "published" | "draft";
-
-// Initials shown inside the author avatar, e.g. "Pusakawan Team" -> "PT"
-const getInitials = (name: string) =>
-  name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
 
 function PostImageCarousel({
   pictures,
@@ -60,14 +52,16 @@ function PostImageCarousel({
   pictures: string[];
   alt: string;
 }) {
-  const [api, setApi] = useState<CarouselApi>();
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    if (!api) return;
-    setCurrent(api.selectedScrollSnap());
-    api.on("select", () => setCurrent(api.selectedScrollSnap()));
-  }, [api]);
+    if (!carouselApi) return;
+    setCurrent(carouselApi.selectedScrollSnap());
+    carouselApi.on("select", () =>
+      setCurrent(carouselApi.selectedScrollSnap()),
+    );
+  }, [carouselApi]);
 
   if (pictures.length === 0) {
     return (
@@ -79,7 +73,7 @@ function PostImageCarousel({
 
   return (
     <Carousel
-      setApi={setApi}
+      setApi={setCarouselApi}
       opts={{ loop: pictures.length > 1 }}
       className="w-full h-full group"
     >
@@ -102,7 +96,7 @@ function PostImageCarousel({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              api?.scrollPrev();
+              carouselApi?.scrollPrev();
             }}
             className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/60"
           >
@@ -112,7 +106,7 @@ function PostImageCarousel({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              api?.scrollNext();
+              carouselApi?.scrollNext();
             }}
             className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/60"
           >

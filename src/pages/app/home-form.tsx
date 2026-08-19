@@ -27,10 +27,83 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
+import {
+  DndContext,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+
+import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
+
+import {
+  SortableContext,
+  horizontalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from "@dnd-kit/sortable";
+
+import { CSS } from "@dnd-kit/utilities";
 import { useNavigate } from "react-router";
+import { cn } from "@/lib/utils";
 
 const MAX_PICTURES = 10;
 const MIN_PICTURES = 1;
+
+function SortableThumbnail({
+  id,
+  src,
+  index,
+  currentSlide,
+  onClick,
+}: {
+  id: string;
+  src: string;
+  index: number;
+  currentSlide: number;
+  onClick: () => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <button
+      ref={setNodeRef}
+      type="button"
+      style={style}
+      {...attributes}
+      {...listeners}
+      onClick={onClick}
+      className={`
+        w-16 h-16 shrink-0 rounded-lg overflow-hidden border-2
+        transition-colors touch-none cursor-grab active:cursor-grabbing
+        ${index === currentSlide ? "border-red-500" : "border-transparent"}
+        ${isDragging ? "opacity-50 scale-105" : ""}
+      `}
+    >
+      <img
+        src={src}
+        alt=""
+        draggable={false}
+        className="w-full h-full object-cover pointer-events-none"
+      />
+    </button>
+  );
+}
 
 export default function AppHomeForm() {
   const t = useTranslate();
@@ -42,6 +115,14 @@ export default function AppHomeForm() {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [saveAsDraft, setSaveAsDraft] = useState(true);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+  );
 
   const { data: identity } = useGetIdentity<{ name?: string } | undefined>();
 
@@ -106,6 +187,28 @@ export default function AppHomeForm() {
   const removePicture = (index: number) => {
     const next = pictures.filter((_, i) => i !== index);
     setValue("pictures", next, { shouldDirty: true, shouldValidate: true });
+  };
+
+  const handlePictureDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = pictures.findIndex((picture) => picture === active.id);
+
+    const newIndex = pictures.findIndex((picture) => picture === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove(pictures, oldIndex, newIndex);
+
+    setValue("pictures", reordered, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+
+    // Keep the carousel focused on the moved picture.
+    carouselApi?.scrollTo(newIndex);
   };
 
   const submit = (status: "draft" | "published") =>
@@ -259,35 +362,47 @@ export default function AppHomeForm() {
 
             {/* Thumbnails / add more */}
             {(pictures.length > 0 || pictures.length < MAX_PICTURES) && (
-              <div className="flex flex-wrap gap-2 mt-3">
-                {pictures.map((picture, index) => (
-                  <button
-                    type="button"
-                    key={`${picture}-thumb-${index}`}
-                    onClick={() => carouselApi?.scrollTo(index)}
-                    className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
-                      index === currentSlide
-                        ? "border-red-500"
-                        : "border-transparent"
-                    }`}
-                  >
-                    <img
-                      src={picture}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-                {pictures.length < MAX_PICTURES && (
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-16 h-16 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-400 hover:border-red-400 hover:text-red-500 transition-colors"
-                  >
-                    <ImagePlus className="w-5 h-5" />
-                  </button>
-                )}
-              </div>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handlePictureDragEnd}
+                modifiers={[restrictToHorizontalAxis]}
+              >
+                <SortableContext
+                  items={pictures}
+                  strategy={horizontalListSortingStrategy}
+                >
+                  <div className="flex gap-2 mt-3 overflow-x-auto overflow-y-hidden pb-2 h-fit">
+                    {pictures.map((picture, index) => (
+                      <SortableThumbnail
+                        key={picture}
+                        id={picture}
+                        src={picture}
+                        index={index}
+                        currentSlide={currentSlide}
+                        onClick={() => carouselApi?.scrollTo(index)}
+                      />
+                    ))}
+
+                    {pictures.length < MAX_PICTURES && (
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className={cn(
+                          "w-16 h-16 shrink-0",
+                          "rounded-lg border-2 border-dashed border-slate-300",
+                          "flex items-center justify-center",
+                          "text-slate-400",
+                          "hover:border-red-400 hover:text-red-500",
+                          "transition-colors",
+                        )}
+                      >
+                        <ImagePlus className="w-5 h-5" />
+                      </button>
+                    )}
+                  </div>
+                </SortableContext>
+              </DndContext>
             )}
 
             <input
@@ -316,7 +431,7 @@ export default function AppHomeForm() {
             </label>
             <Textarea
               {...register("description")}
-              rows={5}
+              rows={12}
               placeholder={t("app.home.new.description.hint")}
               className="bg-slate-50"
             />
