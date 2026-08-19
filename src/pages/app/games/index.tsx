@@ -156,23 +156,24 @@ export default function AppGames() {
           </p>
         )}
 
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center gap-2">
-            <Avatar className="w-8 h-8 bg-red-100">
-              <AvatarFallback className="bg-red-100 text-red-700 text-xs font-semibold">
-                {getInitials(gameDetails.author)}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-sm font-semibold text-slate-800">
-              {gameDetails.author}
-            </span>
-          </div>
+        <div className="flex items-center gap-2 mb-4">
+          <Avatar className="w-8 h-8 bg-red-100 shrink-0">
+            <AvatarFallback className="bg-red-100 text-red-700 text-xs font-semibold">
+              {getInitials(gameDetails.author)}
+            </AvatarFallback>
+          </Avatar>
+          <span className="text-sm font-semibold text-slate-800 truncate">
+            {gameDetails.author}
+          </span>
 
           {gameDetails.held_on && (
-            <div className="flex items-center gap-1 text-xs text-slate-500">
-              <Calendar className="w-4 h-4" />
-              <span>{formatDate(gameDetails.held_on.start_datetime)}</span>
-            </div>
+            <>
+              <span className="text-sm text-slate-400">•</span>
+              <div className="flex items-center gap-1 text-xs text-slate-500 shrink-0">
+                <Calendar className="w-4 h-4" />
+                <span>{formatDate(gameDetails.held_on.start_datetime)}</span>
+              </div>
+            </>
           )}
         </div>
 
