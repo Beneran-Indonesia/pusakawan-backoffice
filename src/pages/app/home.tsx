@@ -220,10 +220,10 @@ export default function AppHome() {
           {post.description}
         </p>
 
-        <div className="grid grid-cols-[auto_auto_1fr_auto] items-center gap-2">
+        <div className="flex flex-nowrap items-center justify-end gap-2">
           <Button
             onClick={() => edit("app-home", post.id!)}
-            className="bg-red-600 hover:bg-red-700 text-white font-semibold"
+            className="shrink-0 bg-red-600 hover:bg-red-700 text-white font-semibold"
           >
             <Pencil className="w-4 h-4" />
             {t("app.home.card.edit")}
@@ -233,13 +233,14 @@ export default function AppHome() {
             size="icon"
             onClick={() => onDuplicate(post)}
             title={t("app.home.card.duplicate")}
+            className="shrink-0"
           >
             <Copy className="w-4 h-4" />
           </Button>
           <Button
             variant="outline"
             onClick={() => onToggleStatus(post)}
-            className={`min-w-0 truncate ${
+            className={`min-w-0 flex-1 truncate ${
               post.status === "published"
                 ? "border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100 hover:text-yellow-700"
                 : "border-green-300 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-700"
@@ -255,7 +256,7 @@ export default function AppHome() {
             variant="outline"
             size="icon"
             onClick={() => setPostToDelete(post)}
-            className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-600"
+            className="shrink-0 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-600"
             title={t("app.home.card.delete")}
           >
             <Trash2 className="w-4 h-4" />

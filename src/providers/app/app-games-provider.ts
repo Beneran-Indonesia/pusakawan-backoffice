@@ -46,7 +46,10 @@ export const { dataProvider: appGamesDataProvider } = createDataProvider(
       },
     },
     getOne: {
-      getEndpoint: ({ id }) => {
+      getEndpoint: ({ id, meta }) => {
+        if (meta?.simple) {
+          return `games/${id}`;
+        }
         return `game-details/${id}`;
       }, // "posts/123"
       mapResponse: async (response) => {
@@ -57,7 +60,10 @@ export const { dataProvider: appGamesDataProvider } = createDataProvider(
 
     // PATCH / PUT METHOD
     update: {
-      getEndpoint: ({ id }) => {
+      getEndpoint: ({ id, meta }) => {
+        if (meta?.simple) {
+          return `games/${id}`;
+        }
         return `game-details/${id}`;
       }, // "posts/123"
       getRequestMethod: () => "put",

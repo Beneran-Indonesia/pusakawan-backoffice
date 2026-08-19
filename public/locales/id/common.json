@@ -48,12 +48,28 @@
       "contents": "Konten",
       "title": "Manajemen Game",
       "subtitle": "Buat dan kelola game interaktif untuk komunitas Anda",
+      "card": {
+        "edit": "Ubah",
+        "duplicate": "Duplikat",
+        "publish": "Publikasikan",
+        "unpublish": "Batalkan Publikasi",
+        "delete": "Hapus"
+      },
       "empty_state": {
         "title": "Belum ada game",
         "subtitle": "Bikin game pertama untuk berinteraksi dengan komunitas Anda!"
       },
       "empty_filter": {
         "title": "Tidak ada games yang ditemukan"
+      },
+      "delete_modal": {
+        "title": "Hapus Game",
+        "description": "Apakah Anda yakin ingin menghapus game ini? Semua data akan dihapus secara permanen.",
+        "item_label": "Item yang akan dihapus:",
+        "warning_label": "Peringatan:",
+        "warning": "Tindakan ini tidak dapat dibatalkan.",
+        "cancel": "Batal",
+        "confirm": "Hapus Game"
       },
       "search_bar": {
         "placeholder": "Cari game...",

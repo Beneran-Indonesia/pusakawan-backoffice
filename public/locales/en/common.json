@@ -49,12 +49,28 @@
       "title": "Games Management",
       "subtitle": "Create and manage interactive games for your community",
       "create_button": "New Game",
+      "card": {
+        "edit": "Edit",
+        "duplicate": "Duplicate",
+        "publish": "Publish",
+        "unpublish": "Unpublish",
+        "delete": "Delete"
+      },
       "empty_state": {
         "title": "No games yet",
         "subtitle": "Create your first game to engage your community"
       },
       "empty_filter": {
         "title": "No games found"
+      },
+      "delete_modal": {
+        "title": "Delete Game",
+        "description": "Are you sure you want to delete this game? All data will be permanently removed.",
+        "item_label": "Item to be deleted:",
+        "warning_label": "Warning:",
+        "warning": "This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete Game"
       },
       "search_bar": {
         "placeholder": "Search games...",
