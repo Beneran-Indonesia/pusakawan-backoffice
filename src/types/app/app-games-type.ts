@@ -3,6 +3,7 @@ import { z } from "zod";
 export const GameStatusSchema = z.enum(["draft", "published"]);
 export const GameSchema = z
   .object({
+    author: z.string(),
     id: z.string(),
     status: GameStatusSchema,
     title: z.string().max(100),
