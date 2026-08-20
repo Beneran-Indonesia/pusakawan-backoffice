@@ -1,3 +1,7 @@
 `/games/index.tsx`
 
-need to change the typing in games home so there's also past game
+* need to change the typing in games home so there's also past game
+
+* on home/games duplicate need to have different name and actual logic behind it
+
+* drag and drop in games

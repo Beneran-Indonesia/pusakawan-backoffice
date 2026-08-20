@@ -185,11 +185,13 @@
         "no_question_text": "Belum ada teks pertanyaan",
         "points_label": "Poin: {{points}}",
         "edit": "Edit",
+        "cancel": "Batal",
         "delete": "Hapus",
         "done_editing": "Selesai Edit",
         "media": {
           "title": "Tambah Media (Opsional)",
-          "upload_hint": "Unggah JPG, PNG, MP4, atau MP3"
+          "upload_hint": "Unggah JPG, PNG, MP4, atau MP3",
+          "remove": "Hapus media"
         },
         "question_field": {
           "label": "Pertanyaan",

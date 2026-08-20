@@ -3,10 +3,12 @@
 import { Input } from "@/components/ui/input";
 import { GameDetails } from "@/types/app/app-game-details-type";
 import { Question } from "@/types/app/app-questions-type";
+import { TabsContent } from "@radix-ui/react-tabs";
 import { useTranslate } from "@refinedev/core";
 import {
   Check,
   ClipboardList,
+  CircleDollarSign,
   Lightbulb,
   PenSquare,
   Trash2,
@@ -83,7 +85,7 @@ function createEmptyQuestion(type: QuestionType): Question {
   };
 }
 
-export default function QuestionsForm({
+export default function QuestionsFormTab({
   control,
   register,
   errors,
@@ -99,6 +101,8 @@ export default function QuestionsForm({
   });
 
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [questionBeforeEditing, setQuestionBeforeEditing] =
+    useState<Question | null>(null);
 
   const handleAddQuestion = (type: QuestionType) => {
     const newIndex = fields.length;
@@ -108,11 +112,31 @@ export default function QuestionsForm({
 
   const handleDelete = (index: number) => {
     remove(index);
-    setEditingIndex((current) => (current === index ? null : current));
+    setEditingIndex((current) => {
+      if (current === null || current === index) return null;
+      return current > index ? current - 1 : current;
+    });
+  };
+
+  const handleEdit = (index: number) => {
+    const question = watch(`questions.${index}`);
+    setQuestionBeforeEditing(question ? structuredClone(question) : null);
+    setEditingIndex(index);
+  };
+
+  const handleCancelEdit = (index: number) => {
+    if (questionBeforeEditing) {
+      setValue(`questions.${index}`, questionBeforeEditing, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    }
+    setQuestionBeforeEditing(null);
+    setEditingIndex(null);
   };
 
   return (
-    <div className="space-y-6">
+    <TabsContent value="questions" className="mt-6 space-y-6">
       {/* Add New Question */}
       <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
         <h3 className="text-lg font-bold text-slate-800">
@@ -183,7 +207,11 @@ export default function QuestionsForm({
                   setValue={setValue}
                   index={index}
                   t={t}
-                  onDone={() => setEditingIndex(null)}
+                  onDone={() => {
+                    setQuestionBeforeEditing(null);
+                    setEditingIndex(null);
+                  }}
+                  onCancel={() => handleCancelEdit(index)}
                   onDelete={() => handleDelete(index)}
                 />
               ) : (
@@ -192,7 +220,7 @@ export default function QuestionsForm({
                   question={field}
                   index={index}
                   t={t}
-                  onEdit={() => setEditingIndex(index)}
+                  onEdit={() => handleEdit(index)}
                   onDelete={() => handleDelete(index)}
                 />
               ),
@@ -200,7 +228,7 @@ export default function QuestionsForm({
           </div>
         )}
       </div>
-    </div>
+    </TabsContent>
   );
 }
 
@@ -279,6 +307,7 @@ type QuestionEditFormProps = {
   index: number;
   t: Translate;
   onDone: () => void;
+  onCancel: () => void;
   onDelete: () => void;
 };
 
@@ -290,6 +319,7 @@ function QuestionEditForm({
   index,
   t,
   onDone,
+  onCancel,
   onDelete,
 }: QuestionEditFormProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -345,9 +375,18 @@ function QuestionEditForm({
         </label>
         {media ? (
           <div className="flex items-center justify-between gap-3 border border-slate-200 rounded-xl px-4 py-3 bg-slate-50">
-            <span className="truncate text-sm text-slate-600">
-              {media.file_name}
-            </span>
+            <div className="flex min-w-0 items-center gap-3">
+              {media.type === "image" && (
+                <img
+                  src={media.url}
+                  alt={media.file_name}
+                  className="h-16 w-16 shrink-0 rounded-lg border border-slate-200 object-cover"
+                />
+              )}
+              <span className="truncate text-sm text-slate-600">
+                {media.file_name}
+              </span>
+            </div>
             <button
               type="button"
               onClick={removeMedia}
@@ -418,14 +457,17 @@ function QuestionEditForm({
         <label className="block text-sm font-semibold text-slate-800 mb-2">
           {t("app.games.questions.pusaka_point")}
         </label>
-        {/* TODO: put the pusaka points logo here, make it absolute and translate - */}
+        <CircleDollarSign
+          className="absolute left-3 top-1/2 mt-3 h-5 w-5 -translate-y-1/2 text-amber-500 pointer-events-none"
+          aria-hidden="true"
+        />
         <Input
           type="number"
           min={0}
           {...register(`questions.${index}.pusaka_points`, {
             valueAsNumber: true,
           })}
-          className="w-full py-4"
+          className="w-full py-4 pr-11"
         />
         {errors?.pusaka_points && (
           <p className="text-xs text-red-600 mt-1">
@@ -436,9 +478,12 @@ function QuestionEditForm({
 
       {/* Actions */}
       <div className="flex items-center gap-3 pt-2 border-slate-100">
-        {/* TODO: cancel changes */}
-        <button>
-          Cancel
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-200 bg-slate-300 rounded-lg transition-colors cursor-pointer"
+        >
+          {t("app.games.questions.cancel")}
         </button>
         <button
           type="button"

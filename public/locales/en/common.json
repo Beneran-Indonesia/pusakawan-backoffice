@@ -186,11 +186,13 @@
         "no_question_text": "No question text",
         "points_label": "Points: {{points}}",
         "edit": "Edit",
+        "cancel": "Cancel",
         "delete": "Delete",
         "done_editing": "Done Editing",
         "media": {
           "title": "Add Media (Optional)",
-          "upload_hint": "Upload JPG, PNG, MP4, or MP3"
+          "upload_hint": "Upload JPG, PNG, MP4, or MP3",
+          "remove": "Remove media"
         },
         "question_field": {
           "label": "Question",
