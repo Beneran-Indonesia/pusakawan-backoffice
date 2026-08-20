@@ -1,5 +1,6 @@
 // Yuri
 
+import { Input } from "@/components/ui/input";
 import { GameDetails } from "@/types/app/app-game-details-type";
 import { Question } from "@/types/app/app-questions-type";
 import { useTranslate } from "@refinedev/core";
@@ -413,17 +414,18 @@ function QuestionEditForm({
       )}
 
       {/* Pusaka Point */}
-      <div>
+      <div className="relative">
         <label className="block text-sm font-semibold text-slate-800 mb-2">
           {t("app.games.questions.pusaka_point")}
         </label>
-        <input
+        {/* TODO: put the pusaka points logo here, make it absolute and translate - */}
+        <Input
           type="number"
           min={0}
           {...register(`questions.${index}.pusaka_points`, {
             valueAsNumber: true,
           })}
-          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+          className="w-full py-4"
         />
         {errors?.pusaka_points && (
           <p className="text-xs text-red-600 mt-1">
@@ -433,7 +435,11 @@ function QuestionEditForm({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+      <div className="flex items-center gap-3 pt-2 border-slate-100">
+        {/* TODO: cancel changes */}
+        <button>
+          Cancel
+        </button>
         <button
           type="button"
           onClick={onDone}

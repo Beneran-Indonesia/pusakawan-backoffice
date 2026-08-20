@@ -204,7 +204,7 @@
         "pusaka_point": "Pusaka Point",
         "correct_answers": {
           "label": "Correct Answers (3 variations)",
-          "placeholder": "Correct answer {{number}}"
+          "placeholder": "Correct Answer Variation #{{number}}"
         },
         "hints": {
           "label": "Hints (Optional)",

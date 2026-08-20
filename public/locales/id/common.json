@@ -203,7 +203,7 @@
         "pusaka_point": "Poin Pusaka",
         "correct_answers": {
           "label": "Jawaban Benar (3 variasi)",
-          "placeholder": "Jawaban benar {{number}}"
+          "placeholder": "Jawaban Benar Variasi #{{number}}"
         },
         "hints": {
           "label": "Petunjuk (Opsional)",

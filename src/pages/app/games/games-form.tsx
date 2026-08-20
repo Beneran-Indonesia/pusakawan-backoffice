@@ -13,7 +13,7 @@ import {
 } from "@/types/app/app-game-details-type";
 import { GameStatus } from "@/types/app/app-games-type";
 import GameDetailsTab from "./game-details";
-import QuestionsForm from "./questions-form";
+import QuestionsFormTab from "./questions-form";
 
 const tabTriggerClass =
   "flex-1 rounded-lg py-3 text-sm font-semibold text-slate-600 transition-colors " +
@@ -25,7 +25,7 @@ export default function AppGamesForm() {
   const [activeTab, setActiveTab] = useState("details");
   const { id } = useResourceParams();
 
-  const t = useTranslate()
+  const t = useTranslate();
 
   const {
     refineCore: { onFinish, formLoading },
@@ -97,8 +97,13 @@ export default function AppGamesForm() {
                 {title || t("app.games.form.untitled")}
               </h1>
               <p className="text-slate-500 mt-1">
-                {status === "published" ? t("app.games.form.status.published") : t("app.games.form.status.draft")} •{" "}
-                {isOffline ? t("app.games.form.type.offline") : t("app.games.form.type.online")}
+                {status === "published"
+                  ? t("app.games.form.status.published")
+                  : t("app.games.form.status.draft")}
+                {" • "}
+                {isOffline
+                  ? t("app.games.form.type.offline")
+                  : t("app.games.form.type.online")}
               </p>
             </div>
           </div>
@@ -149,15 +154,13 @@ export default function AppGamesForm() {
           />
 
           {/* QUESTIONS TAB */}
-          <TabsContent value="questions" className="mt-6">
-            <QuestionsForm
-              control={control}
-              register={register}
-              errors={errors.questions}
-              watch={watch}
-              setValue={setValue}
-            />
-          </TabsContent>
+          <QuestionsFormTab
+            control={control}
+            register={register}
+            errors={errors.questions}
+            watch={watch}
+            setValue={setValue}
+          />
 
           {/* LEADERBOARD TAB */}
           <TabsContent
