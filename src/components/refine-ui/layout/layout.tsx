@@ -48,6 +48,7 @@ export function Layout({ children }: PropsWithChildren) {
                   "md:p-4",
                   "lg:px-6",
                   "lg:pt-6",
+                  "lg:pb-6"
                 )}
               >
                 {children}

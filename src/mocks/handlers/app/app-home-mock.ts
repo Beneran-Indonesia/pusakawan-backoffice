@@ -1,6 +1,7 @@
 import { Post } from "@/types/app/app-home-type";
 import { http, HttpResponse } from "msw";
 import { APP_HOME_API_URL } from "@/lib/urls";
+import { getPastDate } from "@/lib/utils";
 
 const MOCK_HOME: Post[] = [
   {
@@ -11,7 +12,8 @@ const MOCK_HOME: Post[] = [
     ],
     description:
       "Welcome to the Pusakawan learning app! We hope you are all excited to learn today.",
-    timestamp: "2 hours ago",
+    created_at: new Date().toISOString(),
+    published_at: getPastDate(2, "hour"),
     status: "published",
   },
   {
@@ -20,11 +22,12 @@ const MOCK_HOME: Post[] = [
     pictures: [
       "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=800&auto=format&fit=crop",
+      "https://images.unsplash  .com/photo-1517486808906-6ca8b3f04846?w=800&auto=format&fit=crop",
     ],
     description:
       "Join us for an exciting workshop this weekend! Learn new skills and meet fellow students.",
-    timestamp: "1 day ago",
+    created_at: new Date().toISOString(),
+    published_at: getPastDate(1, "day"),
     status: "draft",
   },
   {
@@ -36,7 +39,8 @@ const MOCK_HOME: Post[] = [
     ],
     description:
       "Congratulations to all students who completed the Indonesian Heritage Challenge! Your dedication is inspiring.",
-    timestamp: "3 days ago",
+    created_at: new Date().toISOString(),
+    published_at: getPastDate(3, "day"),
     status: "published",
   },
 ];

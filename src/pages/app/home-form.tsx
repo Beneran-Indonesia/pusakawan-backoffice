@@ -13,7 +13,6 @@ import { Post, PostSchema } from "@/types/app/app-home-type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   HttpError,
-  useGetIdentity,
   useResourceParams,
   useTranslate,
 } from "@refinedev/core";
@@ -48,7 +47,7 @@ import {
 
 import { CSS } from "@dnd-kit/utilities";
 import { useNavigate } from "react-router";
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 
 const MAX_PICTURES = 10;
 const MIN_PICTURES = 1;
@@ -124,8 +123,6 @@ export default function AppHomeForm() {
     }),
   );
 
-  const { data: identity } = useGetIdentity<{ name?: string } | undefined>();
-
   const {
     refineCore: { onFinish, query, formLoading },
     handleSubmit,
@@ -146,8 +143,7 @@ export default function AppHomeForm() {
       status: "draft",
       pictures: [],
       description: "",
-      author: "Pusakawan Team",
-      timestamp: "just now",
+      author: "",
     },
   });
 
@@ -167,7 +163,8 @@ export default function AppHomeForm() {
 
   const pictures = watch("pictures") ?? [];
   const description = watch("description") ?? "";
-  const author = watch("author") || identity?.name || "Pusakawan Team";
+  const author = watch("author");
+  const createdAt = watch("created_at");
 
   const addPictures = (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -224,7 +221,6 @@ export default function AppHomeForm() {
         ...values,
         author,
         status,
-        timestamp: values.timestamp || "just now",
       });
 
       navigate(-1);
@@ -264,14 +260,14 @@ export default function AppHomeForm() {
           <div className="flex items-center gap-3">
             <Avatar className="w-9 h-9 bg-red-100">
               <AvatarFallback className="bg-red-100 text-red-700 text-xs font-semibold">
-                PT
+                {getInitials(author)}
               </AvatarFallback>
             </Avatar>
             <div>
               <p className="font-semibold text-slate-800">{author}</p>
               <p className="text-sm text-slate-500">
                 {isEditing
-                  ? t("app.home.new.editing_content")
+                  ? `Created at: ${createdAt}, edited at: now`
                   : t("app.home.new.creating_content")}
               </p>
             </div>

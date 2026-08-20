@@ -28,6 +28,7 @@ import {
   useList,
   useNavigation,
   useTranslate,
+  useTranslation,
   useUpdate,
 } from "@refinedev/core";
 import {
@@ -41,7 +42,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getInitials } from "@/lib/utils";
+import { getInitials, getRelativeTime } from "@/lib/utils";
 
 type FilterStatus = "all" | "published" | "draft";
 
@@ -130,6 +131,8 @@ function PostImageCarousel({
 
 export default function AppHome() {
   const t = useTranslate();
+  const { getLocale } = useTranslation();
+  const locale = getLocale();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
@@ -149,20 +152,17 @@ export default function AppHome() {
   const onToggleStatus = ({ id, status }: Post) => {
     updatePost({
       resource: "app-home",
-      id: id!,
+      id,
       values: { status: status === "draft" ? "published" : "draft" },
     });
   };
 
   const onDuplicate = (post: Post) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id: _id, ...rest } = post;
     createPost({
       resource: "app-home",
       values: {
-        ...rest,
+        ...post,
         status: "draft",
-        timestamp: "just now",
       },
     });
   };
@@ -185,7 +185,7 @@ export default function AppHome() {
   const renderPostCard = (post: Post) => (
     <div
       key={post.id}
-      className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-200"
+      className="flex flex-col bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-200"
     >
       <div className="relative h-64 bg-slate-100">
         <PostImageCarousel pictures={post.pictures} alt={post.description} />
@@ -202,7 +202,7 @@ export default function AppHome() {
         </span>
       </div>
 
-      <div className="p-5">
+      <div className="p-5 grow flex flex-col">
         <div className="flex items-center gap-2 mb-3">
           <Avatar className="w-8 h-8 bg-red-100">
             <AvatarFallback className="bg-red-100 text-red-700 text-xs font-semibold">
@@ -213,14 +213,16 @@ export default function AppHome() {
             {post.author}
           </span>
           <span className="text-sm text-slate-400">•</span>
-          <span className="text-sm text-slate-500">{post.timestamp}</span>
+          <span className="text-sm text-slate-500">
+            {getRelativeTime(post.published_at || post.created_at, locale)}
+          </span>
         </div>
 
-        <p className="text-sm text-slate-700 mb-4 line-clamp-3">
+        <p className="text-sm text-slate-700 mb-4 line-clamp-5">
           {post.description}
         </p>
 
-        <div className="flex flex-nowrap items-center justify-end gap-2">
+        <div className="flex flex-nowrap items-center justify-end gap-2 mt-auto">
           <Button
             onClick={() => edit("app-home", post.id!)}
             className="shrink-0 bg-red-600 hover:bg-red-700 text-white font-semibold"

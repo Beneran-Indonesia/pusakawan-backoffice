@@ -4,7 +4,7 @@ import { http, HttpResponse } from "msw";
 
 export const MOCK_GAMES: Game[] = [
   {
-    author: "Pusakawan",
+    author: "Pusakawan Team",
     id: "g1",
     title: "Indonesian Heritage Challenge",
     is_offline: true,
@@ -34,7 +34,7 @@ export const MOCK_GAMES: Game[] = [
     },
   },
   {
-    author: "Pusakawan",
+    author: "Pusakawan Team",
     id: "g2",
     title: "Pancasila Values Quiz",
     is_offline: true,
@@ -64,7 +64,7 @@ export const MOCK_GAMES: Game[] = [
     },
   },
   {
-    author: "Pusakawan",
+    author: "Pusakawan Team",
     id: "g3",
     title: "Explore Nusantara",
     is_offline: true,

@@ -108,8 +108,7 @@ export default function AppGames() {
   const renderGameCard = (gameDetails: Game) => (
     <div
       key={gameDetails.id}
-      onClick={() => edit("app-games", gameDetails.id)}
-      className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer"
+      className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-200"
     >
       <div className="relative h-48 bg-linear-to-br from-red-500 to-red-700 overflow-hidden">
         {gameDetails.banner ? (
@@ -146,12 +145,12 @@ export default function AppGames() {
       </div>
 
       <div className="p-5">
-        <h3 className="font-bold text-lg mb-2 text-slate-800 line-clamp-1">
+        <h3 className="font-bold text-lg mb-2 text-slate-800 line-clamp-2">
           {gameDetails.title}
         </h3>
 
         {gameDetails.description && (
-          <p className="text-sm text-slate-600 mb-4 line-clamp-2">
+          <p className="text-sm text-slate-600 mb-4 line-clamp-3">
             {gameDetails.description}
           </p>
         )}
@@ -172,6 +171,8 @@ export default function AppGames() {
               <div className="flex items-center gap-1 text-xs text-slate-500 shrink-0">
                 <Calendar className="w-4 h-4" />
                 <span>{formatDate(gameDetails.held_on.start_datetime)}</span>
+                {" - "}
+                <span>{formatDate(gameDetails.held_on.end_datetime)}</span>
               </div>
             </>
           )}

@@ -52,7 +52,7 @@
         "edit": "Ubah",
         "duplicate": "Duplikat",
         "publish": "Publikasikan",
-        "unpublish": "Batalkan Publikasi",
+        "unpublish": "Bikin Draf",
         "delete": "Hapus"
       },
       "empty_state": {
@@ -244,7 +244,7 @@
         },
         "editing_content": "Mengubah konten",
         "creating_content": "Membuat konten baru",
-        "picture_min_error": "Silakan unggah minimal 1 foto.",
+        "picture_ min_error": "Silakan unggah minimal 1 foto.",
         "pictures": {
           "title": "Foto (maksimal 10)",
           "upload_cta": "Unggah foto"
@@ -256,7 +256,7 @@
         "edit": "Ubah",
         "duplicate": "Duplikat",
         "publish": "Publikasikan",
-        "unpublish": "Batalkan Publikasi",
+        "unpublish": "Bikin Draf",
         "delete": "Hapus"
       },
       "empty_state": {
