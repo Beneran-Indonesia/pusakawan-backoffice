@@ -8,11 +8,12 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import { LoadingOverlay } from "@/components/refine-ui/layout/loading-overlay";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Post, PostSchema } from "@/types/app/app-home-type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   HttpError,
+  useGetIdentity,
   useResourceParams,
   useTranslate,
 } from "@refinedev/core";
@@ -48,6 +49,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useNavigate } from "react-router";
 import { cn, getInitials } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const MAX_PICTURES = 10;
 const MIN_PICTURES = 1;
@@ -110,6 +112,8 @@ export default function AppHomeForm() {
   const { id } = useResourceParams();
   const isEditing = !!id;
 
+  const { data: user, isLoading: userIsLoading } = useGetIdentity();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -143,7 +147,6 @@ export default function AppHomeForm() {
       status: "draft",
       pictures: [],
       description: "",
-      author: "",
     },
   });
 
@@ -161,10 +164,18 @@ export default function AppHomeForm() {
     );
   }, [carouselApi]);
 
+  if (userIsLoading) {
+    return <Skeleton className={cn("h-10", "w-10", "rounded-full")} />;
+  }
+
+  const { name, avatar } = user.user;
+
   const pictures = watch("pictures") ?? [];
   const description = watch("description") ?? "";
-  const author = watch("author");
-  const createdAt = watch("created_at");
+  // we are using id because if id exists; we know it's editing.
+  const authorName = id ? query?.data?.data.author.name : name;
+  const authorAvatar = id ? query?.data?.data.author.avatar : avatar;
+  const createdAt = id ? query?.data?.data.created_at : "";
 
   const addPictures = (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -219,7 +230,7 @@ export default function AppHomeForm() {
 
       await onFinish({
         ...values,
-        author,
+        author: { name, avatar },
         status,
       });
 
@@ -259,15 +270,16 @@ export default function AppHomeForm() {
           {/* Author */}
           <div className="flex items-center gap-3">
             <Avatar className="w-9 h-9 bg-red-100">
+              {authorAvatar && <AvatarImage src={authorAvatar} alt={name} />}
               <AvatarFallback className="bg-red-100 text-red-700 text-xs font-semibold">
-                {getInitials(author)}
+                {getInitials(authorName)}
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-semibold text-slate-800">{author}</p>
+              <p className="font-semibold text-slate-800">{authorName}</p>
               <p className="text-sm text-slate-500">
                 {isEditing
-                  ? `Created at: ${createdAt}, edited at: now`
+                  ? `Created at: ${createdAt}`
                   : t("app.home.new.creating_content")}
               </p>
             </div>

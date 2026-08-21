@@ -7,7 +7,10 @@ export const PostSchema = z.object({
   status: PostStatusSchema,
   pictures: z.array(z.string().url()).min(1).max(10),
   description: z.string().min(1),
-  author: z.string(),
+  author: z.object({
+    name: z.string(),
+    avatar: z.string(),
+  }),
   created_at: z.string(),
   published_at: z.string().nullable().optional(),
   edited_at: z.string().nullable().optional(),

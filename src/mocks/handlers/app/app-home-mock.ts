@@ -6,19 +6,25 @@ import { getPastDate } from "@/lib/utils";
 const MOCK_HOME: Post[] = [
   {
     id: "h1",
-    author: "Pusakawan Team",
+    author: {
+      name: "Pusakawan Team",
+      avatar: ""
+    },
     pictures: [
       "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&auto=format&fit=crop",
     ],
     description:
       "Welcome to the Pusakawan learning app! We hope you are all excited to learn today.",
-    created_at: new Date().toISOString(),
+    created_at: new Date().toLocaleString(),
     published_at: getPastDate(2, "hour"),
     status: "published",
   },
   {
     id: "h2",
-    author: "Pusakawan Team",
+    author: {
+      name: "Pusakawan Team",
+      avatar: ""
+    },
     pictures: [
       "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop",
@@ -26,20 +32,23 @@ const MOCK_HOME: Post[] = [
     ],
     description:
       "Join us for an exciting workshop this weekend! Learn new skills and meet fellow students.",
-    created_at: new Date().toISOString(),
+    created_at: new Date().toLocaleString(),
     published_at: getPastDate(1, "day"),
     status: "draft",
   },
   {
     id: "h3",
-    author: "Pusakawan Team",
+    author: {
+      name: "Pusakawan Team",
+      avatar: ""
+    },
     pictures: [
       "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&auto=format&fit=crop",
     ],
     description:
       "Congratulations to all students who completed the Indonesian Heritage Challenge! Your dedication is inspiring.",
-    created_at: new Date().toISOString(),
+    created_at: new Date().toLocaleString(),
     published_at: getPastDate(3, "day"),
     status: "published",
   },

@@ -9,7 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Carousel,
   CarouselApi,
@@ -192,12 +192,13 @@ export default function AppHome() {
       <div className="p-5 grow flex flex-col">
         <div className="flex items-center gap-2 mb-3">
           <Avatar className="w-8 h-8 bg-red-100">
+            {post.author.avatar && <AvatarImage src={post.author.avatar} alt={post.author.name} />}
             <AvatarFallback className="bg-red-100 text-red-700 text-xs font-semibold">
-              {getInitials(post.author)}
+              {getInitials(post.author.name)}
             </AvatarFallback>
           </Avatar>
           <span className="text-sm font-semibold text-slate-800">
-            {post.author}
+            {post.author.name}
           </span>
           <span className="text-sm text-slate-400">•</span>
           <span className="text-sm text-slate-500">
@@ -245,8 +246,6 @@ export default function AppHome() {
       </div>
     </div>
   );
-
-  // console.log("posts", posts)
 
   return (
     <LoadingOverlay loading={isLoading}>
