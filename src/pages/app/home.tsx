@@ -201,7 +201,7 @@ export default function AppHome() {
           </span>
           <span className="text-sm text-slate-400">•</span>
           <span className="text-sm text-slate-500">
-            {getRelativeTime(post.published_at || post.created_at, locale)}
+            {getRelativeTime(post.published_at ?? post.created_at, locale)}
           </span>
         </div>
 
@@ -245,6 +245,8 @@ export default function AppHome() {
       </div>
     </div>
   );
+
+  // console.log("posts", posts)
 
   return (
     <LoadingOverlay loading={isLoading}>

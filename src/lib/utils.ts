@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 
 type Units = "year" | "month" | "week" | "day" | "hour" | "minute" | "second";
 
+const MS = 1000;
 const UNIT: Record<Units, number> = {
   year: 60 * 60 * 24 * 365,
   month: 60 * 60 * 24 * 30,
@@ -14,7 +15,7 @@ const UNIT: Record<Units, number> = {
 };
 
 export const getPastDate = (num: number, unit: Units): string => {
-  return new Date(Date.now() - num * UNIT[unit]).toISOString();
+  return new Date(Date.now() - num * UNIT[unit] * MS).toISOString();
 };
 
 export const getRelativeTime = (dateString: string, locale: string): string => {
