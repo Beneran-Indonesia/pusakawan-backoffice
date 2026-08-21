@@ -23,7 +23,6 @@ import {
 import { LoadingOverlay } from "@/components/refine-ui/layout/loading-overlay";
 import { Post } from "@/types/app/app-home-type";
 import {
-  useCreate,
   useDelete,
   useList,
   useNavigation,
@@ -35,7 +34,6 @@ import {
   AlertTriangle,
   ChevronLeft,
   ChevronRight,
-  Copy,
   ImageOff,
   Pencil,
   Search,
@@ -144,7 +142,6 @@ export default function AppHome() {
   } = useList<Post>({ resource: "app-home" });
 
   const { mutate: updatePost } = useUpdate();
-  const { mutate: createPost } = useCreate();
   const { mutate: deletePost } = useDelete();
 
   const { edit } = useNavigation();
@@ -154,16 +151,6 @@ export default function AppHome() {
       resource: "app-home",
       id,
       values: { status: status === "draft" ? "published" : "draft" },
-    });
-  };
-
-  const onDuplicate = (post: Post) => {
-    createPost({
-      resource: "app-home",
-      values: {
-        ...post,
-        status: "draft",
-      },
     });
   };
 
@@ -229,15 +216,6 @@ export default function AppHome() {
           >
             <Pencil className="w-4 h-4" />
             {t("app.home.card.edit")}
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => onDuplicate(post)}
-            title={t("app.home.card.duplicate")}
-            className="shrink-0"
-          >
-            <Copy className="w-4 h-4" />
           </Button>
           <Button
             variant="outline"

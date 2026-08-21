@@ -21,7 +21,7 @@ import {
   useCreate,
   useDelete,
   useList,
-useNavigation,
+  useNavigation,
   useTranslate,
   useUpdate,
 } from "@refinedev/core";
@@ -41,7 +41,6 @@ type FilterType = "all" | "online" | "offline";
 type FilterStatus = "all" | "published" | "draft";
 
 export default function AppGames() {
-  
   const t = useTranslate();
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -75,12 +74,11 @@ export default function AppGames() {
   };
 
   const onDuplicate = (game: Game) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id: _id, ...rest } = game;
     createGame({
       resource: "app-games",
       values: {
-        ...rest,
+        ...game,
+        title: "[DUPLICATE] " + game.title,
         status: "draft",
       },
     });
@@ -109,7 +107,7 @@ export default function AppGames() {
   const renderGameCard = (gameDetails: Game) => (
     <div
       key={gameDetails.id}
-      className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-200"
+      className="flex flex-col bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-200"
     >
       <div className="relative h-48 bg-linear-to-br from-red-500 to-red-700 overflow-hidden">
         {gameDetails.banner ? (
@@ -145,8 +143,8 @@ export default function AppGames() {
         </div>
       </div>
 
-      <div className="p-5">
-        <h3 className="font-bold text-lg mb-2 text-slate-800 line-clamp-2">
+      <div className="p-5 grow flex flex-col">
+        <h3 className="font-bold text-lg mb-2 text-slate-800 line-clamp-1">
           {gameDetails.title}
         </h3>
 
@@ -155,83 +153,84 @@ export default function AppGames() {
             {gameDetails.description}
           </p>
         )}
-
-        <div className="flex items-center gap-2 mb-4">
-          <Avatar className="w-8 h-8 bg-red-100 shrink-0">
-            <AvatarFallback className="bg-red-100 text-red-700 text-xs font-semibold">
-              {getInitials(gameDetails.author)}
-            </AvatarFallback>
-          </Avatar>
-          <span className="text-sm font-semibold text-slate-800 truncate">
-            {gameDetails.author}
-          </span>
-
-          {gameDetails.held_on && (
-            <>
-              <span className="text-sm text-slate-400">•</span>
-              <div className="flex items-center gap-1 text-xs text-slate-500 shrink-0">
-                <Calendar className="w-4 h-4" />
-                <span>{formatDate(gameDetails.held_on.start_datetime)}</span>
-                {" - "}
-                <span>{formatDate(gameDetails.held_on.end_datetime)}</span>
-              </div>
-            </>
-          )}
-        </div>
-
-        <div className="flex flex-nowrap items-center justify-end gap-2">
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              edit("app-games", gameDetails.id);
-            }}
-            className="shrink-0 bg-red-600 hover:bg-red-700 text-white font-semibold"
-          >
-            <Pencil className="w-4 h-4" />
-            {t("app.games.card.edit")}
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDuplicate(gameDetails);
-            }}
-            title={t("app.games.card.duplicate")}
-            className="shrink-0"
-          >
-            <Copy className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleStatus(gameDetails);
-            }}
-            className={`min-w-0 flex-1 truncate ${
-              gameDetails.status === "published"
-                ? "border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100 hover:text-yellow-700"
-                : "border-green-300 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-700"
-            }`}
-          >
-            <span className="truncate">
-              {gameDetails.status === "published"
-                ? t("app.games.card.unpublish")
-                : t("app.games.card.publish")}
+        <div className="mt-auto">
+          <div className="flex items-center gap-2 mb-4">
+            <Avatar className="w-8 h-8 bg-red-100 shrink-0">
+              <AvatarFallback className="bg-red-100 text-red-700 text-xs font-semibold">
+                {getInitials(gameDetails.author)}
+              </AvatarFallback>
+            </Avatar>
+            <span className="text-sm font-semibold text-slate-800 truncate">
+              {gameDetails.author}
             </span>
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={(e) => {
-              e.stopPropagation();
-              setGameToDelete(gameDetails);
-            }}
-            className="shrink-0 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-600"
-            title={t("app.games.card.delete")}
-          >
-            <Trash2 className="w-4 h-4" />
-          </Button>
+
+            {gameDetails.held_on && (
+              <>
+                <span className="text-sm text-slate-400">•</span>
+                <div className="flex items-center gap-1 text-xs text-slate-500 shrink-0">
+                  <Calendar className="w-4 h-4" />
+                  <span>{formatDate(gameDetails.held_on.start_datetime)}</span>
+                  {" - "}
+                  <span>{formatDate(gameDetails.held_on.end_datetime)}</span>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="flex flex-nowrap items-center justify-end gap-2">
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                edit("app-games", gameDetails.id);
+              }}
+              className="shrink-0 bg-red-600 hover:bg-red-700 text-white font-semibold"
+            >
+              <Pencil className="w-4 h-4" />
+              {t("app.games.card.edit")}
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDuplicate(gameDetails);
+              }}
+              title={t("app.games.card.duplicate")}
+              className="shrink-0"
+            >
+              <Copy className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleStatus(gameDetails);
+              }}
+              className={`min-w-0 flex-1 truncate ${
+                gameDetails.status === "published"
+                  ? "border-yellow-300 bg-yellow-50 text-yellow-700 hover:bg-yellow-100 hover:text-yellow-700"
+                  : "border-green-300 bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-700"
+              }`}
+            >
+              <span className="truncate">
+                {gameDetails.status === "published"
+                  ? t("app.games.card.unpublish")
+                  : t("app.games.card.publish")}
+              </span>
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                setGameToDelete(gameDetails);
+              }}
+              className="shrink-0 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-600"
+              title={t("app.games.card.delete")}
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>
