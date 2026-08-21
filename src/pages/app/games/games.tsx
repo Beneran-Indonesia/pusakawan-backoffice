@@ -21,7 +21,7 @@ import {
   useCreate,
   useDelete,
   useList,
-  useNavigation,
+useNavigation,
   useTranslate,
   useUpdate,
 } from "@refinedev/core";
@@ -41,6 +41,7 @@ type FilterType = "all" | "online" | "offline";
 type FilterStatus = "all" | "published" | "draft";
 
 export default function AppGames() {
+  
   const t = useTranslate();
 
   const [searchTerm, setSearchTerm] = useState("");
