@@ -5,6 +5,7 @@ import { GameDetails } from "@/types/app/app-game-details-type";
 import { Question } from "@/types/app/app-questions-type";
 import { useTranslate } from "@refinedev/core";
 import {
+  AlertTriangle,
   Check,
   ClipboardList,
   Lightbulb,
@@ -19,6 +20,7 @@ import {
   FieldErrors,
   UseFormRegister,
   UseFormSetValue,
+  UseFormTrigger,
   UseFormWatch,
   useFieldArray,
 } from "react-hook-form";
@@ -35,6 +37,15 @@ type QuestionsErrors = FieldErrors<GameDetails>["questions"];
 // A single row's slice of the errors above.
 type QuestionErrors = NonNullable<QuestionsErrors>[number];
 
+// A question's error slice is only ever populated by react-hook-form when at
+// least one of its (possibly nested) fields actually has an error, so its
+// mere presence is enough to know the row needs attention — this lets the
+// collapsed QuestionCard show a warning without the user having to reopen
+// edit mode to discover what's wrong.
+function questionHasError(errors: QuestionErrors): boolean {
+  return Boolean(errors);
+}
+
 // Options/correct_answer/correct_answers/hints fields only exist on one side
 // of the Question discriminated union, so react-hook-form's `Path<T>` can't
 // resolve them cleanly for a `questions.${index}.*` template string. We cast
@@ -48,6 +59,7 @@ type QuestionsFormProps = {
   errors: QuestionsErrors;
   watch: UseFormWatch<GameDetails>;
   setValue: UseFormSetValue<GameDetails>;
+  trigger: UseFormTrigger<GameDetails>;
 };
 
 function createEmptyQuestion(type: QuestionType): Question {
@@ -89,6 +101,7 @@ export default function QuestionsForm({
   errors,
   watch,
   setValue,
+  trigger,
 }: QuestionsFormProps) {
   const t = useTranslate();
 
@@ -104,11 +117,17 @@ export default function QuestionsForm({
     const newIndex = fields.length;
     append(createEmptyQuestion(type));
     setEditingIndex(newIndex);
+    // Force a full-form re-validation right away. Without this, isValid
+    // (which gates the Publish button in games-form.tsx) can lag a beat
+    // behind an append/remove, letting Publish stay enabled for a moment
+    // even though the newly added question is empty and invalid.
+    void trigger();
   };
 
   const handleDelete = (index: number) => {
     remove(index);
     setEditingIndex((current) => (current === index ? null : current));
+    void trigger();
   };
 
   return (
@@ -181,6 +200,7 @@ export default function QuestionsForm({
                   errors={errors?.[index]}
                   watch={watch}
                   setValue={setValue}
+                  trigger={trigger}
                   index={index}
                   t={t}
                   onDone={() => setEditingIndex(null)}
@@ -192,6 +212,7 @@ export default function QuestionsForm({
                   question={field}
                   index={index}
                   t={t}
+                  hasError={questionHasError(errors?.[index])}
                   onEdit={() => setEditingIndex(index)}
                   onDelete={() => handleDelete(index)}
                 />
@@ -208,6 +229,7 @@ type QuestionCardProps = {
   question: Question;
   index: number;
   t: Translate;
+  hasError: boolean;
   onEdit: () => void;
   onDelete: () => void;
 };
@@ -216,13 +238,18 @@ function QuestionCard({
   question,
   index,
   t,
+  hasError,
   onEdit,
   onDelete,
 }: QuestionCardProps) {
   const isEssay = question.is_essay_question;
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex items-start justify-between gap-4">
+    <div
+      className={`bg-white rounded-xl border p-5 shadow-sm flex items-start justify-between gap-4 ${
+        hasError ? "border-red-300" : "border-slate-200"
+      }`}
+    >
       <div className="min-w-0">
         <div className="flex items-center gap-2 mb-1 flex-wrap">
           <h4 className="font-semibold text-slate-800">
@@ -248,6 +275,12 @@ function QuestionCard({
             points: question.pusaka_points,
           })}
         </p>
+        {hasError && (
+          <p className="flex items-center gap-1.5 text-xs font-medium text-red-600 mt-2">
+            <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+            {t("app.games.questions.has_errors_warning")}
+          </p>
+        )}
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
@@ -276,6 +309,7 @@ type QuestionEditFormProps = {
   errors: QuestionErrors;
   watch: UseFormWatch<GameDetails>;
   setValue: UseFormSetValue<GameDetails>;
+  trigger: UseFormTrigger<GameDetails>;
   index: number;
   t: Translate;
   onDone: () => void;
@@ -287,11 +321,28 @@ function QuestionEditForm({
   errors,
   watch,
   setValue,
+  trigger,
   index,
   t,
   onDone,
   onDelete,
 }: QuestionEditFormProps) {
+  const [attemptedDone, setAttemptedDone] = useState(false);
+
+  // "Done Editing" force-validates every field of this question — including
+  // ones the user never touched — rather than just closing the card. Fields
+  // left blank (e.g. a never-clicked answer option) don't have an error yet
+  // under mode: "onChange" because nothing has changed them; trigger() runs
+  // the zod schema against them regardless, so every required-but-empty
+  // field surfaces its error immediately instead of silently being accepted.
+  const handleDone = async () => {
+    setAttemptedDone(true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const isRowValid = await trigger(`questions.${index}` as any);
+    if (isRowValid) {
+      onDone();
+    }
+  };
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isEssay: boolean = watch(`questions.${index}.is_essay_question` as any);
   const question = watch(`questions.${index}.question`) ?? "";
@@ -419,14 +470,37 @@ function QuestionEditForm({
           {t("app.games.questions.pusaka_point")}
         </label>
         {/* TODO: put the pusaka points logo here, make it absolute and translate - */}
-        <Input
-          type="number"
-          min={0}
-          {...register(`questions.${index}.pusaka_points`, {
+        {(() => {
+          const pointsField = register(`questions.${index}.pusaka_points`, {
             valueAsNumber: true,
-          })}
-          className="w-full py-4"
-        />
+          });
+
+          return (
+            <Input
+              type="number"
+              min={0}
+              {...pointsField}
+              onBlur={(e) => {
+                // Keep react-hook-form's own onBlur (touched state, etc.)
+                // running as normal...
+                pointsField.onBlur(e);
+                // ...then, since `min={0}` only blocks the spinner buttons
+                // and users can still type or paste a negative number, snap
+                // it back to 0 once they leave the field. This is on top of
+                // the zod `nonnegative()` check that already flags negative
+                // values live while typing (mode: "onChange").
+                const value = Number(e.target.value);
+                if (!Number.isNaN(value) && value < 0) {
+                  setValue(`questions.${index}.pusaka_points`, 0, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  });
+                }
+              }}
+              className="w-full py-4"
+            />
+          );
+        })()}
         {errors?.pusaka_points && (
           <p className="text-xs text-red-600 mt-1">
             {errors.pusaka_points.message}
@@ -435,14 +509,18 @@ function QuestionEditForm({
       </div>
 
       {/* Actions */}
+      {attemptedDone && Boolean(errors) && (
+        <p className="flex items-center gap-1.5 text-sm font-medium text-red-600">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          {t("app.games.questions.has_errors_warning")}
+        </p>
+      )}
       <div className="flex items-center gap-3 pt-2 border-slate-100">
         {/* TODO: cancel changes */}
-        <button>
-          Cancel
-        </button>
+        <button>Cancel</button>
         <button
           type="button"
-          onClick={onDone}
+          onClick={handleDone}
           className="flex-1 bg-green-600 text-white rounded-lg py-2.5 font-semibold hover:bg-green-700 transition-colors cursor-pointer"
         >
           {t("app.games.questions.done_editing")}
@@ -577,6 +655,14 @@ function EssayFields({
         <label className="block text-sm font-semibold text-slate-800 mb-2">
           {t("app.games.questions.correct_answers.label")}
         </label>
+        {/* Array-level error, e.g. "at least one correct answer is
+            required" — this isn't tied to any single slot, so it renders
+            once above the list rather than per-input. */}
+        {correctAnswerErrors?.message && (
+          <p className="text-xs text-red-600 mb-2">
+            {correctAnswerErrors.message}
+          </p>
+        )}
         <div className="space-y-3">
           {slots.map((slot) => {
             const value =

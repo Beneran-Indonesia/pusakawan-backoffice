@@ -184,6 +184,7 @@
         "empty_state": "No questions yet. Add your first question above.",
         "question_label": "Question {{number}}",
         "no_question_text": "No question text",
+        "has_errors_warning": "Some fields are missing or invalid",
         "points_label": "Points: {{points}}",
         "edit": "Edit",
         "delete": "Delete",

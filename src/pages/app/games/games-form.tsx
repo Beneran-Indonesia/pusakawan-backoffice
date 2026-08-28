@@ -34,9 +34,15 @@ export default function AppGamesForm() {
     register,
     watch,
     setValue,
+    trigger,
     formState: { errors, isSubmitting, isValid },
   } = useForm<GameDetails, HttpError, GameDetails>({
     resolver: zodResolver(GameDetailsSchema),
+    // Validate as the user types/blurs (not just on submit) so required-field
+    // and out-of-range warnings (e.g. empty answer options, negative points)
+    // show up immediately, and so `isValid` below reflects the *current*
+    // state instead of only updating after a first submit attempt.
+    mode: "onChange",
     refineCoreProps: {
       action: "edit",
       resource: "games",
@@ -160,6 +166,7 @@ export default function AppGamesForm() {
             errors={errors.questions}
             watch={watch}
             setValue={setValue}
+            trigger={trigger}
           />
 
           {/* LEADERBOARD TAB */}
