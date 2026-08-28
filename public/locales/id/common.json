@@ -217,7 +217,14 @@
           "correct_placeholder": "Kerja bagus! Jawaban benar!",
           "incorrect_placeholder": "Jawaban salah. Coba lagi!"
         },
-        "characters_suffix": "karakter"
+        "characters_suffix": "karakter",
+        "errors": {
+          "question_required": "Teks pertanyaan wajib diisi",
+          "option_required": "Pilihan jawaban ini wajib diisi",
+          "points_invalid_type": "Poin harus berupa angka",
+          "points_negative": "Poin tidak boleh negatif",
+          "correct_answer_required": "Minimal satu jawaban benar wajib diisi"
+        }
       }
     },
     "home": {

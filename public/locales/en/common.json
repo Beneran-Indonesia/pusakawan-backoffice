@@ -218,7 +218,14 @@
           "correct_placeholder": "Great job! Correct answer!",
           "incorrect_placeholder": "Incorrect answer. Try again!"
         },
-        "characters_suffix": "characters"
+        "characters_suffix": "characters",
+        "errors": {
+          "question_required": "Question text is required",
+          "option_required": "This answer option is required",
+          "points_invalid_type": "Points must be a number",
+          "points_negative": "Points cannot be negative",
+          "correct_answer_required": "At least one correct answer is required"
+        }
       }
     },
     "home": {
