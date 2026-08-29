@@ -183,6 +183,7 @@
         "empty_state": "Belum ada pertanyaan. Tambahkan pertanyaan pertama Anda di atas.",
         "question_label": "Pertanyaan {{number}}",
         "no_question_text": "Belum ada teks pertanyaan",
+        "has_errors_warning": "Ada isian yang belum lengkap atau tidak valid",
         "points_label": "Poin: {{points}}",
         "edit": "Edit",
         "delete": "Hapus",
@@ -216,7 +217,14 @@
           "correct_placeholder": "Kerja bagus! Jawaban benar!",
           "incorrect_placeholder": "Jawaban salah. Coba lagi!"
         },
-        "characters_suffix": "karakter"
+        "characters_suffix": "karakter",
+        "errors": {
+          "question_required": "Teks pertanyaan wajib diisi",
+          "option_required": "Pilihan jawaban ini wajib diisi",
+          "points_invalid_type": "Poin harus berupa angka",
+          "points_negative": "Poin tidak boleh negatif",
+          "correct_answer_required": "Minimal satu jawaban benar wajib diisi"
+        }
       }
     },
     "home": {

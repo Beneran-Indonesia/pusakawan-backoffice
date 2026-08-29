@@ -1,15 +1,16 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HttpError, useResourceParams, useTranslate } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { ArrowLeft, Save, Eye } from "lucide-react";
 import { LoadingOverlay } from "@/components/refine-ui/layout/loading-overlay";
 import { UnderDevelopment } from "@/components/refine-ui/layout/under-development";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   GameDetails,
-  GameDetailsSchema,
+  createGameDetailsSchema,
 } from "@/types/app/app-game-details-type";
 import { GameStatus } from "@/types/app/app-games-type";
 import GameDetailsTab from "./game-details";
@@ -26,6 +27,17 @@ export default function AppGamesForm() {
   const { id } = useResourceParams();
 
   const t = useTranslate();
+  // Yuri: `t` from refine's useTranslate doesn't reliably change identity on
+  // language switch, so we track `i18n.language` directly to know when to
+  // rebuild the zod schema below with freshly-translated validation
+  // messages (see app-questions-type.ts).
+  const { i18n } = useTranslation();
+
+  const gameDetailsSchema = useMemo(
+    () => createGameDetailsSchema(t),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, i18n.language],
+  );
 
   const {
     refineCore: { onFinish, formLoading },
@@ -34,9 +46,15 @@ export default function AppGamesForm() {
     register,
     watch,
     setValue,
+    trigger,
     formState: { errors, isSubmitting, isValid },
   } = useForm<GameDetails, HttpError, GameDetails>({
-    resolver: zodResolver(GameDetailsSchema),
+    resolver: zodResolver(gameDetailsSchema),
+    // Validate as the user types/blurs (not just on submit) so required-field
+    // and out-of-range warnings (e.g. empty answer options, negative points)
+    // show up immediately, and so `isValid` below reflects the *current*
+    // state instead of only updating after a first submit attempt.
+    mode: "onChange",
     refineCoreProps: {
       action: "edit",
       resource: "games",
@@ -160,6 +178,7 @@ export default function AppGamesForm() {
             errors={errors.questions}
             watch={watch}
             setValue={setValue}
+            trigger={trigger}
           />
 
           {/* LEADERBOARD TAB */}
