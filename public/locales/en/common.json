@@ -18,7 +18,17 @@
     "password_hint": "Enter your password",
     "remember_me": "Remember me",
     "button": "Sign in to Dashboard",
-    "secure_access": "Secure Admin Access"
+    "secure_access": "Secure Admin Access",
+    "errors": {
+      "email": {
+        "required": "Email is required",
+        "valid": "Enter a valid email address"
+      },
+      "password": {
+        "required": "Password is required",
+        "minimum": "Password must be at least 6 characters"
+      }
+    }
   },
   "header": {
     "profile_dropdown": {
@@ -86,6 +96,9 @@
         }
       },
       "details": {
+        "validation": {
+          "update": "At least one field needs to be updated."
+        },
         "game_type": {
           "label": "Game Type",
           "offline": {
@@ -184,6 +197,7 @@
         "empty_state": "No questions yet. Add your first question above.",
         "question_label": "Question {{number}}",
         "no_question_text": "No question text",
+        "has_errors_warning": "Some fields are missing or invalid",
         "points_label": "Points: {{points}}",
         "edit": "Edit",
         "cancel": "Cancel",
@@ -205,7 +219,7 @@
         "correct_answer": "Correct Answer",
         "pusaka_point": "Pusaka Point",
         "correct_answers": {
-          "label": "Correct Answers (3 variations)",
+          "label": "Correct Answers (minimum 1 and maximum 3 variations)",
           "placeholder": "Correct Answer Variation #{{number}}"
         },
         "hints": {
@@ -219,7 +233,14 @@
           "correct_placeholder": "Great job! Correct answer!",
           "incorrect_placeholder": "Incorrect answer. Try again!"
         },
-        "characters_suffix": "characters"
+        "characters_suffix": "characters",
+        "errors": {
+          "question_required": "Question text is required",
+          "option_required": "This answer option is required",
+          "points_invalid_type": "Points must be a number",
+          "points_negative": "Points cannot be negative",
+          "correct_answer_required": "At least one correct answer variance is required"
+        }
       }
     },
     "home": {
@@ -328,10 +349,6 @@
       }
     },
     "errors": {
-      "email": {
-        "required": "Email is required",
-        "valid": "Enter a valid email address"
-      },
       "name": {
         "required": "Name is required"
       },

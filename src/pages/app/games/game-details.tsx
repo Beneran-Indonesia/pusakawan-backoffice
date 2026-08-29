@@ -8,11 +8,9 @@ import {
   FieldPath,
   FieldValues,
   UseFormRegister,
-  FieldError,
-  Merge,
-  FieldErrorsImpl,
   UseFormSetValue,
   UseFormWatch,
+  FieldErrors,
 } from "react-hook-form";
 import { GameDetails } from "@/types/app/app-game-details-type";
 import { Game } from "@/types/app/app-games-type";
@@ -21,9 +19,9 @@ import { useTranslate } from "@refinedev/core";
 type GameDetailsTabProps = {
   control: Control<GameDetails>;
   register: UseFormRegister<GameDetails>;
-  errors: Merge<FieldError, FieldErrorsImpl<Game>> | undefined;
   watch: UseFormWatch<GameDetails>;
   setValue: UseFormSetValue<GameDetails>;
+  errors?: FieldErrors<Game>;
 };
 
 export default function GameDetailsTab({

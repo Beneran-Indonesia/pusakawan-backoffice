@@ -34,9 +34,12 @@ export default function AppGamesForm() {
     register,
     watch,
     setValue,
+    trigger,
     formState: { errors, isSubmitting, isValid },
   } = useForm<GameDetails, HttpError, GameDetails>({
-    resolver: zodResolver(GameDetailsSchema),
+    resolver: zodResolver(GameDetailsSchema(t)),
+    // Validates immediately -- on change.
+    mode: "onChange",
     refineCoreProps: {
       action: "edit",
       resource: "games",
@@ -61,10 +64,7 @@ export default function AppGamesForm() {
   const status = watch("status");
   const questions = watch("questions") ?? [];
 
-  // Publishing requires both the game details AND at least one question to
-  // be filled in correctly — this is what actually connects the two tabs:
-  // the questions form's data lives on the same `questions` field of this
-  // form, so its errors/emptiness directly gate the Publish action below.
+  // Publishing requires both the game details AND at least one question
   const notValid = !isValid || questions.length === 0;
 
   const onFinishWithStatus = (status: GameStatus) =>
@@ -160,6 +160,7 @@ export default function AppGamesForm() {
             errors={errors.questions}
             watch={watch}
             setValue={setValue}
+            trigger={trigger}
           />
 
           {/* LEADERBOARD TAB */}

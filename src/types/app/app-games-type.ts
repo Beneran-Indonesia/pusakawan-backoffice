@@ -3,13 +3,13 @@ import { z } from "zod";
 export const GameStatusSchema = z.enum(["draft", "published"]);
 export const GameSchema = z
   .object({
+    id: z.string().readonly(),
     author: z.string(),
-    id: z.string(),
     status: GameStatusSchema,
     title: z.string().max(100),
     banner: z.string().url(),
     description: z.string().max(500),
-    rules: z.array(z.string().max(200)).max(5).nullable(),
+    rules: z.array(z.string().max(200)).max(5).optional(),
     held_on: z.object({
       start_datetime: z.string(), // date time
       end_datetime: z.string(), // date time
