@@ -11,13 +11,10 @@ import { LoadingOverlay } from "@/components/refine-ui/layout/loading-overlay";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Post, PostSchema } from "@/types/app/app-home-type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  HttpError,
-  useResourceParams,
-  useTranslate,
-} from "@refinedev/core";
+import { HttpError, useResourceParams, useTranslate } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 import {
+  AlertTriangle,
   ArrowLeft,
   ChevronLeft,
   ChevronRight,
@@ -161,6 +158,8 @@ export default function AppHomeForm() {
     );
   }, [carouselApi]);
 
+  const notFound = isEditing && query?.isError;
+
   const pictures = watch("pictures") ?? [];
   const description = watch("description") ?? "";
   const author = watch("author");
@@ -227,6 +226,40 @@ export default function AppHomeForm() {
     })();
 
   const onSubmitClick = () => submit(saveAsDraft ? "draft" : "published");
+
+  if (notFound) {
+    return (
+      <LoadingOverlay loading={formLoading}>
+        <div className="max-w-3xl mx-auto pb-16">
+          <div className="flex items-start gap-3 mb-6">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="mt-1 p-2 rounded-lg hover:bg-slate-100 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-slate-700" />
+            </button>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 min-h-96 flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center text-center px-6">
+              <div className="bg-red-50 p-6 rounded-full mb-6">
+                <AlertTriangle className="w-16 h-16 text-red-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-slate-800 mb-2">
+                {t("app.home.edit.not_found.title", "Post not found")}
+              </h2>
+              <p className="text-slate-500 max-w-md">
+                {t(
+                  "app.home.edit.not_found.description",
+                  `We couldn't find a post with id "${id}". It may not exist or may have been deleted.`,
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+      </LoadingOverlay>
+    );
+  }
 
   return (
     <LoadingOverlay loading={formLoading}>

@@ -3,7 +3,7 @@ import { HttpError, useResourceParams, useTranslate } from "@refinedev/core";
 import { useForm } from "@refinedev/react-hook-form";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { ArrowLeft, Save, Eye } from "lucide-react";
+import { ArrowLeft, Save, Eye, AlertTriangle } from "lucide-react";
 import { LoadingOverlay } from "@/components/refine-ui/layout/loading-overlay";
 import { UnderDevelopment } from "@/components/refine-ui/layout/under-development";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -28,7 +28,7 @@ export default function AppGamesForm() {
   const t = useTranslate();
 
   const {
-    refineCore: { onFinish, formLoading },
+    refineCore: { onFinish, formLoading, query },
     control,
     handleSubmit,
     register,
@@ -67,6 +67,8 @@ export default function AppGamesForm() {
   // form, so its errors/emptiness directly gate the Publish action below.
   const notValid = !isValid || questions.length === 0;
 
+  const notFound = !!id && query?.isError;
+
   const onFinishWithStatus = (status: GameStatus) =>
     handleSubmit(async (values) => {
       await onFinish({
@@ -78,6 +80,40 @@ export default function AppGamesForm() {
         },
       });
     })();
+
+  if (notFound) {
+    return (
+      <LoadingOverlay loading={formLoading}>
+        <div className="pb-16">
+          <div className="flex items-start gap-3 mb-6">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="mt-1 p-2 rounded-lg hover:bg-slate-100 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5 text-slate-700" />
+            </button>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 min-h-96 flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center text-center px-6">
+              <div className="bg-red-50 p-6 rounded-full mb-6">
+                <AlertTriangle className="w-16 h-16 text-red-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-slate-800 mb-2">
+                {t("app.games.form.not_found.title", "Game not found")}
+              </h2>
+              <p className="text-slate-500 max-w-md">
+                {t(
+                  "app.games.form.not_found.description",
+                  `We couldn't find a game with id "${id}". It may not exist or may have been deleted.`,
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+      </LoadingOverlay>
+    );
+  }
 
   return (
     <LoadingOverlay loading={formLoading}>
