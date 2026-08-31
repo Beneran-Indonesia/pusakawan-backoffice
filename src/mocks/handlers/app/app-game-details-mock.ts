@@ -26,9 +26,6 @@ export const MOCK_QUESTIONS: Question[][] = [
       },
       correct_answer: 'b',
       pusaka_points: 10,
-
-      incorrect_validation: 'Oops! That\'s not correct. Try again!',
-      correct_validation: 'Great job! Jakarta is indeed the capital!'
     },
     {
       id: 'q_mp2',
@@ -49,8 +46,6 @@ export const MOCK_QUESTIONS: Question[][] = [
       },
       correct_answer: 'c',
       pusaka_points: 15,
-      incorrect_validation: 'Not quite right. Think about traditional music!',
-      correct_validation: 'Excellent! Gamelan is a beautiful traditional instrument!'
     },
     {
       id: 'q_mp3',
@@ -89,8 +84,6 @@ export const MOCK_QUESTIONS: Question[][] = [
       },
       correct_answer: 'c',
       pusaka_points: 10,
-      incorrect_validation: 'That\'s not right. Count again!',
-      correct_validation: 'Correct! Pancasila has 5 principles!'
     }
   ],
   [
@@ -107,8 +100,6 @@ export const MOCK_QUESTIONS: Question[][] = [
       },
       correct_answer: 'c',
       pusaka_points: 10,
-      incorrect_validation: 'That\'s not right. Count again!',
-      correct_validation: 'Correct! Pancasila has 5 principles!'
     }
   ],
   [
@@ -124,8 +115,6 @@ export const MOCK_QUESTIONS: Question[][] = [
       },
       correct_answer: 'b',
       pusaka_points: 15,
-      incorrect_validation: 'Not quite! Think about Hindu temples and ceremonies.',
-      correct_validation: 'Correct! Bali is known as the Island of Gods!'
     },
     {
       id: 'q_e1',
@@ -151,7 +140,11 @@ export const MOCK_GAME_DETAILS: GameDetails[] = [
     game: MOCK_GAMES[0],
     questions: MOCK_QUESTIONS[0],
     created_at: '2024-01-10',
-    author: "Pusakawan"
+    author: {
+      "email": "team@pusakawan.com",
+      "name": "Pusakawan Team",
+      "role": "SUPER_ADMIN"
+    }
   },
   {
     id: "g2",
@@ -159,7 +152,11 @@ export const MOCK_GAME_DETAILS: GameDetails[] = [
     game: MOCK_GAMES[1],
     questions: MOCK_QUESTIONS[1],
     created_at: '2024-02-05',
-    author: "Pusakawan"
+    author: {
+      "email": "team@pusakawan.com",
+      "name": "Pusakawan Team",
+      "role": "SUPER_ADMIN"
+    }
   },
   {
     id: "g3",
@@ -167,7 +164,11 @@ export const MOCK_GAME_DETAILS: GameDetails[] = [
     game: MOCK_GAMES[2],
     questions: MOCK_QUESTIONS[2],
     created_at: '2024-02-20',
-    author: "Pusakawan"
+    author: {
+      "email": "team@pusakawan.com",
+      "name": "Pusakawan Team",
+      "role": "SUPER_ADMIN"
+    }
   }
 ];
 

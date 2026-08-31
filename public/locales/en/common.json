@@ -87,7 +87,9 @@
         "status_dropdown": {
           "all": "All Games",
           "published": "Active Games",
-          "draft": "Draft Games"
+          "draft": "Draft Games",
+          "past": "Past Games"
+
         },
         "type_dropdown": {
           "all": "All Types",
@@ -244,6 +246,7 @@
       }
     },
     "home": {
+      "contents": "Contents",
       "new": {
         "title": "Add New Content",
         "subtitle": "Upload new photo and description for the app home screen",
@@ -301,6 +304,13 @@
       "edit": {
         "title": "Edit Content",
         "subtitle": "Update the photo and description for the app home screen."
+      },
+      "errors": {
+        "pictures": {
+          "min": "Minimum of 1 picture required",
+          "max": "Maximum of 10 pictures can be uploaded."
+        },
+        "description": "Description is required"
       }
     }
   },
@@ -375,5 +385,22 @@
       "description": "Server error. Your profile was not updated."
     }
   },
-  "under_development": "This page is currently under development. Please come back later to see the full features."
+  "pages": {
+    "error": {
+      "title": "Page not found",
+      "description": "The page you're looking for doesn't exist.",
+      "backHome": "Go back"
+    },
+    "under_development": "This page is currently under development. Please come back later to see the full features."
+  },
+  "notifications": {
+      "error": "Error (status code: {{statusCode}})",
+      "createError": "There was an error creating {{resource}} (status code: {{statusCode}})",
+      "deleteError": "Error when deleting {{resource}} (status code: {{statusCode}})",
+      "editError": "Error when editing {{resource}} (status code: {{statusCode}})",
+      "success": "Successful",
+      "createSuccess": "Successfully created {{resource}}",
+      "editSuccess": "Successfully edited {{resource}}",
+      "deleteSuccess": "Successfully deleted {{resource}}"
+  }
 }

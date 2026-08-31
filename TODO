@@ -1,7 +1,4 @@
-* need to change the typing in games home so there's also past game
 * filter by created_by = user name soon
-* games active is not i18n yet
 * get relative time is not changed when user changes language
-* notifications on success has no title
-* Yuri: questions have no validation
-* Zefanya: drag and drop in games questions
+* drag and drop in games questions
+* notifications listener to work

@@ -7,8 +7,9 @@ const MOCK_HOME: Post[] = [
   {
     id: "h1",
     author: {
-      name: "Pusakawan Team",
-      avatar: ""
+      "email": "team@pusakawan.com",
+      "name": "Pusakawan Team",
+      "role": "SUPER_ADMIN"
     },
     pictures: [
       "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&auto=format&fit=crop",
@@ -22,8 +23,9 @@ const MOCK_HOME: Post[] = [
   {
     id: "h2",
     author: {
-      name: "Pusakawan Team",
-      avatar: ""
+      "email": "team@pusakawan.com",
+      "name": "Pusakawan Team",
+      "role": "SUPER_ADMIN"
     },
     pictures: [
       "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop",
@@ -39,8 +41,9 @@ const MOCK_HOME: Post[] = [
   {
     id: "h3",
     author: {
-      name: "Pusakawan Team",
-      avatar: ""
+      "email": "team@pusakawan.com",
+      "name": "Pusakawan Team",
+      "role": "SUPER_ADMIN"
     },
     pictures: [
       "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&auto=format&fit=crop",

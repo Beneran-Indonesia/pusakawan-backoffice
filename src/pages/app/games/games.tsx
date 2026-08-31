@@ -38,7 +38,7 @@ import {
 import { useState } from "react";
 
 type FilterType = "all" | "online" | "offline";
-type FilterStatus = "all" | "published" | "draft";
+type FilterStatus = "all" | "published" | "draft" | "past";
 
 export default function AppGames() {
   const t = useTranslate();
@@ -269,6 +269,9 @@ export default function AppGames() {
             <option value="draft">
               {t("app.games.search_bar.status_dropdown.draft")}
             </option>
+            <option value="past">
+              {t("app.games.search_bar.status_dropdown.past")}
+            </option>
           </select>
 
           {/* Type Filter Dropdown */}
@@ -295,9 +298,11 @@ export default function AppGames() {
             <h2 className="text-xl font-bold text-slate-800 mb-4">
               {filterStatus === "all" && `${filteredGames.length} Games`}
               {filterStatus === "published" &&
-                `${filteredGames.length} Active Games`}
+                `${filteredGames.length} ${t("app.games.search_bar.status_dropdown.published")}`}
               {filterStatus === "draft" &&
-                `${filteredGames.length} Draft Games`}
+                `${filteredGames.length} ${t("app.games.search_bar.status_dropdown.draft")}`}
+              {filterStatus === "past" &&
+                `${filteredGames.length} ${t("app.games.search_bar.status_dropdown.past")}`}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredGames.map(renderGameCard)}

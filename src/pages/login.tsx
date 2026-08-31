@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useLogin, useTranslate } from "@refinedev/core";
 import { Mail, ShieldCheck } from "lucide-react";
-import { Controller, FieldError, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import ErrorLabel from "@/components/ErrorLabel";
 
 type Translate = ReturnType<typeof useTranslate>;
 
@@ -218,6 +219,3 @@ export const Login: React.FC = () => {
     </div>
   );
 };
-
-const ErrorLabel = ({ errors }: { errors?: FieldError }) =>
-  errors && <p className="text-xs text-red-600 mt-2">{errors.message}</p>;

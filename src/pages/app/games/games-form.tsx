@@ -14,6 +14,8 @@ import {
 import { GameStatus } from "@/types/app/app-games-type";
 import GameDetailsTab from "./game-details";
 import QuestionsFormTab from "./questions-form";
+import { ErrorComponent } from "@/components/refine-ui/layout/error-component";
+import { LoadingSpinner } from "@/components/Loading";
 
 const tabTriggerClass =
   "flex-1 rounded-lg py-3 text-sm font-semibold text-slate-600 transition-colors " +
@@ -28,7 +30,7 @@ export default function AppGamesForm() {
   const t = useTranslate();
 
   const {
-    refineCore: { onFinish, formLoading },
+    refineCore: { onFinish, formLoading, query },
     control,
     handleSubmit,
     register,
@@ -67,6 +69,8 @@ export default function AppGamesForm() {
   // Publishing requires both the game details AND at least one question
   const notValid = !isValid || questions.length === 0;
 
+  const notFound = !!id && query?.isError;
+
   const onFinishWithStatus = (status: GameStatus) =>
     handleSubmit(async (values) => {
       await onFinish({
@@ -78,6 +82,14 @@ export default function AppGamesForm() {
         },
       });
     })();
+
+  if (formLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (notFound) {
+    return <ErrorComponent />;
+  }
 
   return (
     <LoadingOverlay loading={formLoading}>

@@ -22,7 +22,6 @@ import {
 import { useState } from "react";
 import {
   Control,
-  FieldError,
   FieldErrors,
   UseFormRegister,
   UseFormSetValue,
@@ -30,6 +29,7 @@ import {
   UseFormWatch,
   useFieldArray,
 } from "react-hook-form";
+import ErrorLabel from "@/components/ErrorLabel";
 
 type QuestionType = "multiple_choice" | "essay";
 
@@ -52,10 +52,7 @@ type QuestionsFormProps = {
 };
 
 function createEmptyQuestion(type: QuestionType): Question {
-  const id =
-    typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : `question-${Date.now()}`;
+  const id = `question-${Date.now()}`;
 
   const baseQuestion = {
     id,
@@ -449,11 +446,9 @@ function QuestionEditForm({
           className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all resize-none"
         />
         <div className="flex items-center justify-between mt-1">
-          {errors?.question && (
-            <p className="text-xs text-red-600">{errors.question.message}</p>
-          )}
+          <ErrorLabel errors={errors?.question} />
           <p className="text-xs text-slate-400 ml-auto">
-            {question.length}/150 {t("app.games.questions.characters_suffix")}
+            {question.length}/300 {t("app.games.questions.characters_suffix")}
           </p>
         </div>
       </div>
@@ -486,7 +481,6 @@ function QuestionEditForm({
           const pointsField = register(`questions.${index}.pusaka_points`, {
             valueAsNumber: true,
           });
-
           return (
             <Input
               type="number"
@@ -513,11 +507,7 @@ function QuestionEditForm({
             />
           );
         })()}
-        {errors?.pusaka_points && (
-          <p className="text-xs text-red-600 mt-1">
-            {errors.pusaka_points.message}
-          </p>
-        )}
+        <ErrorLabel errors={errors?.pusaka_points} />
       </div>
       {attemptedDone && Boolean(errors) && (
         <p className="flex items-center gap-1.5 text-sm font-medium text-red-600">
@@ -527,7 +517,6 @@ function QuestionEditForm({
       )}
       {/* Actions */}
       <div className="flex items-center gap-3 pt-2 border-slate-100">
-        {/* TODO: cancel changes */}
         <button onClick={onCancel}>Cancel</button>
         <button
           type="button"
@@ -595,11 +584,7 @@ function MultipleChoiceFields({
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
                   />
                   <div className="flex items-center justify-between mt-1">
-                    {optionErrors?.[letter] && (
-                      <p className="text-xs text-red-600">
-                        {optionErrors[letter].message}
-                      </p>
-                    )}
+                    <ErrorLabel errors={optionErrors?.[letter]} />
                     <p className="text-xs text-slate-400 text-right ml-auto">
                       {value.length}/100{" "}
                       {t("app.games.questions.characters_suffix")}
@@ -626,11 +611,7 @@ function MultipleChoiceFields({
             </option>
           ))}
         </select>
-        {errors?.correct_answer && (
-          <p className="text-xs text-red-600 mt-1">
-            {errors.correct_answer.message}
-          </p>
-        )}
+        <ErrorLabel errors={errors?.correct_answer} />
       </div>
     </div>
   );
@@ -779,6 +760,3 @@ function EssayFields({ register, errors, watch, index, t }: EssayFieldsProps) {
     </div>
   );
 }
-
-const ErrorLabel = ({ errors }: { errors?: FieldError }) =>
-  errors && <p className="text-xs text-red-600 mt-2">{errors.message}</p>;

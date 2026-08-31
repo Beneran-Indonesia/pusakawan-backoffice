@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const GameStatusSchema = z.enum(["draft", "published"]);
+export const GameStatusSchema = z.enum(["draft", "published", "past"]);
 export const GameSchema = z
   .object({
     id: z.string().readonly(),

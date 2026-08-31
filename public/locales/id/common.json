@@ -87,7 +87,8 @@
         "status_dropdown": {
           "all": "Semua Game",
           "published": "Game Aktif",
-          "draft": "Draf Game"
+          "draft": "Draf Game",
+          "past": "Game lampau"
         },
         "type_dropdown": {
           "all": "Semua Jenis",
@@ -244,6 +245,7 @@
       }
     },
     "home": {
+      "contents": "Konten",
       "new": {
         "title": "Tambah Konten Baru",
         "subtitle": "Unggah foto dan deskripsi baru untuk beranda aplikasi",
@@ -301,6 +303,13 @@
       "edit": {
         "title": "Ubah Konten",
         "subtitle": "Perbarui foto dan deskripsi untuk beranda aplikasi."
+      },
+      "errors": {
+        "pictures": {
+          "min": "Minimal 1 foto terunggah",
+          "max": "Maksimal 10 foto terunggah"
+        },
+        "description": "Deskripsi wajib diisi"
       }
     }
   },
@@ -375,5 +384,22 @@
       "description": "Kesalahan server. Profil Anda tidak diperbarui."
     }
   },
-  "under_development": "Halaman ini sedang dalam proses pengembangan. Silakan kunjungi kembali nanti untuk melihat fitur-fitur lengkapnya."
+  "pages": {
+    "error": {
+      "title": "Halaman tidak ditemukan",
+      "description": "Halaman yang Anda cari tidak ada.",
+      "backHome": "Kembali"
+    },
+    "under_development": "Halaman ini sedang dalam proses pengembangan. Silakan kunjungi kembali nanti untuk melihat fitur-fitur lengkapnya."
+  },
+  "notifications": {
+      "error": "Gagal memuat (kode status: {{statusCode}})",
+      "createError": "Gagal membuat {{resource}} (kode status: {{statusCode}})",
+      "deleteError": "Gagal menghapus {{resource}} (kode status: {{statusCode}})",
+      "editError": "Gagal mengedit {{resource}} (kode status: {{statusCode}})",
+      "success": "Berhasil",
+      "createSuccess": "Berhasil membuat {{resource}}",
+      "editSuccess": "Berhasil mengedit {{resource}}",
+      "deleteSuccess": "Berhasil menghapus {{resource}}"
+  }
 }

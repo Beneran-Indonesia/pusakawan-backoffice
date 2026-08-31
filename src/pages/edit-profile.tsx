@@ -20,9 +20,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ThemeProvider } from "@/components/refine-ui/theme/theme-provider";
 import { LoadingSpinner } from "@/components/Loading";
-import { Controller, FieldError } from "react-hook-form";
+import { Controller, } from "react-hook-form";
 import { LoadingOverlay } from "@/components/refine-ui/layout/loading-overlay";
 import z from "zod";
+import ErrorLabel from "@/components/ErrorLabel";
 
 type Translate = ReturnType<typeof useTranslate>;
 
@@ -415,6 +416,3 @@ export default function EditProfile() {
     </ThemeProvider>
   );
 }
-
-const ErrorLabel = ({ errors }: { errors?: FieldError }) =>
-  errors && <p className="text-xs text-red-600 mt-2">{errors.message}</p>;

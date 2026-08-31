@@ -18,20 +18,5 @@ export const GameDetailsSchema = (t: Translate) =>
     created_at: z.string(), // datetime + timezone
   });
 
-export const GameDetailsCreateSchema = (t: Translate) =>
-  GameDetailsSchema(t).pick({
-    status: true,
-    game: true,
-    questions: true,
-  });
-
-export const GameDetailsUpdateSchema = (t: Translate) =>
-  GameDetailsCreateSchema(t)
-    .partial()
-    .refine((data) => Object.keys(data).length > 0, {
-      message: t("app.games.details.validation.update")
-    })
 
 export type GameDetails = z.infer<ReturnType<typeof GameDetailsSchema>>;
-export type CreateGameDetails = z.infer<ReturnType<typeof GameDetailsCreateSchema>>;
-export type UpdateGameDetails = z.infer<ReturnType<typeof GameDetailsUpdateSchema>>;
