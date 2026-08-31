@@ -179,8 +179,16 @@
           "details": "Detail Game",
           "questions": "Pertanyaan",
           "leaderboard": "Papan Peringkat"
+        },
+        "errors": {
+        "title": "Judul wajib diisi",
+            "description": "Deskripsi wajib diisi",
+            "banner": "Banner wajib diisi",
+            "end_time": "Waktu selesai harus setelah waktu mulai",
+            "maximum_participants": "Jumlah anggota maksimum harus lebih besar dari anggota minimum"
         }
       },
+
       "questions": {
         "add_new": {
           "title": "Tambah Pertanyaan Baru",
