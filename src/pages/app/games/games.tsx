@@ -157,11 +157,11 @@ export default function AppGames() {
           <div className="flex items-center gap-2 mb-4">
             <Avatar className="w-8 h-8 bg-red-100 shrink-0">
               <AvatarFallback className="bg-red-100 text-red-700 text-xs font-semibold">
-                {getInitials(gameDetails.author)}
+                {getInitials(gameDetails.author.name)}
               </AvatarFallback>
             </Avatar>
             <span className="text-sm font-semibold text-slate-800 truncate">
-              {gameDetails.author}
+              {gameDetails.author.name}
             </span>
 
             {gameDetails.held_on && (

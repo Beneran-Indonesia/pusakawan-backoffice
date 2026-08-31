@@ -3,6 +3,7 @@ import { MOCK_GAMES } from "./app-games-mock";
 import { Question } from "@/types/app/app-questions-type";
 import { http, HttpResponse } from "msw";
 import { APP_GAME_DETAILS_API_URL } from "@/lib/urls";
+import { MOCK_USER } from "../auth-mock";
 
 export const MOCK_QUESTIONS: Question[][] = [
 
@@ -140,11 +141,7 @@ export const MOCK_GAME_DETAILS: GameDetails[] = [
     game: MOCK_GAMES[0],
     questions: MOCK_QUESTIONS[0],
     created_at: '2024-01-10',
-    author: {
-      "email": "team@pusakawan.com",
-      "name": "Pusakawan Team",
-      "role": "SUPER_ADMIN"
-    }
+    author: MOCK_USER
   },
   {
     id: "g2",
@@ -152,11 +149,7 @@ export const MOCK_GAME_DETAILS: GameDetails[] = [
     game: MOCK_GAMES[1],
     questions: MOCK_QUESTIONS[1],
     created_at: '2024-02-05',
-    author: {
-      "email": "team@pusakawan.com",
-      "name": "Pusakawan Team",
-      "role": "SUPER_ADMIN"
-    }
+    author: MOCK_USER
   },
   {
     id: "g3",
@@ -164,11 +157,7 @@ export const MOCK_GAME_DETAILS: GameDetails[] = [
     game: MOCK_GAMES[2],
     questions: MOCK_QUESTIONS[2],
     created_at: '2024-02-20',
-    author: {
-      "email": "team@pusakawan.com",
-      "name": "Pusakawan Team",
-      "role": "SUPER_ADMIN"
-    }
+    author: MOCK_USER
   }
 ];
 

@@ -180,6 +180,13 @@
           "details": "Game Details",
           "questions": "Questions",
           "leaderboard": "Leaderboard"
+        },
+        "errors": {
+          "title": "Title is required",
+          "description": "Description is required",
+          "banner": "Banner is required",
+          "end_time": "End datetime must be after start datetime",
+          "maximum_participants": "Maximum members must be more than minimum members"
         }
       },
       "questions": {

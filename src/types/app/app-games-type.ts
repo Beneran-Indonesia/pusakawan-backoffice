@@ -1,14 +1,18 @@
 import { z } from "zod";
+import { BasicUserSchema } from "../users-type";
+import type { useTranslate } from "@refinedev/core";
+
+type Translate = ReturnType<typeof useTranslate>;
 
 export const GameStatusSchema = z.enum(["draft", "published", "past"]);
-export const GameSchema = z
+export const GameSchema = (t: Translate) => z
   .object({
     id: z.string().readonly(),
-    author: z.string(),
+    author: BasicUserSchema,
     status: GameStatusSchema,
-    title: z.string().max(100),
-    banner: z.string().url(),
-    description: z.string().max(500),
+    title: z.string().min(1, t("app.games.form.errors.title")).max(100),
+    banner: z.string().url().min(1, t("app.games.form.errors.banner")),
+    description: z.string().min(1, t("app.games.form.errors.description")).max(500),
     rules: z.array(z.string().max(200)).max(5).optional(),
     held_on: z.object({
       start_datetime: z.string(), // date time
@@ -30,7 +34,7 @@ export const GameSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["held_on", "end_datetime"],
-        message: "End datetime must be after start datetime",
+        message: t("app.games.form.errors.end_time"),
       });
     }
 
@@ -41,10 +45,10 @@ export const GameSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["minimum_participants", "maximum_participants"],
-        message: "Maximum members must be more than minimum members",
+        message: t("app.games.form.errors.maximum_participants"),
       });
     }
   });
 export type GameStatus = z.infer<typeof GameStatusSchema>;
 
-export type Game = z.infer<typeof GameSchema>;
+export type Game = z.infer<ReturnType<typeof GameSchema>>;

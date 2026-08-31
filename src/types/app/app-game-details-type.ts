@@ -11,7 +11,7 @@ export const GameDetailsSchema = (t: Translate) =>
   z.object({
     id: z.string().readonly(),
     status: GameStatusSchema,
-    game: GameSchema,
+    game: GameSchema(t),
     questions: z.array(QuestionSchema(t)),
     author: BasicUserSchema.readonly(),
     updated_at: z.string().optional(), // datetime + timezone

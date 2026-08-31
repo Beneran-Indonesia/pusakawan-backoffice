@@ -141,6 +141,7 @@ export default function AppHomeForm() {
     formState: { errors, isSubmitting },
   } = useForm<Post, HttpError, Post>({
     resolver: zodResolver(PostSchema(t)),
+    mode: "onChange",
     refineCoreProps: {
       action: isEditing ? "edit" : "create",
       resource: "app-home",

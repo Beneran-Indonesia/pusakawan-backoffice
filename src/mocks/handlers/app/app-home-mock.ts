@@ -2,15 +2,12 @@ import { Post } from "@/types/app/app-home-type";
 import { http, HttpResponse } from "msw";
 import { APP_HOME_API_URL } from "@/lib/urls";
 import { getPastDate } from "@/lib/utils";
+import { MOCK_USER } from "../auth-mock";
 
 const MOCK_HOME: Post[] = [
   {
     id: "h1",
-    author: {
-      "email": "team@pusakawan.com",
-      "name": "Pusakawan Team",
-      "role": "SUPER_ADMIN"
-    },
+    author: MOCK_USER,
     pictures: [
       "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&auto=format&fit=crop",
     ],
@@ -22,11 +19,7 @@ const MOCK_HOME: Post[] = [
   },
   {
     id: "h2",
-    author: {
-      "email": "team@pusakawan.com",
-      "name": "Pusakawan Team",
-      "role": "SUPER_ADMIN"
-    },
+    author: MOCK_USER,
     pictures: [
       "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&auto=format&fit=crop",
@@ -40,11 +33,7 @@ const MOCK_HOME: Post[] = [
   },
   {
     id: "h3",
-    author: {
-      "email": "team@pusakawan.com",
-      "name": "Pusakawan Team",
-      "role": "SUPER_ADMIN"
-    },
+    author: MOCK_USER,
     pictures: [
       "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&auto=format&fit=crop",
