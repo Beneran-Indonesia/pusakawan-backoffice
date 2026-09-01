@@ -1,19 +1,22 @@
 import { z } from "zod";
+import { BasicUserSchema } from "../users-type";
+import type { useTranslate } from "@refinedev/core";
+
+// Error validation uses localization.
+type Translate = ReturnType<typeof useTranslate>;
 
 const PostStatusSchema = z.enum(["draft", "published"]);
 
-export const PostSchema = z.object({
-    id: z.string(),
-    status: PostStatusSchema,
-    thumbnail: z.string().url(),
-    description: z.string(),
-    author: z.string(),
-    // pictures: z.array(z.string().url()).max(10),
-    timestamp: z.string(),
-    // created_at: z.string(),
-    published_at: z.string().nullable().optional(),
-    edited_at: z.string().nullable().optional(),
+export const PostSchema = (t: Translate) => z.object({
+  id: z.string().readonly(),
+  status: PostStatusSchema,
+  pictures: z.array(z.string().url()).min(1, t("app.home.errors.pictures.min")).max(10, t("app.home.errors.pictures.max")),
+  description: z.string().min(1, t("app.home.errors.description")),
+  author: BasicUserSchema,
+  created_at: z.string(),
+  published_at: z.string().nullable().optional(),
+  edited_at: z.string().nullable().optional(),
 });
 
 export type PostStatus = z.infer<typeof PostStatusSchema>;
-export type Post = z.infer<typeof PostSchema>;
+export type Post = z.infer<ReturnType<typeof PostSchema>>;

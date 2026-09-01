@@ -13,7 +13,9 @@ import {
 } from "@/types/app/app-game-details-type";
 import { GameStatus } from "@/types/app/app-games-type";
 import GameDetailsTab from "./game-details";
-import QuestionsForm from "./questions-form";
+import QuestionsFormTab from "./questions-form";
+import { ErrorComponent } from "@/components/refine-ui/layout/error-component";
+import { LoadingSpinner } from "@/components/Loading";
 
 const tabTriggerClass =
   "flex-1 rounded-lg py-3 text-sm font-semibold text-slate-600 transition-colors " +
@@ -25,18 +27,21 @@ export default function AppGamesForm() {
   const [activeTab, setActiveTab] = useState("details");
   const { id } = useResourceParams();
 
-  const t = useTranslate()
+  const t = useTranslate();
 
   const {
-    refineCore: { onFinish, formLoading },
+    refineCore: { onFinish, formLoading, query },
     control,
     handleSubmit,
     register,
     watch,
     setValue,
+    trigger,
     formState: { errors, isSubmitting, isValid },
   } = useForm<GameDetails, HttpError, GameDetails>({
-    resolver: zodResolver(GameDetailsSchema),
+    resolver: zodResolver(GameDetailsSchema(t)),
+    // Validates immediately -- on change.
+    mode: "onChange",
     refineCoreProps: {
       action: "edit",
       resource: "games",
@@ -61,11 +66,10 @@ export default function AppGamesForm() {
   const status = watch("status");
   const questions = watch("questions") ?? [];
 
-  // Publishing requires both the game details AND at least one question to
-  // be filled in correctly — this is what actually connects the two tabs:
-  // the questions form's data lives on the same `questions` field of this
-  // form, so its errors/emptiness directly gate the Publish action below.
+  // Publishing requires both the game details AND at least one question
   const notValid = !isValid || questions.length === 0;
+
+  const notFound = !!id && query?.isError;
 
   const onFinishWithStatus = (status: GameStatus) =>
     handleSubmit(async (values) => {
@@ -78,6 +82,14 @@ export default function AppGamesForm() {
         },
       });
     })();
+
+  if (formLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (notFound) {
+    return <ErrorComponent />;
+  }
 
   return (
     <LoadingOverlay loading={formLoading}>
@@ -97,8 +109,13 @@ export default function AppGamesForm() {
                 {title || t("app.games.form.untitled")}
               </h1>
               <p className="text-slate-500 mt-1">
-                {status === "published" ? t("app.games.form.status.published") : t("app.games.form.status.draft")} •{" "}
-                {isOffline ? t("app.games.form.type.offline") : t("app.games.form.type.online")}
+                {status === "published"
+                  ? t("app.games.form.status.published")
+                  : t("app.games.form.status.draft")}
+                {" • "}
+                {isOffline
+                  ? t("app.games.form.type.offline")
+                  : t("app.games.form.type.online")}
               </p>
             </div>
           </div>
@@ -149,9 +166,14 @@ export default function AppGamesForm() {
           />
 
           {/* QUESTIONS TAB */}
-          <TabsContent value="questions" className="mt-6">
-            <QuestionsForm control={control} />
-          </TabsContent>
+          <QuestionsFormTab
+            control={control}
+            register={register}
+            errors={errors.questions}
+            watch={watch}
+            setValue={setValue}
+            trigger={trigger}
+          />
 
           {/* LEADERBOARD TAB */}
           <TabsContent

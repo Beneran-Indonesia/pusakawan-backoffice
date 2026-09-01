@@ -2,11 +2,7 @@
 
 import { Smartphone, Monitor, ListIcon } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import {
-  useMenu,
-  type TreeMenuItem,
-  usePermissions,
-} from "@refinedev/core";
+import { useMenu, type TreeMenuItem, usePermissions } from "@refinedev/core";
 import {
   SidebarRail as ShadcnSidebarRail,
   Sidebar as ShadcnSidebar,
@@ -18,16 +14,17 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router";
 
-type SidebarPanel = "LMS" | "APP"; 
+type SidebarPanel = "LMS" | "APP";
 
 export function Sidebar() {
   const { data: userRole } = usePermissions({});
   const { open } = useShadcnSidebar();
   const { menuItems, selectedKey } = useMenu();
+
   const [platform, setPlatform] = useState<SidebarPanel>("APP");
   // onmount, change the platform panel according to user's role :)
   useEffect(() => {
-    setPlatform(menuItems[0].name as SidebarPanel)
+    setPlatform(menuItems[0].name as SidebarPanel);
   }, []);
 
   const PLATFORM_RULES = {
@@ -37,7 +34,9 @@ export function Sidebar() {
 
   const filteredPlatform = menuItems.find(PLATFORM_RULES[platform]) ?? null;
   const manageUserNav =
-    menuItems.find((it) => it.name === "MANAGE_USERS") ?? null;
+    userRole === "SUPER_ADMIN"
+      ? (menuItems.find((it) => it.name === "MANAGE_USERS") ?? null)
+      : null;
 
   return (
     <ShadcnSidebar

@@ -17,9 +17,7 @@ async function enableMocks() {
   await worker.start();
 }
 
-async function main() {
-  await enableMocks();
-
+enableMocks().then(() => {
   root.render(
     <React.StrictMode>
       <React.Suspense fallback={<LoadingSpinner />}>
@@ -27,6 +25,4 @@ async function main() {
       </React.Suspense>
     </React.StrictMode>,
   );
-}
-
-main();
+})

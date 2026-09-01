@@ -8,22 +8,22 @@ import {
   FieldPath,
   FieldValues,
   UseFormRegister,
-  FieldError,
-  Merge,
-  FieldErrorsImpl,
   UseFormSetValue,
   UseFormWatch,
+  FieldErrors,
+  FieldError,
 } from "react-hook-form";
 import { GameDetails } from "@/types/app/app-game-details-type";
 import { Game } from "@/types/app/app-games-type";
 import { useTranslate } from "@refinedev/core";
+import ErrorLabel from "@/components/ErrorLabel";
 
 type GameDetailsTabProps = {
   control: Control<GameDetails>;
   register: UseFormRegister<GameDetails>;
-  errors: Merge<FieldError, FieldErrorsImpl<Game>> | undefined;
   watch: UseFormWatch<GameDetails>;
   setValue: UseFormSetValue<GameDetails>;
+  errors?: FieldErrors<Game>;
 };
 
 export default function GameDetailsTab({
@@ -129,9 +129,7 @@ export default function GameDetailsTab({
           placeholder={t("app.games.details.title.placeholder")}
         />
         <div className="flex items-center justify-between mt-1">
-          {errors && errors.title && (
-            <p className="text-xs text-red-600">{errors.title.message}</p>
-          )}
+          <ErrorLabel errors={errors?.title} />
           <p className="text-xs text-slate-400 ml-auto">
             {t("app.games.details.title.character_count", {
               count: title.length,
@@ -179,9 +177,7 @@ export default function GameDetailsTab({
             />
           </Label>
         )}
-        {errors && errors.banner && (
-          <p className="text-xs text-red-600 mt-1">{errors.banner.message}</p>
-        )}
+        <ErrorLabel errors={errors?.banner} />
       </section>
 
       {/* About the Game */}
@@ -197,9 +193,7 @@ export default function GameDetailsTab({
           className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 focus:bg-white transition-all resize-none"
         />
         <div className="flex items-center justify-between mt-1">
-          {errors && errors.description && (
-            <p className="text-xs text-red-600">{errors.description.message}</p>
-          )}
+          <ErrorLabel errors={errors?.description} />
           <p className="text-xs text-slate-400 ml-auto">
             {t("app.games.details.about.character_count", {
               count: description.length,
@@ -215,7 +209,7 @@ export default function GameDetailsTab({
         </Label>
         <div className="space-y-4">
           {rules.map((rule, index) => (
-            <div key={index} className="flex items-start gap-3">
+            <div key={"rule" + index} className="flex items-start gap-3">
               <div className="flex-1">
                 <Input
                   className="px-4"
@@ -240,6 +234,7 @@ export default function GameDetailsTab({
               >
                 <Trash2 className="w-4 h-4" />
               </button>
+              <ErrorLabel errors={errors?.rules as FieldError} />
             </div>
           ))}
 
@@ -254,11 +249,6 @@ export default function GameDetailsTab({
             </button>
           )}
         </div>
-        {errors && errors.rules && (
-          <p className="text-xs text-red-600 mt-2">
-            {errors.rules.message as string}
-          </p>
-        )}
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-10 gap-6">
@@ -291,12 +281,7 @@ export default function GameDetailsTab({
               />
             </div>
           </div>
-
-          {errors && errors.held_on?.end_datetime && (
-            <p className="text-xs text-red-600 mt-2">
-              {errors.held_on.end_datetime.message}
-            </p>
-          )}
+          <ErrorLabel errors={errors?.held_on?.end_datetime} />
         </section>
 
         {/* Group Size */}
@@ -335,12 +320,7 @@ export default function GameDetailsTab({
               />
             </div>
           </div>
-
-          {errors && errors.group_size?.maximum_participants && (
-            <p className="text-xs text-red-600 mt-2">
-              {errors.group_size.maximum_participants.message}
-            </p>
-          )}
+          <ErrorLabel errors={errors?.group_size?.maximum_participants} />
         </section>
       </div>
 

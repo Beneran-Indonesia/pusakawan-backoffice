@@ -18,12 +18,13 @@ import { UserToken } from "@/types/users-type";
 import { createAuthProvider } from "./providers/auth-provider";
 import { createResources, filterResources } from "./providers/resources";
 import AppHome from "./pages/app/home";
-import AppGames from "./pages/app/games/index";
+import AppGames from "./pages/app/games/games";
 import AppGamesForm from "./pages/app/games/games-form";
 import {
   APP_GAMES_EDIT_ROUTE,
   APP_GAMES_NEW_ROUTE,
   APP_GAMES_ROUTE,
+  APP_HOME_EDIT_ROUTE,
   APP_HOME_NEW_ROUTE,
   APP_HOME_ROUTE,
   EDIT_PROFILE_ROUTE,
@@ -145,6 +146,14 @@ function App() {
               }
             />
             {/* Edit home */}
+            <Route
+              path={APP_HOME_EDIT_ROUTE}
+              element={
+                <Layout>
+                  <AppHomeForm />
+                </Layout>
+              }
+            />
 
             {/* List games */}
             <Route

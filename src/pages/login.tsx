@@ -10,20 +10,24 @@ import { Mail, ShieldCheck } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import ErrorLabel from "@/components/ErrorLabel";
 
-const signInSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Email is required")
-    .email("Enter a valid email address"),
-  password: z
-    .string()
-    .min(1, "Password is required")
-    .min(6, "Password must be at least 6 characters"),
-  rememberMe: z.boolean(),
-});
+type Translate = ReturnType<typeof useTranslate>;
 
-type SignInFormValues = z.infer<typeof signInSchema>;
+const SignInSchema = (t: Translate) =>
+  z.object({
+    email: z
+      .string()
+      .min(1, t("sign_in.errors.email.required"))
+      .email(t("sign_in.errors.email.valid")),
+    password: z
+      .string()
+      .min(1, t("sign_in.errors.password.required"))
+      .min(6, t("sign_in.errors.password.minimum")),
+    rememberMe: z.boolean(),
+  });
+
+type SignInFormValues = z.infer<ReturnType<typeof SignInSchema>>;
 
 export const Login: React.FC = () => {
   const t = useTranslate();
@@ -34,7 +38,7 @@ export const Login: React.FC = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<SignInFormValues>({
-    resolver: zodResolver(signInSchema),
+    resolver: zodResolver(SignInSchema(t)),
     defaultValues: {
       email: "",
       password: "",
@@ -146,9 +150,7 @@ export const Login: React.FC = () => {
                   )}
                 />
               </div>
-              {errors.email && (
-                <p className="text-xs text-red-600">{errors.email.message}</p>
-              )}
+              <ErrorLabel errors={errors?.email} />
             </div>
 
             <div className="space-y-2">
@@ -169,11 +171,7 @@ export const Login: React.FC = () => {
                   />
                 )}
               />
-              {errors.password && (
-                <p className="text-xs text-red-600">
-                  {errors.password.message}
-                </p>
-              )}
+              <ErrorLabel errors={errors?.password} />
             </div>
 
             <div className="flex items-center justify-between">

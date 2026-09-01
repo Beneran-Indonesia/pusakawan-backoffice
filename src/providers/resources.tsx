@@ -14,6 +14,8 @@ import {
   APP_GAMES_EDIT_ROUTE,
   APP_GAMES_NEW_ROUTE,
   APP_GAMES_ROUTE,
+  APP_HOME_EDIT_ROUTE,
+  APP_HOME_NEW_ROUTE,
   APP_HOME_ROUTE,
   APP_PROGRAM_ROUTE,
   EDIT_PROFILE_ROUTE,
@@ -81,8 +83,8 @@ export const createResources = (t: TFunction): ResourceProps[] => {
     {
       list: APP_HOME_ROUTE,
       name: "home",
-      create: "/app/home",
-      edit: "/app/edit",
+      create: APP_HOME_NEW_ROUTE,
+      edit: APP_HOME_EDIT_ROUTE,
       identifier: "app-home",
       meta: {
         parent: "APP",
@@ -135,11 +137,16 @@ export const createResources = (t: TFunction): ResourceProps[] => {
       label: "Edit Profile",
       icon: <UserPen className="w-5 h-5" />,
       allowedRoles: ["SUPER_ADMIN", "ADMIN", "APP", "LMS"],
-      dataProviderName: "editProfileData"
+      dataProviderName: "editProfileData",
     },
   };
 
-  return [...appNavItems, ...lmsNavItems, editProfileNavItem, manageUserNavItem];
+  return [
+    ...appNavItems,
+    ...lmsNavItems,
+    editProfileNavItem,
+    manageUserNavItem,
+  ];
 };
 
 export const filterResources = (

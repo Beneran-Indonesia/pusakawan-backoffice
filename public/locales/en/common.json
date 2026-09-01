@@ -18,7 +18,17 @@
     "password_hint": "Enter your password",
     "remember_me": "Remember me",
     "button": "Sign in to Dashboard",
-    "secure_access": "Secure Admin Access"
+    "secure_access": "Secure Admin Access",
+    "errors": {
+      "email": {
+        "required": "Email is required",
+        "valid": "Enter a valid email address"
+      },
+      "password": {
+        "required": "Password is required",
+        "minimum": "Password must be at least 6 characters"
+      }
+    }
   },
   "header": {
     "profile_dropdown": {
@@ -49,6 +59,13 @@
       "title": "Games Management",
       "subtitle": "Create and manage interactive games for your community",
       "create_button": "New Game",
+      "card": {
+        "edit": "Edit",
+        "duplicate": "Duplicate",
+        "publish": "Publish",
+        "unpublish": "Unpublish",
+        "delete": "Delete"
+      },
       "empty_state": {
         "title": "No games yet",
         "subtitle": "Create your first game to engage your community"
@@ -56,12 +73,23 @@
       "empty_filter": {
         "title": "No games found"
       },
+      "delete_modal": {
+        "title": "Delete Game",
+        "description": "Are you sure you want to delete this game? All data will be permanently removed.",
+        "item_label": "Item to be deleted:",
+        "warning_label": "Warning:",
+        "warning": "This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete Game"
+      },
       "search_bar": {
         "placeholder": "Search games...",
         "status_dropdown": {
           "all": "All Games",
           "published": "Active Games",
-          "draft": "Draft Games"
+          "draft": "Draft Games",
+          "past": "Past Games"
+
         },
         "type_dropdown": {
           "all": "All Types",
@@ -70,6 +98,9 @@
         }
       },
       "details": {
+        "validation": {
+          "update": "At least one field needs to be updated."
+        },
         "game_type": {
           "label": "Game Type",
           "offline": {
@@ -149,6 +180,13 @@
           "details": "Game Details",
           "questions": "Questions",
           "leaderboard": "Leaderboard"
+        },
+        "errors": {
+          "title": "Title is required",
+          "description": "Description is required",
+          "banner": "Banner is required",
+          "end_time": "End datetime must be after start datetime",
+          "maximum_participants": "Maximum members must be more than minimum members"
         }
       },
       "questions": {
@@ -168,13 +206,16 @@
         "empty_state": "No questions yet. Add your first question above.",
         "question_label": "Question {{number}}",
         "no_question_text": "No question text",
+        "has_errors_warning": "Some fields are missing or invalid",
         "points_label": "Points: {{points}}",
         "edit": "Edit",
+        "cancel": "Cancel",
         "delete": "Delete",
         "done_editing": "Done Editing",
         "media": {
           "title": "Add Media (Optional)",
-          "upload_hint": "Upload JPG, PNG, MP4, or MP3"
+          "upload_hint": "Upload JPG, PNG, MP4, or MP3",
+          "remove": "Remove media"
         },
         "question_field": {
           "label": "Question",
@@ -187,8 +228,8 @@
         "correct_answer": "Correct Answer",
         "pusaka_point": "Pusaka Point",
         "correct_answers": {
-          "label": "Correct Answers (3 variations)",
-          "placeholder": "Correct answer {{number}}"
+          "label": "Correct Answers (minimum 1 and maximum 3 variations)",
+          "placeholder": "Correct Answer Variation #{{number}}"
         },
         "hints": {
           "label": "Hints (Optional)",
@@ -201,10 +242,18 @@
           "correct_placeholder": "Great job! Correct answer!",
           "incorrect_placeholder": "Incorrect answer. Try again!"
         },
-        "characters_suffix": "characters"
+        "characters_suffix": "characters",
+        "errors": {
+          "question_required": "Question text is required",
+          "option_required": "This answer option is required",
+          "points_invalid_type": "Points must be a number",
+          "points_negative": "Points cannot be negative",
+          "correct_answer_required": "At least one correct answer variance is required"
+        }
       }
     },
     "home": {
+      "contents": "Contents",
       "new": {
         "title": "Add New Content",
         "subtitle": "Upload new photo and description for the app home screen",
@@ -215,7 +264,15 @@
             "draft": "Save as Draft",
             "cancel": "Cancel",
             "publish": "Publish Content"
-          }
+          },
+          "save_as_draft": "Save as Draft (won't appear in mobile app until published)"
+        },
+        "editing_content": "Editing content",
+        "creating_content": "Creating new content",
+        "picture_min_error": "Please upload at least 1 photo.",
+        "pictures": {
+          "title": "Photos (up to 10)",
+          "upload_cta": "Upload photo(s)"
         }
       },
       "title": "App Home Management",
@@ -226,6 +283,41 @@
         "all": "All Content",
         "published": "Published",
         "draft": "Draft"
+      },
+      "create_button": "New Content",
+      "card": {
+        "edit": "Edit",
+        "duplicate": "Duplicate",
+        "publish": "Publish",
+        "unpublish": "Unpublish",
+        "delete": "Delete"
+      },
+      "empty_state": {
+        "title": "No content yet",
+        "subtitle": "Create your first content to show it on the student app home"
+      },
+      "empty_filter": {
+        "title": "No content found"
+      },
+      "delete_modal": {
+        "title": "Delete Content",
+        "description": "Are you sure you want to delete this content? All data will be permanently removed from the app home.",
+        "item_label": "Item to be deleted:",
+        "warning_label": "Warning:",
+        "warning": "This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete Content"
+      },
+      "edit": {
+        "title": "Edit Content",
+        "subtitle": "Update the photo and description for the app home screen."
+      },
+      "errors": {
+        "pictures": {
+          "min": "Minimum of 1 picture required",
+          "max": "Maximum of 10 pictures can be uploaded."
+        },
+        "description": "Description is required"
       }
     }
   },
@@ -274,10 +366,6 @@
       }
     },
     "errors": {
-      "email": {
-        "required": "Email is required",
-        "valid": "Enter a valid email address"
-      },
       "name": {
         "required": "Name is required"
       },
@@ -304,5 +392,22 @@
       "description": "Server error. Your profile was not updated."
     }
   },
-  "under_development": "This page is currently under development. Please come back later to see the full features."
+  "pages": {
+    "error": {
+      "title": "Page not found",
+      "description": "The page you're looking for doesn't exist.",
+      "backHome": "Go back"
+    },
+    "under_development": "This page is currently under development. Please come back later to see the full features."
+  },
+  "notifications": {
+      "error": "Error (status code: {{statusCode}})",
+      "createError": "There was an error creating {{resource}} (status code: {{statusCode}})",
+      "deleteError": "Error when deleting {{resource}} (status code: {{statusCode}})",
+      "editError": "Error when editing {{resource}} (status code: {{statusCode}})",
+      "success": "Successful",
+      "createSuccess": "Successfully created {{resource}}",
+      "editSuccess": "Successfully edited {{resource}}",
+      "deleteSuccess": "Successfully deleted {{resource}}"
+  }
 }

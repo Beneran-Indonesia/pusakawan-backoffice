@@ -1,9 +1,11 @@
 import { APP_GAMES_API_URL } from "@/lib/urls";
 import { Game } from "@/types/app/app-games-type";
 import { http, HttpResponse } from "msw";
+import { MOCK_USER } from "../auth-mock";
 
 export const MOCK_GAMES: Game[] = [
   {
+    author: MOCK_USER,
     id: "g1",
     title: "Indonesian Heritage Challenge",
     is_offline: true,
@@ -33,6 +35,7 @@ export const MOCK_GAMES: Game[] = [
     },
   },
   {
+    author: MOCK_USER,
     id: "g2",
     title: "Pancasila Values Quiz",
     is_offline: true,
@@ -62,6 +65,7 @@ export const MOCK_GAMES: Game[] = [
     },
   },
   {
+    author: MOCK_USER,
     id: "g3",
     title: "Explore Nusantara",
     is_offline: true,

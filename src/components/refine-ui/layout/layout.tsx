@@ -6,57 +6,72 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import type { PropsWithChildren } from "react";
 import { Sidebar } from "./sidebar";
-import {
-  Authenticated,
-  useCan,
-  useResourceParams,
-} from "@refinedev/core";
+import { useCan, useIsAuthenticated, useResourceParams } from "@refinedev/core";
 import { Navigate } from "react-router";
-import { LoadingOverlay } from "./loading-overlay";
+import { LoadingSpinner } from "@/components/Loading";
+// import { LoadingOverlay } from "./loading-overlay";
 
 export function Layout({ children }: PropsWithChildren) {
+  const { data: user, isLoading: authLoading } = useIsAuthenticated();
   const { resource } = useResourceParams();
-  const { data, isLoading } = useCan({
-    resource: resource?.meta?.parent,
+
+  const authenticated = !authLoading && (user?.authenticated === true);
+  const parentResource = resource?.meta?.parent;
+
+  const { data: canData, isLoading: canLoading } = useCan({
+    resource: parentResource,
     action: "access",
+    queryOptions: {
+      enabled: !!parentResource && authenticated,
+    },
   });
 
-  if (!data?.can) {
+  if (authLoading || canLoading) {
+    return <LoadingSpinner />
+  }
+
+  // Auth initialization finished and there's no user.
+  if (!authenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (!canLoading && !canData?.can) {
     return <Navigate to="/" replace />;
   }
 
   return (
-    <Authenticated fallback={<Navigate to="/" replace />} key="layout">
-      <ThemeProvider>
-        <LoadingOverlay loading={isLoading}>
-          <SidebarProvider>
-            <Sidebar />
-            <SidebarInset>
-              <Header />
-              <main
-                className={cn(
-                  "@container/main",
-                  "container",
-                  "mx-auto",
-                  "relative",
-                  "w-full",
-                  "flex",
-                  "flex-col",
-                  "flex-1",
-                  "px-2",
-                  "pt-4",
-                  "md:p-4",
-                  "lg:px-6",
-                  "lg:pt-6",
-                )}
-              >
-                {children}
-              </main>
-            </SidebarInset>
-          </SidebarProvider>
-        </LoadingOverlay>
-      </ThemeProvider>
-    </Authenticated>
+    // <Authenticated fallback={<Navigate to="/" replace />} key="layout">
+    <ThemeProvider>
+      {/* <LoadingOverlay loading={authLoading || canLoading}> */}
+        <SidebarProvider>
+          <Sidebar />
+          <SidebarInset>
+            <Header />
+            <main
+              className={cn(
+                "@container/main",
+                "container",
+                "mx-auto",
+                "relative",
+                "w-full",
+                "flex",
+                "flex-col",
+                "flex-1",
+                "px-2",
+                "pt-4",
+                "md:p-4",
+                "lg:px-6",
+                "lg:pt-6",
+                "lg:pb-6",
+              )}
+            >
+              {children}
+            </main>
+          </SidebarInset>
+        </SidebarProvider>
+      {/* </LoadingOverlay> */}
+    </ThemeProvider>
+    // </Authenticated>
   );
 }
 

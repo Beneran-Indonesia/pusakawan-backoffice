@@ -1,13 +1,12 @@
 import { http, HttpResponse } from 'msw'
 import { UserToken } from '@/types/users-type'
 import { LOGIN_API_URL, LOGOUT_API_URL, REFRESH_TOKEN_API_URL } from '@/lib/urls'
-// import { getCookieValue } from '@/lib/utils';
 
-const MOCK_USER: UserToken["user"] = {
-    email: "a@g.c",
-    name: "Sarah",
-    role: "APP",
-    avatar: "https://avatars.githubusercontent.com/u/84066712?v=4",
+export const MOCK_USER: UserToken["user"] = {
+    email: "team@pusakawan.com",
+    name: "Pusakawan Team",
+    role: "SUPER_ADMIN",
+    avatar: "https://avatars.githubusercontent.com/u/153171605?s=40&v=4",
 };
 
 const REFRESH_TOKEN = "YU4KmQ3rVzW3LjFaSU6hMrJimy9sQGKj+04";

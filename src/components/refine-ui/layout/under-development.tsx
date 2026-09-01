@@ -24,7 +24,7 @@ export function UnderDevelopment({ title }: UnderDevelopmentProps) {
           <Construction className="w-16 h-16 text-red-600" />
         </div>
         <h2 className="text-2xl font-bold text-slate-800 mb-2">{title}</h2>
-        <p className="text-slate-500 max-w-md">{t("under_development")}</p>
+        <p className="text-slate-500 max-w-md">{t("pages.under_development")}</p>
       </div>
     </div>
   );

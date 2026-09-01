@@ -1,7 +1,7 @@
 import { useGetIdentity } from "@refinedev/core";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 
 type UserHeaderProps = {
   desktopSize: boolean;
@@ -31,15 +31,5 @@ export function UserHeader({ desktopSize = true }: UserHeaderProps) {
     </div>
   );
 }
-
-const getInitials = (name = "") => {
-  const names = name.split(" ");
-  let initials = names[0].substring(0, 1).toUpperCase();
-
-  if (names.length > 1) {
-    initials += names[names.length - 1].substring(0, 1).toUpperCase();
-  }
-  return initials;
-};
 
 UserHeader.displayName = "UserHeader";

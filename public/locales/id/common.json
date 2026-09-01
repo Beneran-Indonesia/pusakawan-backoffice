@@ -18,7 +18,17 @@
     "password_hint": "Masukkan kata sandi Anda",
     "remember_me": "Ingat saya",
     "button": "Masuk ke Dashboard",
-    "secure_access": "Akses Aman Admin"
+    "secure_access": "Akses Aman Admin",
+    "errors": {
+      "email": {
+        "required": "Email wajib diisi",
+        "valid": "Masukkan alamat email yang valid"
+      },
+      "password": {
+        "required": "Kata sandi wajib diisi",
+        "minimum": "Kata sandi minimal harus 6 karakter"
+      }
+    }
   },
   "header": {
     "profile_dropdown": {
@@ -39,15 +49,23 @@
     "app": {
       "home": "Beranda",
       "programs": "Programs",
-      "games": "Games",
-      "manage_user": "Kelola User"
-    }
+      "games": "Games"
+    },
+    "manage_user": "Kelola User"
   },
   "app": {
     "games": {
       "contents": "Konten",
       "title": "Manajemen Game",
       "subtitle": "Buat dan kelola game interaktif untuk komunitas Anda",
+      "create_button": "Game Baru",
+      "card": {
+        "edit": "Ubah",
+        "duplicate": "Duplikat",
+        "publish": "Publikasikan",
+        "unpublish": "Bikin Draf",
+        "delete": "Hapus"
+      },
       "empty_state": {
         "title": "Belum ada game",
         "subtitle": "Bikin game pertama untuk berinteraksi dengan komunitas Anda!"
@@ -55,12 +73,22 @@
       "empty_filter": {
         "title": "Tidak ada games yang ditemukan"
       },
+      "delete_modal": {
+        "title": "Hapus Game",
+        "description": "Apakah Anda yakin ingin menghapus game ini? Semua data akan dihapus secara permanen.",
+        "item_label": "Item yang akan dihapus:",
+        "warning_label": "Peringatan:",
+        "warning": "Tindakan ini tidak dapat dibatalkan.",
+        "cancel": "Batal",
+        "confirm": "Hapus Game"
+      },
       "search_bar": {
         "placeholder": "Cari game...",
         "status_dropdown": {
           "all": "Semua Game",
           "published": "Game Aktif",
-          "draft": "Draf Game"
+          "draft": "Draf Game",
+          "past": "Game lampau"
         },
         "type_dropdown": {
           "all": "Semua Jenis",
@@ -69,6 +97,9 @@
         }
       },
       "details": {
+        "validation": {
+          "update": "Setidaknya satu kolom perlu diperbarui."
+        },
         "game_type": {
           "label": "Tipe Game",
           "offline": {
@@ -148,8 +179,16 @@
           "details": "Detail Game",
           "questions": "Pertanyaan",
           "leaderboard": "Papan Peringkat"
+        },
+        "errors": {
+        "title": "Judul wajib diisi",
+            "description": "Deskripsi wajib diisi",
+            "banner": "Banner wajib diisi",
+            "end_time": "Waktu selesai harus setelah waktu mulai",
+            "maximum_participants": "Jumlah anggota maksimum harus lebih besar dari anggota minimum"
         }
       },
+
       "questions": {
         "add_new": {
           "title": "Tambah Pertanyaan Baru",
@@ -167,13 +206,16 @@
         "empty_state": "Belum ada pertanyaan. Tambahkan pertanyaan pertama Anda di atas.",
         "question_label": "Pertanyaan {{number}}",
         "no_question_text": "Belum ada teks pertanyaan",
+        "has_errors_warning": "Ada isian yang belum lengkap atau tidak valid",
         "points_label": "Poin: {{points}}",
         "edit": "Edit",
+        "cancel": "Batal",
         "delete": "Hapus",
         "done_editing": "Selesai Edit",
         "media": {
           "title": "Tambah Media (Opsional)",
-          "upload_hint": "Unggah JPG, PNG, MP4, atau MP3"
+          "upload_hint": "Unggah JPG, PNG, MP4, atau MP3",
+          "remove": "Hapus media"
         },
         "question_field": {
           "label": "Pertanyaan",
@@ -186,8 +228,8 @@
         "correct_answer": "Jawaban Benar",
         "pusaka_point": "Poin Pusaka",
         "correct_answers": {
-          "label": "Jawaban Benar (3 variasi)",
-          "placeholder": "Jawaban benar {{number}}"
+          "label": "Jawaban Benar (minimal 1, maksimum 3 variasi)",
+          "placeholder": "Jawaban Benar Variasi #{{number}}"
         },
         "hints": {
           "label": "Petunjuk (Opsional)",
@@ -200,10 +242,39 @@
           "correct_placeholder": "Kerja bagus! Jawaban benar!",
           "incorrect_placeholder": "Jawaban salah. Coba lagi!"
         },
-        "characters_suffix": "karakter"
+        "characters_suffix": "karakter",
+        "errors": {
+          "question_required": "Teks pertanyaan wajib diisi",
+          "option_required": "Pilihan jawaban ini wajib diisi",
+          "points_invalid_type": "Poin harus berupa angka",
+          "points_negative": "Poin tidak boleh negatif",
+          "correct_answer_required": "Minimal satu varians jawaban benar wajib diisi"
+        }
       }
     },
     "home": {
+      "contents": "Konten",
+      "new": {
+        "title": "Tambah Konten Baru",
+        "subtitle": "Unggah foto dan deskripsi baru untuk beranda aplikasi",
+        "description": {
+          "title": "Deskripsi",
+          "hint": "Tulis deskripsi konten di sini...",
+          "buttons": {
+            "draft": "Simpan sebagai Draf",
+            "cancel": "Kembali",
+            "publish": "Publikasikan Konten"
+          },
+          "save_as_draft": "Simpan sebagai Draf (tidak akan muncul di aplikasi mobile sampai dipublikasikan)"
+        },
+        "editing_content": "Mengubah konten",
+        "creating_content": "Membuat konten baru",
+        "picture_min_error": "Silakan unggah minimal 1 foto.",
+        "pictures": {
+          "title": "Foto (maksimal 10)",
+          "upload_cta": "Unggah foto"
+        }
+      },
       "title": "Manajemen Beranda Aplikasi",
       "subtitle": "Kelola konten yang akan ditampilkan di halaman beranda aplikasi siswa",
       "new_button": "Konten Baru",
@@ -213,22 +284,130 @@
         "published": "Dipublikasikan",
         "draft": "Draf"
       },
-      "new": {
-        "title": "Tambah Konten Baru",
-        "subtitle": "Unggah foto dan deskripsi baru untuk beranda aplikasi",
-        "description": {
-          "title": "Deskripsi",
-          "hint": "Tulis deskripsi konten di sini...",
-          "buttons": {
-            "draft": "Simpan sebagai Draf",
-            "cancel": "Batalkan",
-            "publish": "Publikasikan Konten"
-          }
-        }
+      "create_button": "Konten Baru",
+      "card": {
+        "edit": "Ubah",
+        "duplicate": "Duplikat",
+        "publish": "Publikasikan",
+        "unpublish": "Bikin Draf",
+        "delete": "Hapus"
       },
-      "contents": "Konten"
+      "empty_state": {
+        "title": "Belum ada konten",
+        "subtitle": "Buat konten pertama Anda untuk ditampilkan di beranda aplikasi siswa"
+      },
+      "empty_filter": {
+        "title": "Konten tidak ditemukan"
+      },
+      "delete_modal": {
+        "title": "Hapus Konten",
+        "description": "Apakah Anda yakin ingin menghapus konten ini? Semua data akan dihapus secara permanen dari beranda aplikasi.",
+        "item_label": "Item yang akan dihapus:",
+        "warning_label": "Peringatan:",
+        "warning": "Tindakan ini tidak dapat dibatalkan.",
+        "cancel": "Kembali",
+        "confirm": "Hapus Konten"
+      },
+      "edit": {
+        "title": "Ubah Konten",
+        "subtitle": "Perbarui foto dan deskripsi untuk beranda aplikasi."
+      },
+      "errors": {
+        "pictures": {
+          "min": "Minimal 1 foto terunggah",
+          "max": "Maksimal 10 foto terunggah"
+        },
+        "description": "Deskripsi wajib diisi"
+      }
     }
   },
-  "edit_profile": {},
-  "under_development": "Halaman ini sedang dalam proses pengembangan. Silakan kunjungi kembali nanti untuk melihat fitur-fitur lengkapnya."
+  "edit_profile": {
+    "header": {
+      "title": "Edit Profil",
+      "subtitle": "Perbarui informasi pribadi Anda"
+    },
+    "profile_photo": {
+      "title": "Foto Profil",
+      "upload": "Unggah Foto",
+      "description": "Ukuran yang disarankan: 400x400px",
+      "choose_photo": "Pilih Foto"
+    },
+    "personal_information": {
+      "title": "Informasi Pribadi",
+      "full_name": {
+        "label": "Nama Lengkap",
+        "title": "Masukkan nama lengkap Anda",
+        "placeholder": "Andy Smith"
+      },
+      "birthdate": "Tanggal Lahir",
+      "gender": {
+        "label": "Jenis Kelamin",
+        "male": "Laki-laki",
+        "female": "Perempuan"
+      }
+    },
+    "contact_information": {
+      "title": "Informasi Kontak",
+      "email": {
+        "label": "Alamat Email",
+        "locked": "🔒 Hubungi Administrator untuk mengubah email Anda."
+      },
+      "phone_number": {
+        "label": "Nomor Telepon"
+      },
+      "institution": {
+        "label": "Institusi",
+        "placeholder": "Masukkan nama institusi Anda"
+      },
+      "buttons": {
+        "cancel": "Batal",
+        "save": "Simpan Perubahan",
+        "saving": "Menyimpan..."
+      }
+    },
+    "errors": {
+      "name": {
+        "required": "Nama wajib diisi"
+      },
+      "birthdate": {
+        "required": "Tanggal lahir wajib diisi"
+      },
+      "institution": {
+        "required": "Institusi wajib diisi"
+      },
+      "phone_number": {
+        "required": "Nomor telepon wajib diisi"
+      },
+      "avatar": {
+        "only_image": "Hanya file gambar yang diperbolehkan",
+        "too_large": "Ukuran gambar harus kurang dari 5MB"
+      }
+    },
+    "success_notification": {
+      "message": "Profil diperbarui",
+      "description": "Profil Anda berhasil diperbarui"
+    },
+    "error_notification": {
+      "message": "Profil gagal diperbarui",
+      "description": "Kesalahan server. Profil Anda tidak diperbarui."
+    }
+  },
+  "pages": {
+    "error": {
+      "title": "Halaman tidak ditemukan",
+      "description": "Halaman yang Anda cari tidak ada.",
+      "backHome": "Kembali"
+    },
+    "under_development": "Halaman ini sedang dalam proses pengembangan. Silakan kunjungi kembali nanti untuk melihat fitur-fitur lengkapnya."
+  },
+  "notifications": {
+      "error": "Gagal memuat (kode status: {{statusCode}})",
+      "createError": "Gagal membuat {{resource}} (kode status: {{statusCode}})",
+      "deleteError": "Gagal menghapus {{resource}} (kode status: {{statusCode}})",
+      "editError": "Gagal mengedit {{resource}} (kode status: {{statusCode}})",
+      "success": "Berhasil",
+      "createSuccess": "Berhasil membuat {{resource}}",
+      "editSuccess": "Berhasil mengedit {{resource}}",
+      "deleteSuccess": "Berhasil menghapus {{resource}}"
+  }
 }

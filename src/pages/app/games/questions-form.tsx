@@ -1,9 +1,16 @@
 // Yuri
 
+import { Input } from "@/components/ui/input";
 import { GameDetails } from "@/types/app/app-game-details-type";
-import { Question } from "@/types/app/app-questions-type";
+import {
+  EssayQuestion,
+  MultipleChoiceQuestion,
+  Question,
+} from "@/types/app/app-questions-type";
+import { TabsContent } from "@radix-ui/react-tabs";
 import { useTranslate } from "@refinedev/core";
 import {
+  AlertTriangle,
   Check,
   ClipboardList,
   Lightbulb,
@@ -14,68 +21,58 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import {
-  Controller,
   Control,
-  FieldPath,
-  FieldValues,
+  FieldErrors,
   UseFormRegister,
-  FieldError,
-  Merge,
-  FieldErrorsImpl,
   UseFormSetValue,
+  UseFormTrigger,
   UseFormWatch,
   useFieldArray,
-  useWatch,
 } from "react-hook-form";
+import ErrorLabel from "@/components/ErrorLabel";
 
 type QuestionType = "multiple_choice" | "essay";
 
 type Translate = ReturnType<typeof useTranslate>;
 
-type GameDetailsTabProps = {
-  control: Control<GameDetails>;
-  register: UseFormRegister<GameDetails>;
-  errors: Merge<FieldError, FieldErrorsImpl<Question>> | undefined;
-  watch: UseFormWatch<GameDetails>;
-  setValue: UseFormSetValue<GameDetails>;
-};
-
-// Options/correct_answer/correct_answers/hints/validation fields only exist on
-// one side of the Question discriminated union, so react-hook-form's `Path<T>`
-// can't resolve them cleanly for a `questions.${index}.*` template string.
-// We cast those specific field names to `any` rather than fighting the union
-// typing — `question`, `pusaka_points`, and `is_essay_question` are shared by
-// both variants so they stay fully typed.
+// Options/correct_answer/correct_answers/hints fields only exist on one side
+// of the Question discriminated union, so react-hook-form's `Path<T>` can't
+// resolve them cleanly for a `questions.${index}.*` template string. We cast
+// those specific field names to `any` rather than fighting the union typing
+// — `question`, `pusaka_points`, `media`, `correct_validation`, and
+// `incorrect_validation` are shared by both variants so they stay fully
+// typed and don't need the cast.
 type QuestionsFormProps = {
   control: Control<GameDetails>;
+  register: UseFormRegister<GameDetails>;
+  watch: UseFormWatch<GameDetails>;
+  setValue: UseFormSetValue<GameDetails>;
+  trigger: UseFormTrigger<GameDetails>;
+  errors?: FieldErrors<GameDetails>["questions"];
 };
 
 function createEmptyQuestion(type: QuestionType): Question {
-  const id =
-    typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : `question-${Date.now()}`;
+  const id = `question-${Date.now()}`;
+
+  const baseQuestion = {
+    id,
+    question: "",
+    pusaka_points: 1,
+  };
 
   if (type === "multiple_choice") {
     return {
-      id,
-      question: "",
-      pusaka_points: 10,
+      ...baseQuestion,
       is_essay_question: false,
       options: { a: "", b: "", c: "", d: "" },
       correct_answer: "a",
-      correct_validation: "",
-      incorrect_validation: "",
     };
   }
 
   return {
-    id,
-    question: "",
-    pusaka_points: 10,
+    ...baseQuestion,
     is_essay_question: true,
-    // Yuri: 3 fixed slots for the UI; empty entries should be filtered out
-    // (or validated) before this is actually submitted to the backend.
+    // correct answers and hints have minimum 1 and maximum 3
     correct_answers: ["", "", ""],
     hints: ["", "", ""],
     correct_validation: "",
@@ -83,7 +80,14 @@ function createEmptyQuestion(type: QuestionType): Question {
   };
 }
 
-export default function QuestionsForm({ control }: QuestionsFormProps) {
+export default function QuestionsFormTab({
+  control,
+  register,
+  errors,
+  watch,
+  setValue,
+  trigger,
+}: QuestionsFormProps) {
   const t = useTranslate();
 
   const { fields, append, remove } = useFieldArray({
@@ -93,20 +97,41 @@ export default function QuestionsForm({ control }: QuestionsFormProps) {
   });
 
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [questionBeforeEditing, setQuestionBeforeEditing] =
+    useState<Question | null>(null);
 
   const handleAddQuestion = (type: QuestionType) => {
     const newIndex = fields.length;
     append(createEmptyQuestion(type));
     setEditingIndex(newIndex);
+    // Force a full-form re-validation right away. Without this, isValid
+    // (which gates the Publish button in games-form.tsx) can lag a beat
+    // behind an append/remove, letting Publish stay enabled for a moment
+    // even though the newly added question is empty and invalid.
+    // void trigger();
   };
 
   const handleDelete = (index: number) => {
     remove(index);
-    setEditingIndex((current) => (current === index ? null : current));
+    setEditingIndex((current) => {
+      if (current === null || current === index) return null;
+      return current > index ? current - 1 : current;
+    });
+  };
+
+  const handleCancelEdit = (index: number) => {
+    if (questionBeforeEditing) {
+      setValue(`questions.${index}`, questionBeforeEditing, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    }
+    setQuestionBeforeEditing(null);
+    setEditingIndex(null);
   };
 
   return (
-    <div className="space-y-6">
+    <TabsContent value="questions" className="mt-6 space-y-6">
       {/* Add New Question */}
       <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
         <h3 className="text-lg font-bold text-slate-800">
@@ -171,10 +196,22 @@ export default function QuestionsForm({ control }: QuestionsFormProps) {
               editingIndex === index ? (
                 <QuestionEditForm
                   key={field.fieldId}
-                  control={control}
+                  register={register}
+                  errors={
+                    errors?.[index] as NonNullable<
+                      FieldErrors<GameDetails>["questions"]
+                    >[number]
+                  }
+                  watch={watch}
+                  setValue={setValue}
+                  trigger={trigger}
                   index={index}
                   t={t}
-                  onDone={() => setEditingIndex(null)}
+                  onDone={() => {
+                    setQuestionBeforeEditing(null);
+                    setEditingIndex(null);
+                  }}
+                  onCancel={() => handleCancelEdit(index)}
                   onDelete={() => handleDelete(index)}
                 />
               ) : (
@@ -183,6 +220,7 @@ export default function QuestionsForm({ control }: QuestionsFormProps) {
                   question={field}
                   index={index}
                   t={t}
+                  hasError={Boolean(errors?.[index])}
                   onEdit={() => setEditingIndex(index)}
                   onDelete={() => handleDelete(index)}
                 />
@@ -191,7 +229,7 @@ export default function QuestionsForm({ control }: QuestionsFormProps) {
           </div>
         )}
       </div>
-    </div>
+    </TabsContent>
   );
 }
 
@@ -199,6 +237,7 @@ type QuestionCardProps = {
   question: Question;
   index: number;
   t: Translate;
+  hasError: boolean;
   onEdit: () => void;
   onDelete: () => void;
 };
@@ -207,13 +246,18 @@ function QuestionCard({
   question,
   index,
   t,
+  hasError,
   onEdit,
   onDelete,
 }: QuestionCardProps) {
   const isEssay = question.is_essay_question;
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm flex items-start justify-between gap-4">
+    <div
+      className={`bg-white rounded-xl border p-5 shadow-sm flex items-start justify-between gap-4 ${
+        hasError ? "border-red-300" : "border-slate-200"
+      }`}
+    >
       <div className="min-w-0">
         <div className="flex items-center gap-2 mb-1 flex-wrap">
           <h4 className="font-semibold text-slate-800">
@@ -239,6 +283,12 @@ function QuestionCard({
             points: question.pusaka_points,
           })}
         </p>
+        {hasError && (
+          <p className="flex items-center gap-1.5 text-xs font-medium text-red-600 mt-2">
+            <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+            {t("app.games.questions.has_errors_warning")}
+          </p>
+        )}
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
@@ -262,28 +312,80 @@ function QuestionCard({
   );
 }
 
-type QuestionEditFormProps = {
-  control: Control<GameDetails>;
+type QuestionEditFormProps = Omit<QuestionsFormProps, "control" | "errors"> & {
+  errors?: FieldErrors<Question>;
   index: number;
   t: Translate;
   onDone: () => void;
+  onCancel: () => void;
   onDelete: () => void;
 };
 
 function QuestionEditForm({
-  control,
+  register,
+  errors,
+  watch,
+  setValue,
+  trigger,
   index,
   t,
   onDone,
+  onCancel,
   onDelete,
 }: QuestionEditFormProps) {
-  const isEssay: boolean = useWatch({
-    control,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    name: `questions.${index}.is_essay_question` as any,
-  });
+  const [attemptedDone, setAttemptedDone] = useState(false);
 
-  const [mediaFileName, setMediaFileName] = useState<string | null>(null);
+  // "Done Editing" force-validates every field of this question — including
+  // ones the user never touched — rather than just closing the card. Fields
+  // left blank (e.g. a never-clicked answer option) don't have an error yet
+  // under mode: "onChange" because nothing has changed them; trigger() runs
+  // the zod schema against them regardless, so every required-but-empty
+  // field surfaces its error immediately instead of silently being accepted.
+  const handleDone = async () => {
+    setAttemptedDone(true);
+    const isRowValid = await trigger(`questions.${index}`);
+    if (isRowValid) {
+      onDone();
+    }
+  };
+  const isEssay: boolean = watch(`questions.${index}.is_essay_question`);
+  const question = watch(`questions.${index}.question`) ?? "";
+  const media = watch(`questions.${index}.media`) as
+    | Question["media"]
+    | undefined;
+
+  const handleMediaUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const mediaType = file.type.startsWith("video/")
+      ? "video"
+      : file.type.startsWith("audio/")
+        ? "audio"
+        : "image";
+
+    setValue(
+      `questions.${index}.media`,
+      {
+        id:
+          typeof crypto !== "undefined" && "randomUUID" in crypto
+            ? crypto.randomUUID()
+            : `media-${Date.now()}`,
+        type: mediaType,
+        url: URL.createObjectURL(file),
+        file_name: file.name,
+        file_size: file.size,
+      },
+      { shouldDirty: true, shouldValidate: true },
+    );
+  };
+
+  const removeMedia = () => {
+    setValue(`questions.${index}.media`, undefined, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  };
 
   return (
     <div className="bg-white rounded-xl border-2 border-red-200 p-5 shadow-sm space-y-5">
@@ -292,20 +394,43 @@ function QuestionEditForm({
         <label className="block text-sm font-semibold text-slate-800 mb-2">
           {t("app.games.questions.media.title")}
         </label>
-        <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-slate-200 rounded-xl py-6 cursor-pointer hover:border-red-300 hover:bg-red-50/20 transition-colors text-slate-500 text-sm text-center px-4">
-          <Upload className="w-5 h-5" />
-          <span className="truncate max-w-full">
-            {mediaFileName ?? t("app.games.questions.media.upload_hint")}
-          </span>
-          <input
-            type="file"
-            accept="image/jpeg,image/png,video/mp4,audio/mpeg"
-            className="hidden"
-            onChange={(e) =>
-              setMediaFileName(e.target.files?.[0]?.name ?? null)
-            }
-          />
-        </label>
+        {media ? (
+          <div className="flex items-center justify-between gap-3 border border-slate-200 rounded-xl px-4 py-3 bg-slate-50">
+            <div className="flex min-w-0 items-center gap-3">
+              {media.type === "image" && (
+                <img
+                  src={media.url}
+                  alt={media.file_name}
+                  className="h-16 w-16 shrink-0 rounded-lg border border-slate-200 object-cover"
+                />
+              )}
+              <span className="truncate text-sm text-slate-600">
+                {media.file_name}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={removeMedia}
+              className="shrink-0 p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              aria-label={t("app.games.questions.media.remove")}
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-slate-200 rounded-xl py-6 cursor-pointer hover:border-red-300 hover:bg-red-50/20 transition-colors text-slate-500 text-sm text-center px-4">
+            <Upload className="w-5 h-5" />
+            <span className="truncate max-w-full">
+              {t("app.games.questions.media.upload_hint")}
+            </span>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,video/mp4,audio/mpeg"
+              className="hidden"
+              onChange={handleMediaUpload}
+            />
+          </label>
+        )}
       </div>
 
       {/* Question */}
@@ -313,60 +438,89 @@ function QuestionEditForm({
         <label className="block text-sm font-semibold text-slate-800 mb-2">
           {t("app.games.questions.question_field.label")}
         </label>
-        <Controller
-          control={control}
-          name={`questions.${index}.question`}
-          render={({ field }) => (
-            <>
-              <textarea
-                {...field}
-                maxLength={300}
-                rows={3}
-                placeholder={t(
-                  "app.games.questions.question_field.placeholder",
-                )}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all resize-none"
-              />
-              <p className="text-xs text-slate-400 text-right mt-1">
-                {field.value?.length ?? 0}/300{" "}
-                {t("app.games.questions.characters_suffix")}
-              </p>
-            </>
-          )}
+        <textarea
+          {...register(`questions.${index}.question`)}
+          maxLength={300}
+          rows={3}
+          placeholder={t("app.games.questions.question_field.placeholder")}
+          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all resize-none"
         />
+        <div className="flex items-center justify-between mt-1">
+          <ErrorLabel errors={errors?.question} />
+          <p className="text-xs text-slate-400 ml-auto">
+            {question.length}/300 {t("app.games.questions.characters_suffix")}
+          </p>
+        </div>
       </div>
 
       {isEssay ? (
-        <EssayFields control={control} index={index} t={t} />
+        <EssayFields
+          register={register}
+          errors={errors}
+          watch={watch}
+          index={index}
+          t={t}
+        />
       ) : (
-        <MultipleChoiceFields control={control} index={index} t={t} />
+        <MultipleChoiceFields
+          register={register}
+          errors={errors}
+          watch={watch}
+          index={index}
+          t={t}
+        />
       )}
 
       {/* Pusaka Point */}
-      <div>
+      <div className="relative">
         <label className="block text-sm font-semibold text-slate-800 mb-2">
           {t("app.games.questions.pusaka_point")}
         </label>
-        <Controller
-          control={control}
-          name={`questions.${index}.pusaka_points`}
-          render={({ field }) => (
-            <input
+        {/* TODO: put the pusaka points logo here, make it absolute and translate - */}
+        {(() => {
+          const pointsField = register(`questions.${index}.pusaka_points`, {
+            valueAsNumber: true,
+          });
+          return (
+            <Input
               type="number"
               min={0}
-              value={field.value ?? 0}
-              onChange={(e) => field.onChange(Number(e.target.value))}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+              {...pointsField}
+              onBlur={(e) => {
+                // Keep react-hook-form's own onBlur (touched state, etc.)
+                // running as normal...
+                pointsField.onBlur(e);
+                // ...then, since `min={0}` only blocks the spinner buttons
+                // and users can still type or paste a negative number, snap
+                // it back to 0 once they leave the field. This is on top of
+                // the zod `nonnegative()` check that already flags negative
+                // values live while typing (mode: "onChange").
+                const value = Number(e.target.value);
+                if (!Number.isNaN(value) && value < 0) {
+                  setValue(`questions.${index}.pusaka_points`, 0, {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  });
+                }
+              }}
+              className="w-full py-4"
             />
-          )}
-        />
+          );
+        })()}
+        <ErrorLabel errors={errors?.pusaka_points} />
       </div>
-
+      {attemptedDone && Boolean(errors) && (
+        <p className="flex items-center gap-1.5 text-sm font-medium text-red-600">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          {t("app.games.questions.has_errors_warning")}
+        </p>
+      )}
       {/* Actions */}
-      <div className="flex items-center gap-3 pt-2 border-t border-slate-100">
+      <div className="flex items-center gap-3 pt-2 border-slate-100">
+        <button onClick={onCancel}>Cancel</button>
         <button
           type="button"
-          onClick={onDone}
+          onClick={handleDone}
           className="flex-1 bg-green-600 text-white rounded-lg py-2.5 font-semibold hover:bg-green-700 transition-colors cursor-pointer"
         >
           {t("app.games.questions.done_editing")}
@@ -385,13 +539,25 @@ function QuestionEditForm({
 }
 
 type QuestionTypeFieldsProps = {
-  control: Control<GameDetails>;
+  register: UseFormRegister<GameDetails>;
+  watch: UseFormWatch<GameDetails>;
   index: number;
   t: Translate;
 };
 
-function MultipleChoiceFields({ control, index, t }: QuestionTypeFieldsProps) {
-  const letters: Array<"a" | "b" | "c" | "d"> = ["a", "b", "c", "d"];
+type MultipleChoiceFieldsProps = QuestionTypeFieldsProps & {
+  errors?: FieldErrors<MultipleChoiceQuestion>;
+};
+
+function MultipleChoiceFields({
+  register,
+  errors,
+  watch,
+  index,
+  t,
+}: MultipleChoiceFieldsProps) {
+  const letters = ["a", "b", "c", "d"] as const;
+  const optionErrors = errors?.options;
 
   return (
     <div className="space-y-4">
@@ -400,38 +566,34 @@ function MultipleChoiceFields({ control, index, t }: QuestionTypeFieldsProps) {
           {t("app.games.questions.options.label")}
         </label>
         <div className="space-y-3">
-          {letters.map((letter) => (
-            <div key={letter} className="flex items-start gap-2">
-              <span className="mt-2 text-sm font-semibold text-slate-600 uppercase">
-                {letter}.
-              </span>
-              <div className="flex-1">
-                <Controller
-                  control={control}
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  name={`questions.${index}.options.${letter}` as any}
-                  render={({ field }) => (
-                    <>
-                      <input
-                        {...field}
-                        value={field.value ?? ""}
-                        maxLength={100}
-                        placeholder={t(
-                          "app.games.questions.options.placeholder",
-                          { letter: letter.toUpperCase() },
-                        )}
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                      />
-                      <p className="text-xs text-slate-400 text-right mt-1">
-                        {field.value?.length ?? 0}/100{" "}
-                        {t("app.games.questions.characters_suffix")}
-                      </p>
-                    </>
-                  )}
-                />
+          {letters.map((letter) => {
+            const value = watch(`questions.${index}.options.${letter}`) ?? "";
+
+            return (
+              <div key={letter} className="flex items-start gap-2">
+                <span className="mt-2 text-sm font-semibold text-slate-600 uppercase">
+                  {letter}.
+                </span>
+                <div className="flex-1">
+                  <input
+                    {...register(`questions.${index}.options.${letter}`)}
+                    maxLength={100}
+                    placeholder={t("app.games.questions.options.placeholder", {
+                      letter: letter.toUpperCase(),
+                    })}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                  />
+                  <div className="flex items-center justify-between mt-1">
+                    <ErrorLabel errors={optionErrors?.[letter]} />
+                    <p className="text-xs text-slate-400 text-right ml-auto">
+                      {value.length}/100{" "}
+                      {t("app.games.questions.characters_suffix")}
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -439,31 +601,30 @@ function MultipleChoiceFields({ control, index, t }: QuestionTypeFieldsProps) {
         <label className="block text-sm font-semibold text-slate-800 mb-2">
           {t("app.games.questions.correct_answer")}
         </label>
-        <Controller
-          control={control}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          name={`questions.${index}.correct_answer` as any}
-          render={({ field }) => (
-            <select
-              {...field}
-              value={field.value ?? "a"}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-            >
-              {letters.map((letter) => (
-                <option key={letter} value={letter}>
-                  {letter.toUpperCase()}
-                </option>
-              ))}
-            </select>
-          )}
-        />
+        <select
+          {...register(`questions.${index}.correct_answer`)}
+          className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+        >
+          {letters.map((letter) => (
+            <option key={letter} value={letter}>
+              {letter.toUpperCase()}
+            </option>
+          ))}
+        </select>
+        <ErrorLabel errors={errors?.correct_answer} />
       </div>
     </div>
   );
 }
 
-function EssayFields({ control, index, t }: QuestionTypeFieldsProps) {
+type EssayFieldsProps = QuestionTypeFieldsProps & {
+  errors?: FieldErrors<EssayQuestion>;
+};
+
+function EssayFields({ register, errors, watch, index, t }: EssayFieldsProps) {
   const slots = [0, 1, 2] as const;
+  const correctAnswerErrors = errors?.correct_answers;
+  const hintErrors = errors?.hints;
 
   return (
     <div className="space-y-5">
@@ -472,33 +633,44 @@ function EssayFields({ control, index, t }: QuestionTypeFieldsProps) {
         <label className="block text-sm font-semibold text-slate-800 mb-2">
           {t("app.games.questions.correct_answers.label")}
         </label>
+        {/* Array-level error, e.g. "at least one correct answer is
+            required" — this isn't tied to any single slot, so it renders
+            once above the list rather than per-input. */}
+        {correctAnswerErrors?.message && (
+          <p className="text-xs text-red-600 mb-2">
+            {correctAnswerErrors.message}
+          </p>
+        )}
         <div className="space-y-3">
-          {slots.map((slot) => (
-            <Controller
-              key={slot}
-              control={control}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              name={`questions.${index}.correct_answers.${slot}` as any}
-              render={({ field }) => (
-                <div>
-                  <input
-                    {...field}
-                    value={field.value ?? ""}
-                    maxLength={300}
-                    placeholder={t(
-                      "app.games.questions.correct_answers.placeholder",
-                      { number: slot + 1 },
-                    )}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                  />
-                  <p className="text-xs text-slate-400 text-right mt-1">
-                    {field.value?.length ?? 0}/300{" "}
+          {slots.map((slot) => {
+            const value =
+              watch(`questions.${index}.correct_answers.${slot}`) ?? "";
+
+            return (
+              <div key={slot}>
+                <input
+                  {...register(`questions.${index}.correct_answers.${slot}`)}
+                  maxLength={300}
+                  placeholder={t(
+                    "app.games.questions.correct_answers.placeholder",
+                    { number: slot + 1 },
+                  )}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                />
+                <div className="flex items-center justify-between mt-1">
+                  {correctAnswerErrors?.[slot] && (
+                    <p className="text-xs text-red-600">
+                      {correctAnswerErrors[slot].message}
+                    </p>
+                  )}
+                  <p className="text-xs text-slate-400 text-right ml-auto">
+                    {value.length}/300{" "}
                     {t("app.games.questions.characters_suffix")}
                   </p>
                 </div>
-              )}
-            />
-          ))}
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -513,28 +685,26 @@ function EssayFields({ control, index, t }: QuestionTypeFieldsProps) {
         </p>
         <div className="space-y-3">
           {slots.map((slot) => (
-            <Controller
-              key={slot}
-              control={control}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              name={`questions.${index}.hints.${slot}` as any}
-              render={({ field }) => (
-                <div className="flex items-center gap-2">
-                  <span className="shrink-0 w-8 h-8 rounded-lg bg-amber-100 text-amber-500 flex items-center justify-center">
-                    <Lightbulb className="w-4 h-4" />
-                  </span>
-                  <input
-                    {...field}
-                    value={field.value ?? ""}
-                    maxLength={100}
-                    placeholder={t("app.games.questions.hints.placeholder", {
-                      number: slot + 1,
-                    })}
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                  />
-                </div>
-              )}
-            />
+            <div key={slot} className="flex items-center gap-2">
+              <span className="shrink-0 w-8 h-8 rounded-lg bg-amber-100 text-amber-500 flex items-center justify-center">
+                <Lightbulb className="w-4 h-4" />
+              </span>
+              <div className="flex-1">
+                <input
+                  {...register(`questions.${index}.hints.${slot}`)}
+                  maxLength={100}
+                  placeholder={t("app.games.questions.hints.placeholder", {
+                    number: slot + 1,
+                  })}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
+                />
+                {hintErrors?.[slot] && (
+                  <p className="text-xs text-red-600 mt-1">
+                    {hintErrors[slot].message}
+                  </p>
+                )}
+              </div>
+            </div>
           ))}
         </div>
       </div>
@@ -546,29 +716,22 @@ function EssayFields({ control, index, t }: QuestionTypeFieldsProps) {
             <Check className="w-4 h-4" />
             {t("app.games.questions.validation.correct_label")}
           </label>
-          <Controller
-            control={control}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            name={`questions.${index}.correct_validation` as any}
-            render={({ field }) => (
-              <>
-                <textarea
-                  {...field}
-                  value={field.value ?? ""}
-                  maxLength={500}
-                  rows={3}
-                  placeholder={t(
-                    "app.games.questions.validation.correct_placeholder",
-                  )}
-                  className="w-full px-3 py-2 bg-slate-50 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all resize-none"
-                />
-                <p className="text-xs text-slate-400 text-right mt-1">
-                  {field.value?.length ?? 0}/500{" "}
-                  {t("app.games.questions.characters_suffix")}
-                </p>
-              </>
+          <textarea
+            {...register(`questions.${index}.correct_validation`)}
+            maxLength={500}
+            rows={3}
+            placeholder={t(
+              "app.games.questions.validation.correct_placeholder",
             )}
+            className="w-full px-3 py-2 bg-slate-50 border border-green-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition-all resize-none"
           />
+          <div className="flex items-center justify-between mt-1">
+            <ErrorLabel errors={errors?.correct_validation} />
+            <p className="text-xs text-slate-400 ml-auto">
+              {(watch(`questions.${index}.correct_validation`) ?? "").length}
+              /500 {t("app.games.questions.characters_suffix")}
+            </p>
+          </div>
         </div>
 
         <div>
@@ -576,29 +739,22 @@ function EssayFields({ control, index, t }: QuestionTypeFieldsProps) {
             <X className="w-4 h-4" />
             {t("app.games.questions.validation.incorrect_label")}
           </label>
-          <Controller
-            control={control}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            name={`questions.${index}.incorrect_validation` as any}
-            render={({ field }) => (
-              <>
-                <textarea
-                  {...field}
-                  value={field.value ?? ""}
-                  maxLength={500}
-                  rows={3}
-                  placeholder={t(
-                    "app.games.questions.validation.incorrect_placeholder",
-                  )}
-                  className="w-full px-3 py-2 bg-slate-50 border border-red-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all resize-none"
-                />
-                <p className="text-xs text-slate-400 text-right mt-1">
-                  {field.value?.length ?? 0}/500{" "}
-                  {t("app.games.questions.characters_suffix")}
-                </p>
-              </>
+          <textarea
+            {...register(`questions.${index}.incorrect_validation`)}
+            maxLength={500}
+            rows={3}
+            placeholder={t(
+              "app.games.questions.validation.incorrect_placeholder",
             )}
+            className="w-full px-3 py-2 bg-slate-50 border border-red-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all resize-none"
           />
+          <div className="flex items-center justify-between mt-1">
+            <ErrorLabel errors={errors?.incorrect_validation} />
+            <p className="text-xs text-slate-400 ml-auto">
+              {(watch(`questions.${index}.incorrect_validation`) ?? "").length}
+              /500 {t("app.games.questions.characters_suffix")}
+            </p>
+          </div>
         </div>
       </div>
     </div>
