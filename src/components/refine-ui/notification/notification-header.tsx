@@ -1,8 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useNotifications } from "./notifications-store";
 
 export default function NotificationHeader() {
+  const notifications = useNotifications();
+
+  const unreadCount = notifications.filter(
+    (notification) => !notification.read,
+  ).length;
+
+  console.log("this is notifications with unread count", notifications, unreadCount);
+
   return (
     <Button
       variant="outline"
