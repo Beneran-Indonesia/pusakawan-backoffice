@@ -89,7 +89,6 @@
           "published": "Active Games",
           "draft": "Draft Games",
           "past": "Past Games"
-
         },
         "type_dropdown": {
           "all": "All Types",
@@ -250,6 +249,10 @@
           "points_negative": "Points cannot be negative",
           "correct_answer_required": "At least one correct answer variance is required"
         }
+      },
+      "toast": {
+        "published_success": "\"{{title}}\" has been published",
+        "unpublished_success": "\"{{title}}\" has been moved to draft"
       }
     },
     "home": {
@@ -401,13 +404,21 @@
     "under_development": "This page is currently under development. Please come back later to see the full features."
   },
   "notifications": {
-      "error": "Error (status code: {{statusCode}})",
-      "createError": "There was an error creating {{resource}} (status code: {{statusCode}})",
-      "deleteError": "Error when deleting {{resource}} (status code: {{statusCode}})",
-      "editError": "Error when editing {{resource}} (status code: {{statusCode}})",
-      "success": "Successful",
-      "createSuccess": "Successfully created {{resource}}",
-      "editSuccess": "Successfully edited {{resource}}",
-      "deleteSuccess": "Successfully deleted {{resource}}"
+    "error": "Error (status code: {{statusCode}})",
+    "createError": "There was an error creating {{resource}} (status code: {{statusCode}})",
+    "deleteError": "Error when deleting {{resource}} (status code: {{statusCode}})",
+    "editError": "Error when editing {{resource}} (status code: {{statusCode}})",
+    "success": "Successful",
+    "createSuccess": "Successfully created {{resource}}",
+    "editSuccess": "Successfully edited {{resource}}",
+    "deleteSuccess": "Successfully deleted {{resource}}",
+    "panel": {
+      "title": "Notifications",
+      "mark_all_read": "Mark all read",
+      "empty": "No notifications",
+      "type_success": "Success",
+      "type_error": "Error",
+      "type_progress": "In progress"
+    }
   }
 }

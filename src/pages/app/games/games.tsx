@@ -63,13 +63,24 @@ export default function AppGames() {
 
   const { edit } = useNavigation();
 
-  const onToggleStatus = ({ id, status }: Game) => {
+  const onToggleStatus = ({ id, status, title }: Game) => {
+    const willPublish = status === "draft";
+
     mutate({
       id,
       values: {
-        status: status === "draft" ? "published" : "draft",
+        status: willPublish ? "published" : "draft",
       },
       meta: { simple: true },
+      successNotification: () => ({
+        message: t(
+          willPublish
+            ? "app.games.toast.published_success"
+            : "app.games.toast.unpublished_success",
+          { title },
+        ),
+        type: "success",
+      }),
     });
   };
 
@@ -298,11 +309,17 @@ export default function AppGames() {
             <h2 className="text-xl font-bold text-slate-800 mb-4">
               {filterStatus === "all" && `${filteredGames.length} Games`}
               {filterStatus === "published" &&
-                `${filteredGames.length} ${t("app.games.search_bar.status_dropdown.published")}`}
+                `${filteredGames.length} ${t(
+                  "app.games.search_bar.status_dropdown.published",
+                )}`}
               {filterStatus === "draft" &&
-                `${filteredGames.length} ${t("app.games.search_bar.status_dropdown.draft")}`}
+                `${filteredGames.length} ${t(
+                  "app.games.search_bar.status_dropdown.draft",
+                )}`}
               {filterStatus === "past" &&
-                `${filteredGames.length} ${t("app.games.search_bar.status_dropdown.past")}`}
+                `${filteredGames.length} ${t(
+                  "app.games.search_bar.status_dropdown.past",
+                )}`}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredGames.map(renderGameCard)}

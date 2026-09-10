@@ -3,6 +3,12 @@ import { toast } from "sonner";
 import { UndoableNotification } from "@/components/refine-ui/notification/undoable-notification";
 import { notificationStore } from "./notifications-store";
 
+function isGenericDescription(description: unknown): boolean {
+  if (!description) return true;
+
+  return String(description).trim().split(/\s+/).length <= 2;
+}
+
 export function useNotificationProvider(): NotificationProvider {
   return {
     open: ({
@@ -13,12 +19,17 @@ export function useNotificationProvider(): NotificationProvider {
       undoableTimeout,
       cancelMutation,
     }) => {
+      const panelTitle = String(message);
+      const panelDescription = isGenericDescription(description)
+        ? ""
+        : String(description);
+
       notificationStore.add({
         id:
           (key && String(key + notificationStore.getLength())) ||
           String(new Date().getTime()),
-        message: String(message),
-        description: description ? String(description) : "",
+        message: panelTitle,
+        description: panelDescription,
         type,
       });
 
