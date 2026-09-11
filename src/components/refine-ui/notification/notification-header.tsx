@@ -9,17 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  CircleCheck,
-  CircleAlert,
-  Clock,
-  Bell,
-  Trash2,
-  Rocket,
-  ArchiveRestore,
-  Pencil,
-  Plus,
-} from "lucide-react";
+import { CircleCheck, CircleAlert, Clock, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNotifications, type Notification } from "./notifications-store";
 
@@ -55,77 +45,7 @@ const TYPE_ICON: Record<Notification["type"], IconVariant> = {
   },
 };
 
-const ACTION_MATCHERS: { test: RegExp; variant: IconVariant }[] = [
-  {
-    test: /menghapus|dihapus|delete|deleted/i,
-    variant: {
-      icon: <Trash2 className={cn("h-5", "w-5")} strokeWidth={2.25} />,
-      badgeClassName: cn(
-        "bg-red-100",
-        "text-red-600",
-        "dark:bg-red-500/15",
-        "dark:text-red-400",
-      ),
-    },
-  },
-  {
-    test: /dipublikasikan|published|publish/i,
-    variant: {
-      icon: <Rocket className={cn("h-5", "w-5")} strokeWidth={2.25} />,
-      badgeClassName: cn(
-        "bg-emerald-100",
-        "text-emerald-600",
-        "dark:bg-emerald-500/15",
-        "dark:text-emerald-400",
-      ),
-    },
-  },
-  {
-    test: /jadikan draft|draft|unpublish/i,
-    variant: {
-      icon: <ArchiveRestore className={cn("h-5", "w-5")} strokeWidth={2.25} />,
-      badgeClassName: cn(
-        "bg-amber-100",
-        "text-amber-600",
-        "dark:bg-amber-500/15",
-        "dark:text-amber-400",
-      ),
-    },
-  },
-  {
-    test: /membuat|dibuat|create|created/i,
-    variant: {
-      icon: <Plus className={cn("h-5", "w-5")} strokeWidth={2.25} />,
-      badgeClassName: cn(
-        "bg-blue-100",
-        "text-blue-600",
-        "dark:bg-blue-500/15",
-        "dark:text-blue-400",
-      ),
-    },
-  },
-  {
-    test: /mengedit|diedit|mengubah|edit|updated/i,
-    variant: {
-      icon: <Pencil className={cn("h-5", "w-5")} strokeWidth={2.25} />,
-      badgeClassName: cn(
-        "bg-blue-100",
-        "text-blue-600",
-        "dark:bg-blue-500/15",
-        "dark:text-blue-400",
-      ),
-    },
-  },
-];
-
 function getIconVariant(notification: Notification): IconVariant {
-  if (notification.type === "success") {
-    const text = `${notification.message} ${notification.description}`;
-    const match = ACTION_MATCHERS.find(({ test }) => test.test(text));
-
-    if (match) return match.variant;
-  }
-
   return TYPE_ICON[notification.type];
 }
 
@@ -172,7 +92,10 @@ export default function NotificationHeader() {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className={cn("w-80", "p-0")}>
+      <PopoverContent
+        align="end"
+        className={cn("w-80", "p-0", "overflow-y-scroll")}
+      >
         <div
           className={cn(
             "flex",
