@@ -204,6 +204,8 @@
         "list_title": "Pertanyaan",
         "empty_state": "Belum ada pertanyaan. Tambahkan pertanyaan pertama Anda di atas.",
         "question_label": "Pertanyaan {{number}}",
+        "drag_handle_label": "Seret untuk mengurutkan pertanyaan {{number}}",
+        "drag_handle_disabled_label": "Selesaikan pengeditan untuk mengurutkan pertanyaan",
         "no_question_text": "Belum ada teks pertanyaan",
         "has_errors_warning": "Ada isian yang belum lengkap atau tidak valid",
         "points_label": "Poin: {{points}}",

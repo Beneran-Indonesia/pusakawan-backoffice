@@ -204,6 +204,8 @@
         "list_title": "Questions",
         "empty_state": "No questions yet. Add your first question above.",
         "question_label": "Question {{number}}",
+        "drag_handle_label": "Drag to reorder question {{number}}",
+        "drag_handle_disabled_label": "Finish editing to reorder questions",
         "no_question_text": "No question text",
         "has_errors_warning": "Some fields are missing or invalid",
         "points_label": "Points: {{points}}",

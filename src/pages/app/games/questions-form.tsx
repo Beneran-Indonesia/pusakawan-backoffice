@@ -13,13 +13,14 @@ import {
   AlertTriangle,
   Check,
   ClipboardList,
+  GripVertical,
   Lightbulb,
   PenSquare,
   Trash2,
   Upload,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   Control,
   FieldErrors,
@@ -29,7 +30,19 @@ import {
   UseFormWatch,
   useFieldArray,
 } from "react-hook-form";
+import { DndProvider, useDrag, useDrop, XYCoord } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import ErrorLabel from "@/components/ErrorLabel";
+
+// Drag-and-drop item type used to reorder questions in the list. Only
+// exists in this file, so a plain string constant is enough — no need to
+// share it anywhere else.
+const QUESTION_DND_TYPE = "question-card";
+
+type QuestionDragItem = {
+  index: number;
+  id: string;
+};
 
 type QuestionType = "multiple_choice" | "essay";
 
@@ -90,7 +103,7 @@ export default function QuestionsFormTab({
 }: QuestionsFormProps) {
   const t = useTranslate();
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control,
     name: "questions",
     keyName: "fieldId",
@@ -99,6 +112,17 @@ export default function QuestionsFormTab({
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [questionBeforeEditing, setQuestionBeforeEditing] =
     useState<Question | null>(null);
+
+  // Dragging is only enabled while no card is being edited — reordering
+  // mid-edit would leave `editingIndex` pointing at the wrong row.
+  const isReorderingDisabled = editingIndex !== null;
+
+  const moveQuestion = useCallback(
+    (dragIndex: number, hoverIndex: number) => {
+      move(dragIndex, hoverIndex);
+    },
+    [move],
+  );
 
   const handleAddQuestion = (type: QuestionType) => {
     const newIndex = fields.length;
@@ -191,42 +215,47 @@ export default function QuestionsFormTab({
             {t("app.games.questions.empty_state")}
           </div>
         ) : (
-          <div className="space-y-4">
-            {fields.map((field, index) =>
-              editingIndex === index ? (
-                <QuestionEditForm
-                  key={field.fieldId}
-                  register={register}
-                  errors={
-                    errors?.[index] as NonNullable<
-                      FieldErrors<GameDetails>["questions"]
-                    >[number]
-                  }
-                  watch={watch}
-                  setValue={setValue}
-                  trigger={trigger}
-                  index={index}
-                  t={t}
-                  onDone={() => {
-                    setQuestionBeforeEditing(null);
-                    setEditingIndex(null);
-                  }}
-                  onCancel={() => handleCancelEdit(index)}
-                  onDelete={() => handleDelete(index)}
-                />
-              ) : (
-                <QuestionCard
-                  key={field.fieldId}
-                  question={field}
-                  index={index}
-                  t={t}
-                  hasError={Boolean(errors?.[index])}
-                  onEdit={() => setEditingIndex(index)}
-                  onDelete={() => handleDelete(index)}
-                />
-              ),
-            )}
-          </div>
+          <DndProvider backend={HTML5Backend}>
+            <div className="space-y-4">
+              {fields.map((field, index) =>
+                editingIndex === index ? (
+                  <QuestionEditForm
+                    key={field.fieldId}
+                    register={register}
+                    errors={
+                      errors?.[index] as NonNullable<
+                        FieldErrors<GameDetails>["questions"]
+                      >[number]
+                    }
+                    watch={watch}
+                    setValue={setValue}
+                    trigger={trigger}
+                    index={index}
+                    t={t}
+                    onDone={() => {
+                      setQuestionBeforeEditing(null);
+                      setEditingIndex(null);
+                    }}
+                    onCancel={() => handleCancelEdit(index)}
+                    onDelete={() => handleDelete(index)}
+                  />
+                ) : (
+                  <DraggableQuestionCard
+                    key={field.fieldId}
+                    id={field.fieldId}
+                    question={field}
+                    index={index}
+                    t={t}
+                    hasError={Boolean(errors?.[index])}
+                    onEdit={() => setEditingIndex(index)}
+                    onDelete={() => handleDelete(index)}
+                    moveQuestion={moveQuestion}
+                    isDragDisabled={isReorderingDisabled}
+                  />
+                ),
+              )}
+            </div>
+          </DndProvider>
         )}
       </div>
     </TabsContent>
@@ -240,6 +269,8 @@ type QuestionCardProps = {
   hasError: boolean;
   onEdit: () => void;
   onDelete: () => void;
+  dragHandleRef?: (node: HTMLButtonElement | null) => void;
+  isDragDisabled?: boolean;
 };
 
 function QuestionCard({
@@ -249,6 +280,8 @@ function QuestionCard({
   hasError,
   onEdit,
   onDelete,
+  dragHandleRef,
+  isDragDisabled,
 }: QuestionCardProps) {
   const isEssay = question.is_essay_question;
 
@@ -258,37 +291,66 @@ function QuestionCard({
         hasError ? "border-red-300" : "border-slate-200"
       }`}
     >
-      <div className="min-w-0">
-        <div className="flex items-center gap-2 mb-1 flex-wrap">
-          <h4 className="font-semibold text-slate-800">
-            {t("app.games.questions.question_label", { number: index + 1 })}
-          </h4>
-          <span
-            className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              isEssay
-                ? "bg-purple-100 text-purple-700"
-                : "bg-blue-100 text-blue-700"
+      <div className="flex items-start gap-3 min-w-0">
+        {dragHandleRef && (
+          <button
+            type="button"
+            ref={dragHandleRef}
+            disabled={isDragDisabled}
+            aria-label={
+              isDragDisabled
+                ? t("app.games.questions.drag_handle_disabled_label")
+                : t("app.games.questions.drag_handle_label", {
+                    number: index + 1,
+                  })
+            }
+            title={
+              isDragDisabled
+                ? t("app.games.questions.drag_handle_disabled_label")
+                : undefined
+            }
+            className={`shrink-0 mt-1 p-1 rounded-md text-slate-400 transition-colors ${
+              isDragDisabled
+                ? "cursor-not-allowed opacity-40"
+                : "cursor-grab hover:bg-slate-100 hover:text-slate-600 active:cursor-grabbing"
             }`}
           >
-            {isEssay
-              ? t("app.games.questions.add_new.essay.title")
-              : t("app.games.questions.add_new.multiple_choice.title")}
-          </span>
-        </div>
-        <p className="text-sm text-slate-500 truncate">
-          {question.question || t("app.games.questions.no_question_text")}
-        </p>
-        <p className="text-xs text-slate-400 mt-2">
-          {t("app.games.questions.points_label", {
-            points: question.pusaka_points,
-          })}
-        </p>
-        {hasError && (
-          <p className="flex items-center gap-1.5 text-xs font-medium text-red-600 mt-2">
-            <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-            {t("app.games.questions.has_errors_warning")}
-          </p>
+            <GripVertical className="w-4 h-4" />
+          </button>
         )}
+
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <h4 className="font-semibold text-slate-800">
+              {t("app.games.questions.question_label", { number: index + 1 })}
+            </h4>
+            <span
+              className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                isEssay
+                  ? "bg-purple-100 text-purple-700"
+                  : "bg-blue-100 text-blue-700"
+              }`}
+            >
+              {isEssay
+                ? t("app.games.questions.add_new.essay.title")
+                : t("app.games.questions.add_new.multiple_choice.title")}
+            </span>
+          </div>
+          <p className="text-sm text-slate-500 truncate">
+            {question.question || t("app.games.questions.no_question_text")}
+          </p>
+          <p className="text-xs text-slate-400 mt-2">
+            {t("app.games.questions.points_label", {
+              points: question.pusaka_points,
+            })}
+          </p>
+          {hasError && (
+            <p className="flex items-center gap-1.5 text-xs font-medium text-red-600 mt-2">
+              <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+              {t("app.games.questions.has_errors_warning")}
+            </p>
+          )}
+        </div>
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
@@ -308,6 +370,78 @@ function QuestionCard({
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
+    </div>
+  );
+}
+
+type DraggableQuestionCardProps = Omit<QuestionCardProps, "dragHandleRef"> & {
+  id: string;
+  moveQuestion: (dragIndex: number, hoverIndex: number) => void;
+  isDragDisabled: boolean;
+};
+
+// Wraps QuestionCard with react-dnd's drag source + drop target, following
+// the "sortable list with a drag handle" pattern from the react-dnd docs
+// (https://react-dnd.github.io/react-dnd/examples/sortable/simple). The
+// outer div is the drop target (it measures hover position to decide when
+// to swap), while only the grip handle inside QuestionCard is the drag
+// source, so clicking Edit/Delete never accidentally starts a drag.
+function DraggableQuestionCard({
+  id,
+  index,
+  moveQuestion,
+  isDragDisabled,
+  ...questionCardProps
+}: DraggableQuestionCardProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const [, drop] = useDrop<QuestionDragItem>({
+    accept: QUESTION_DND_TYPE,
+    hover(item, monitor) {
+      if (!containerRef.current) return;
+      const dragIndex = item.index;
+      const hoverIndex = index;
+      if (dragIndex === hoverIndex) return;
+
+      // Only swap once the dragged card has crossed the midpoint of the
+      // hovered card, so the list doesn't flicker back and forth.
+      const hoverBoundingRect = containerRef.current.getBoundingClientRect();
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const clientOffset = monitor.getClientOffset();
+      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
+
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
+
+      moveQuestion(dragIndex, hoverIndex);
+      // Mutate the monitor item directly to avoid stale-index flicker
+      // while the drag is still in progress (standard react-dnd pattern).
+      item.index = hoverIndex;
+    },
+  });
+
+  const [{ isDragging }, drag] = useDrag({
+    type: QUESTION_DND_TYPE,
+    item: (): QuestionDragItem => ({ id, index }),
+    canDrag: !isDragDisabled,
+    collect: (monitor) => ({ isDragging: monitor.isDragging() }),
+  });
+
+  drop(containerRef);
+
+  return (
+    <div
+      ref={containerRef}
+      className={isDragging ? "opacity-40" : undefined}
+      data-question-index={index}
+    >
+      <QuestionCard
+        index={index}
+        isDragDisabled={isDragDisabled}
+        dragHandleRef={drag}
+        {...questionCardProps}
+      />
     </div>
   );
 }
@@ -361,8 +495,8 @@ function QuestionEditForm({
     const mediaType = file.type.startsWith("video/")
       ? "video"
       : file.type.startsWith("audio/")
-        ? "audio"
-        : "image";
+      ? "audio"
+      : "image";
 
     setValue(
       `questions.${index}.media`,
