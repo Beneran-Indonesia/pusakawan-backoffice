@@ -122,12 +122,13 @@ const loginHandler = http.post(LOGIN_API_URL, async ({ request }) => {
     }
 
     const users: Record<string, UserToken["user"]["role"]> = {
+        "app@test.com": "APP",
         "superadmin@test.com": "SUPER_ADMIN",
         "admin@test.com": "ADMIN",
         "lms@test.com": "LMS",
     };
 
-    let role: UserToken["user"]["role"] = "APP";
+    let role: UserToken["user"]["role"];
 
     if (!(email in users)) {
         return HttpResponse.json(
@@ -138,6 +139,11 @@ const loginHandler = http.post(LOGIN_API_URL, async ({ request }) => {
 
     if (password === "password" && email in users) {
         role = users[email];
+    } else {
+        return HttpResponse.json(
+            { message: "Credentials not found" },
+            { status: 404 }
+        )
     }
 
     const response = mockToken(role);
