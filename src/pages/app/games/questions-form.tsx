@@ -20,7 +20,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Control,
   FieldErrors,
@@ -30,6 +30,7 @@ import {
   UseFormWatch,
   useFieldArray,
 } from "react-hook-form";
+import { Trans } from "react-i18next";
 import { DndProvider, DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import ErrorLabel from "@/components/ErrorLabel";
@@ -117,9 +118,44 @@ export default function QuestionsFormTab({
   // mid-edit would leave `editingIndex` pointing at the wrong row.
   const isReorderingDisabled = editingIndex !== null;
 
+  // Feedback shown directly on the card that just moved (not a toast) —
+  // which field it belongs to, plus its 1-based order before/after the
+  // move. Cleared automatically a couple seconds after each reorder.
+  const [reorderInfo, setReorderInfo] = useState<{
+    fieldId: string;
+    oldOrder: number;
+    newOrder: number;
+  } | null>(null);
+  const reorderInfoTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
+  useEffect(() => {
+    return () => {
+      if (reorderInfoTimeoutRef.current) {
+        clearTimeout(reorderInfoTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const moveQuestion = useCallback(
-    (dragIndex: number, hoverIndex: number) => {
+    (dragIndex: number, hoverIndex: number, fieldId: string) => {
+      if (dragIndex === hoverIndex) return;
       move(dragIndex, hoverIndex);
+
+      // Human-friendly, 1-based order numbers — matches how each card
+      // labels itself ("Pertanyaan {{number}}" uses index + 1).
+      setReorderInfo({
+        fieldId,
+        oldOrder: dragIndex + 1,
+        newOrder: hoverIndex + 1,
+      });
+      if (reorderInfoTimeoutRef.current) {
+        clearTimeout(reorderInfoTimeoutRef.current);
+      }
+      reorderInfoTimeoutRef.current = setTimeout(() => {
+        setReorderInfo(null);
+      }, 2500);
     },
     [move],
   );
@@ -251,6 +287,11 @@ export default function QuestionsFormTab({
                     onDelete={() => handleDelete(index)}
                     moveQuestion={moveQuestion}
                     isDragDisabled={isReorderingDisabled}
+                    justReordered={
+                      reorderInfo?.fieldId === field.fieldId
+                        ? reorderInfo
+                        : null
+                    }
                   />
                 ),
               )}
@@ -262,6 +303,8 @@ export default function QuestionsFormTab({
   );
 }
 
+type ReorderInfo = { fieldId: string; oldOrder: number; newOrder: number };
+
 type QuestionCardProps = {
   question: Question;
   index: number;
@@ -271,6 +314,7 @@ type QuestionCardProps = {
   onDelete: () => void;
   dragHandleRef?: (node: HTMLButtonElement | null) => void;
   isDragDisabled?: boolean;
+  justReordered?: ReorderInfo | null;
 };
 
 function QuestionCard({
@@ -282,6 +326,7 @@ function QuestionCard({
   onDelete,
   dragHandleRef,
   isDragDisabled,
+  justReordered,
 }: QuestionCardProps) {
   const isEssay = question.is_essay_question;
 
@@ -335,6 +380,18 @@ function QuestionCard({
                 ? t("app.games.questions.add_new.essay.title")
                 : t("app.games.questions.add_new.multiple_choice.title")}
             </span>
+            {justReordered && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium animate-in fade-in zoom-in-95 duration-200">
+                <Trans
+                  i18nKey="app.games.questions.reorder_toast"
+                  values={{
+                    oldOrder: justReordered.oldOrder,
+                    newOrder: justReordered.newOrder,
+                  }}
+                  components={{ b: <strong /> }}
+                />
+              </span>
+            )}
           </div>
           <p className="text-sm text-slate-500 truncate">
             {question.question || t("app.games.questions.no_question_text")}
@@ -376,7 +433,11 @@ function QuestionCard({
 
 type DraggableQuestionCardProps = Omit<QuestionCardProps, "dragHandleRef"> & {
   id: string;
-  moveQuestion: (dragIndex: number, hoverIndex: number) => void;
+  moveQuestion: (
+    dragIndex: number,
+    hoverIndex: number,
+    fieldId: string,
+  ) => void;
   isDragDisabled: boolean;
 };
 
@@ -444,7 +505,7 @@ function DraggableQuestionCard({
         ? hoverIndex
         : hoverIndex + 1;
 
-      moveQuestion(dragIndex, targetIndex);
+      moveQuestion(dragIndex, targetIndex, item.id);
     },
   });
 
