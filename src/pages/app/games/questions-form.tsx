@@ -30,7 +30,7 @@ import {
   UseFormWatch,
   useFieldArray,
 } from "react-hook-form";
-import { DndProvider, useDrag, useDrop, XYCoord } from "react-dnd";
+import { DndProvider, DropTargetMonitor, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import ErrorLabel from "@/components/ErrorLabel";
 
@@ -382,10 +382,11 @@ type DraggableQuestionCardProps = Omit<QuestionCardProps, "dragHandleRef"> & {
 
 // Wraps QuestionCard with react-dnd's drag source + drop target, following
 // the "sortable list with a drag handle" pattern from the react-dnd docs
-// (https://react-dnd.github.io/react-dnd/examples/sortable/simple). The
-// outer div is the drop target (it measures hover position to decide when
-// to swap), while only the grip handle inside QuestionCard is the drag
-// source, so clicking Edit/Delete never accidentally starts a drag.
+// (https://react-dnd.github.io/react-dnd/examples/sortable/simple), with
+// one change: the actual reorder only happens on drop. While dragging,
+// `hover` just tracks which half of the card the pointer is over so we can
+// show a thin insertion line — the list itself doesn't move until the user
+// releases the card.
 function DraggableQuestionCard({
   id,
   index,
@@ -394,30 +395,56 @@ function DraggableQuestionCard({
   ...questionCardProps
 }: DraggableQuestionCardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [insertPosition, setInsertPosition] = useState<"top" | "bottom" | null>(
+    null,
+  );
 
-  const [, drop] = useDrop<QuestionDragItem>({
+  const getHoverHalf = (
+    monitor: DropTargetMonitor,
+  ): "top" | "bottom" | null => {
+    if (!containerRef.current) return null;
+    const hoverBoundingRect = containerRef.current.getBoundingClientRect();
+    const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+    const clientOffset = monitor.getClientOffset();
+    if (!clientOffset) return null;
+    const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+    return hoverClientY < hoverMiddleY ? "top" : "bottom";
+  };
+
+  const [{ isOver }, drop] = useDrop<
+    QuestionDragItem,
+    void,
+    { isOver: boolean }
+  >({
     accept: QUESTION_DND_TYPE,
+    collect: (monitor) => ({ isOver: monitor.isOver({ shallow: true }) }),
     hover(item, monitor) {
-      if (!containerRef.current) return;
+      if (item.index === index) {
+        setInsertPosition(null);
+        return;
+      }
+      setInsertPosition(getHoverHalf(monitor));
+    },
+    drop(item, monitor) {
       const dragIndex = item.index;
       const hoverIndex = index;
+      setInsertPosition(null);
       if (dragIndex === hoverIndex) return;
 
-      // Only swap once the dragged card has crossed the midpoint of the
-      // hovered card, so the list doesn't flicker back and forth.
-      const hoverBoundingRect = containerRef.current.getBoundingClientRect();
-      const hoverMiddleY =
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-      const clientOffset = monitor.getClientOffset();
-      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
+      // Land just above/below the card it was dropped on, depending on
+      // which half the pointer was over — this is computed fresh here
+      // (rather than reused from hover state) so it's accurate at the
+      // exact moment of release.
+      const droppedOnTopHalf = getHoverHalf(monitor) === "top";
+      const targetIndex = droppedOnTopHalf
+        ? dragIndex < hoverIndex
+          ? hoverIndex - 1
+          : hoverIndex
+        : dragIndex < hoverIndex
+        ? hoverIndex
+        : hoverIndex + 1;
 
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
-
-      moveQuestion(dragIndex, hoverIndex);
-      // Mutate the monitor item directly to avoid stale-index flicker
-      // while the drag is still in progress (standard react-dnd pattern).
-      item.index = hoverIndex;
+      moveQuestion(dragIndex, targetIndex);
     },
   });
 
@@ -430,10 +457,19 @@ function DraggableQuestionCard({
 
   drop(containerRef);
 
+  const showTopIndicator = isOver && insertPosition === "top";
+  const showBottomIndicator = isOver && insertPosition === "bottom";
+
   return (
     <div
       ref={containerRef}
-      className={isDragging ? "opacity-40" : undefined}
+      className={[
+        isDragging ? "opacity-40" : "",
+        showTopIndicator ? "border-t-2 border-red-500" : "",
+        showBottomIndicator ? "border-b-2 border-red-500" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
       data-question-index={index}
     >
       <QuestionCard
